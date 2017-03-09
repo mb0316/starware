@@ -84,7 +84,8 @@ using namespace std;
 
 vector<int> gatevalueX;
 vector<int> gatevalueY;
-TGraphErrors* singledecay = new TGraphErrors();
+TGraphErrors* singledecay;
+//TGraphErrors* singledecay = new TGraphErrors();
 
 void MLM1(Int_t &, Double_t *, Double_t &f, Double_t *par, Int_t)
 {
@@ -370,7 +371,7 @@ void BMspec::intro()
 {
     cout << "-----------------------------STARWARE(SpecTroscopy Analysis for gamma-Ray softWARE)---------------------------------" << endl;
     cout << "------------------------------------------Byul means 'star' in Korean.----------------------------------------------" << endl;
-    cout << "----------------------------------Gamma-ray Spectroscopy Analysis Tool Beta Ver.1.2--------------------------------------" << endl;
+    cout << "-------------------------------Gamma-ray Spectroscopy Analysis Tool Beta Ver.1.2------------------------------------" << endl;
     cout << "The Data analysis from coincidence event matrices." << endl;
     cout << "Made by Byul Moon(B.Moon) from Korea University" << endl;
     cout << "Since Jan. 2016." << endl;
@@ -670,6 +671,7 @@ void BMspec::Hnetarea(TCanvas *tempcvs, TString &openFile)
 
 	if (openFile != NULL)
 	{
+
 		if (gatevalueX.size() > 0 && gatevalueY.size() == 0)
 		{
 			start = gatevalueX[0];
@@ -1054,6 +1056,7 @@ void BMspec::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &peaksv
     TFile* file[num];
     TH1* hist[num];
     Int_t peakfile;
+	singledecay = new TGraphErrors();
     
     for (Int_t i = 0; i < num; i++)
     {
@@ -1092,7 +1095,7 @@ void BMspec::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &peaksv
         singledecay -> SetPointError(i, interval/2, sqrt(hist_tot -> GetBinContent(i+1)));
     }
 
-	if (halftype == 1)
+	if (halftype == 1) //halflife measurement for parent nucleus
 	{
 		Double_t expectedhalf = double(half_parent/log(2));
 		TF1* fcn = new TF1("single_decay", "[0]*exp(-x/[1])+[2]", 0, 4000);
@@ -1131,7 +1134,8 @@ void BMspec::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &peaksv
 		cout << "Half-life : " << p[1]*log(2) << "(" << error*p[1]*log(2) << ")" << endl;
 
 	}
-	if (halftype == 0)
+
+	if (halftype == 0) //halflife measurement for daughter nucleus
 	{
 		Double_t expectedhalf = double(log(2)/half_parent);
 		cout << expectedhalf << endl;
@@ -1146,6 +1150,7 @@ void BMspec::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &peaksv
 		fitter -> SetParameter(1, "TC1", expectedhalf, 0.001, expectedhalf-5E-6, expectedhalf+5E-6);
 		fitter -> SetParameter(2, "TC2", expectedhalf/2, 0.001, 0, 0);
 		fitter -> SetParameter(3, "BG", 1.200, 0.001, 0, 0);
+		fitter -> FixParameter(1);
 		fitter -> SetFCN(MLM2);
 		fitter -> ExecuteCommand("MINOS", 0, 0);
 

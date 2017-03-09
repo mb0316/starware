@@ -141,6 +141,7 @@ class BMgui
 		Double_t PDaut;
 		Double_t unit;
 
+
 		TGStatusBar* fStatusBar;
 
 		void starware();
@@ -756,7 +757,7 @@ void BMgui::starware()
     fMainFrame1073->MapWindow();
     fMainFrame1073->Resize(1200,600);
 
-	fMainFrame1073->SetWindowName("STARWARE Beta Ver.1.0");
+	fMainFrame1073->SetWindowName("STARWARE Beta Ver.1.2");
 	fMainFrame1073->MapSubwindows();
 	fMainFrame1073->Connect("CloseWindow()", "BMgui", this, "TerminatePro()");
 
@@ -843,11 +844,17 @@ void BMgui::openeff()
     
     // If user clicks cancel, do nothing.
     if (effInfo.fFilename == NULL)
+	{
         return;
-    
+    }
+
     //Get the file name with path
-    effdatafile = effInfo.fFilename;
-    if (effInfo.fFilename != NULL)	cout << "The efficiency data file has been successfully read." << endl;
+    if (effInfo.fFilename != NULL)
+	{
+    	effdatafile = effInfo.fFilename;
+		cout << "The efficiency data file has been successfully read." << endl;
+	}
+
 }
 
 void BMgui::gatedspectrum()
@@ -909,14 +916,14 @@ void BMgui::decaygate()
 
 void BMgui::netarea()
 {
-	if (effdatafile != NULL)
+	if (effdatafile.Length() >= 1)
 	{
 	    star.Hnetarea(cvs3, effdatafile);
     
 	    cvs3 -> Modified();
 		cvs3 -> Update();
 	}
-	if (effdatafile == NULL)
+	if (effdatafile.Length() == 0)
 	{
 		cout << "The efficiency data has not been loaded. Please load the efficiency data file." << endl;
 	}
@@ -924,7 +931,7 @@ void BMgui::netarea()
 
 void BMgui::netarea2()
 {
-	if (effdatafile != NULL)
+	if (effdatafile.Length() >= 1)
 	{
 
 		star.Hnetarea2(cvs3, effdatafile, tstart, tend);
@@ -932,7 +939,7 @@ void BMgui::netarea2()
 		cvs3 -> Modified();
 		cvs3 -> Update();
 	}
-	if (effdatafile == NULL)
+	if (effdatafile.Length() == 0)
 	{
 		cout << "The efficiency data has not been loaded. Please load the efficiency data file." << endl;
 	}
