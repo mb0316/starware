@@ -4,7 +4,7 @@
 *************************STARWARE GUI CONSTRUCTOR FILE******************************
 Made by Byul Moon from Korea University
 GUI constructor for STARWARE program.
-Last refine : 09.01.2017, ver.1.0
+Last refine : 09.Mar.2017, ver.1.2
 Copyright by B. Moon
 ***********************************************************************************/
 
@@ -69,9 +69,23 @@ This program operates with a GUI system.\n\
 STARWARE only accepts the data format with ~.mat.\n\
 \n\
 Since Jan. 2016.\n\
-Current Version : Beta ver.1.0\n\
-Last Update : 09.01.2017.\n\
+Current Version : Beta ver.1.2\n\
+Last Update : 8.Mar.2017.\n\
 By Byul Moon from Korea University\n\
+alpha ver.1.2 Update News 1 : The decaygate function now cotains the elimination of the background.\n\
+alpha ver.1.2 Update News 2 : The decaygate function now asks the degree of the data compression(the bin size).\n\
+alpha ver.1.3 Update News 1 : The netarea function now uses the gaussian fitting to get the exact net area including the error.\n\
+alpha ver.1.4 Update News 1 : The netarea function now does not remove the background by using TSpectrum. Instead, now the function fits the background with the linear function to remove the background.\n\
+alpha ver.1.5 Update News 1 : This program now performs the efficiency calibration by using the external data file.\n\
+alpha ver.2.0 Update News 1 : Now this program works with its own CLASS header file.\n\
+alpha ver.2.1 Update News 1 : The timegrow function now works with the fit process not using TSpectrum anymore.\n\
+alpha ver.3.0 Update News 1 : Now you can use the mouse double-click to set the gate condition. If you want to set the gate, please zoom in the spectrum and double-click the bin point.\n\
+alpha ver.3.0 Update News 2 : Now this program works with RADWARE data foramt(.mat).\n\
+alpha ver.3.1 Update News 1 : Now this program provides halflife measurement using gamma-rays.\n\
+alpha ver.4.0 Update News 1 : Now this program is based on the GUI system.\n\
+beta ver.1.0 Update News 1 (09.Jan.2017) : The interface for STARWARE is now fixed.\n\
+beta ver.1.1 Update News 1 (22.Feb.2017) : The analysis for the half-life of the daughter nucleus has been added.\n\
+beta ver.1.2 Update News 1 (08.Mar.2017) : The logft calculation has been added.\n\
 ";
 
 const char gCOPYRIGHT[] = "\
@@ -88,7 +102,7 @@ To be announced.\n\
 
 const char gCONTACT[] ="\
 			STARWARE CONTACT INFORMATION\n\
-Please contact via the below e-mail address.\n\
+Please contact via the following e-mail address.\n\
 mb0316@nuclear.korea.ac.kr\n\
 ";
 
@@ -119,6 +133,14 @@ class BMgui
 		Int_t timeaxis2=1; //timeaxis1 : x axis is time, timeaxis2: y axis is time; 0 : enable, 1 : unable
 		Int_t halftype=1; //halftype=1 : mother nucleus decay, halftype=0 : daughter nucleus decay
 
+		Int_t ZParent;
+		Double_t HalfParent;
+		Double_t QParent;
+		Double_t EParent;
+		Double_t EDaut;
+		Double_t PDaut;
+		Double_t unit;
+
 		TGStatusBar* fStatusBar;
 
 		void starware();
@@ -147,11 +169,19 @@ class BMgui
 		void SetHalfLife(const Char_t *value);
 		void checktimetox(Bool_t value);
 		void checktimetoy(Bool_t value);
-		void checkhalftype(Bool_t value);
+		void checkhalftype(Int_t value);
 		void EventInfo(Int_t event, Int_t px, Int_t py, TObject *selected);
 		void SetStatusText(const char *text, Int_t pi);
 		void HandleMenu(Int_t menu_id);
 		void TerminatePro();
+		void SetZParent(const Char_t *value);
+		void SetQParent(const Char_t *value);
+		void SetHalfParent(const Char_t *value);
+		void SetEParent(const Char_t *value);
+		void SetEDaut(const Char_t *value);
+		void SetPDaut(const Char_t *value);
+		void logft();
+		void SetUnit(Int_t value);
 //	ClassDef(BMgui, 1);
 };
 //#endif
@@ -526,10 +556,10 @@ void BMgui::starware()
     lHALF -> SetMargins(0, 0, 0, 0);
     lHALF -> SetWrapLength(-1);
     fCompositeFrame5 -> AddFrame(lHALF, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
-    lHALF -> MoveResize(1050, 40, 170, 20);
+    lHALF -> MoveResize(1020, 40, 170, 20);
     
     TGNumberEntryField *fSETPEAK = new TGNumberEntryField(fCompositeFrame5, 2, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 4096);
-    fSETPEAK->MoveResize(1050,65,40,20);
+    fSETPEAK->MoveResize(1020,65,40,20);
     fCompositeFrame5->AddFrame(fSETPEAK, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     fSETPEAK -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetPeakValue(const Char_t *)");
     
@@ -540,7 +570,7 @@ void BMgui::starware()
     TSETPEAK->SetWrapLength(-1);
     TSETPEAK->Resize(100,35);
     fCompositeFrame3->AddFrame(TSETPEAK, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    TSETPEAK->MoveResize(1050,90,100,35);
+    TSETPEAK->MoveResize(1020,90,100,35);
     
     TGTextButton *TGETHALF = new TGTextButton(fCompositeFrame5,"GET HALFLIFE",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
     TGETHALF-> Connect("Clicked()", "BMgui", this, "halflife()");
@@ -549,25 +579,27 @@ void BMgui::starware()
     TGETHALF->SetWrapLength(-1);
     TGETHALF->Resize(100,35);
     fCompositeFrame3->AddFrame(TGETHALF, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    TGETHALF->MoveResize(1050,130,100,35);
-
-    TGCheckButton *fCheck_half = new TGCheckButton(fCompositeFrame5,"uncheck for parent");
-    fCheck_half->Connect("Toggled(Bool_t)", "BMgui", this, "checkhalftype(Bool_t)");
-    fCheck_half->SetTextJustify(kTextLeft);
-    fCheck_half->SetMargins(0,0,0,0);
-    fCheck_half->SetWrapLength(-1);
-    fCompositeFrame5->AddFrame(fCheck_half, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    fCheck_half->Move(1050,200);
+    TGETHALF->MoveResize(1020,130,100,35);
  
-	TGLabel *lCheck_half = new TGLabel(fCompositeFrame5, "check for daughter");
+	TGLabel *lCheck_half = new TGLabel(fCompositeFrame5, "Types of decay");
     lCheck_half -> SetTextJustify(kTextLeft);
     lCheck_half-> SetMargins(0, 0, 0, 0);
     lCheck_half-> SetWrapLength(-1);
     fCompositeFrame5 -> AddFrame(lCheck_half, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
-    lCheck_half-> MoveResize(1070, 220, 200, 20);
-  
+    lCheck_half-> MoveResize(1020, 180, 200, 20);
+
+	TGComboBox *fTYPE_DECAY = new TGComboBox(fCompositeFrame5,-1,kHorizontalFrame | kSunkenFrame | kOwnBackground);
+	fTYPE_DECAY->SetName("Types of decay");
+	fTYPE_DECAY->AddEntry("Parent",0);
+	fTYPE_DECAY->AddEntry("Daughter",1);
+	fTYPE_DECAY->Resize(100,20);
+	fTYPE_DECAY->Select(-1);
+	fCompositeFrame5->AddFrame(fTYPE_DECAY, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
+	fTYPE_DECAY->MoveResize(1020,210,100,20);
+	fTYPE_DECAY->Connect("Selected(Int_t)", "BMgui", this, "checkhalftype(Int_t)");
+
     TGNumberEntryField *fHALF_P = new TGNumberEntryField(fCompositeFrame5, 0, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 4096);
-    fHALF_P->MoveResize(1050,280,100,20);
+    fHALF_P->MoveResize(1020,280,100,20);
     fCompositeFrame5->AddFrame(fHALF_P, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     fHALF_P -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetHalfLife(const Char_t *)");
   
@@ -576,7 +608,7 @@ void BMgui::starware()
     lHalf_P-> SetMargins(0, 0, 0, 0);
     lHalf_P-> SetWrapLength(-1);
     fCompositeFrame5 -> AddFrame(lHalf_P, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
-    lHalf_P-> MoveResize(1050, 250, 200, 20);
+    lHalf_P-> MoveResize(1020, 250, 200, 20);
     
     // embedded canvas
     TRootEmbeddedCanvas *thalf = new TRootEmbeddedCanvas(0,fCompositeFrame5,1000,250,kSunkenFrame);
@@ -586,6 +618,130 @@ void BMgui::starware()
     thalf->AdoptCanvas(cvs8);
     fCompositeFrame5->AddFrame(thalf, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     thalf->MoveResize(10,10,1000,500);
+
+
+	// container of "Tab6"
+	TGCompositeFrame *fCompositeFrame6;
+	fCompositeFrame6 = fTab1 -> AddTab("LOGFT Calculation");
+	fCompositeFrame6 -> SetLayoutManager(new TGVerticalLayout(fCompositeFrame6));
+	fCompositeFrame6 ->SetLayoutBroken(kTRUE);
+  
+	TGLabel *lP_INFO = new TGLabel(fCompositeFrame6, "Parent Information");
+    lP_INFO -> SetTextJustify(kTextLeft);
+    lP_INFO-> SetMargins(0, 0, 0, 0);
+    lP_INFO-> SetWrapLength(-1);
+    fCompositeFrame6 -> AddFrame(lP_INFO, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
+    lP_INFO-> MoveResize(100, 100, 500, 20);
+     
+	TGLabel *lZ_PARENT = new TGLabel(fCompositeFrame6, "Z");
+    lZ_PARENT -> SetTextJustify(kTextLeft);
+    lZ_PARENT-> SetMargins(0, 0, 0, 0);
+    lZ_PARENT-> SetWrapLength(-1);
+    fCompositeFrame6 -> AddFrame(lZ_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
+    lZ_PARENT-> MoveResize(100, 150, 100, 20);
+     
+    TGNumberEntryField *fZ_PARENT = new TGNumberEntryField(fCompositeFrame6, 0, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 113);
+    fZ_PARENT->MoveResize(250,150,100,20);
+    fCompositeFrame6->AddFrame(fZ_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
+    fZ_PARENT -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetZParent(const Char_t *)");
+  
+	TGLabel *lHALFLIFE_PARENT = new TGLabel(fCompositeFrame6, "Halflife");
+    lHALFLIFE_PARENT -> SetTextJustify(kTextLeft);
+    lHALFLIFE_PARENT-> SetMargins(0, 0, 0, 0);
+    lHALFLIFE_PARENT-> SetWrapLength(-1);
+    fCompositeFrame6 -> AddFrame(lHALFLIFE_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
+    lHALFLIFE_PARENT-> MoveResize(100, 200, 100, 20);
+     
+    TGNumberEntryField *fHALFLIFE_PARENT = new TGNumberEntryField(fCompositeFrame6, 0, 0, TGNumberFormat::kNESReal, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 10000);
+    fHALFLIFE_PARENT->MoveResize(250,200,100,20);
+    fCompositeFrame6->AddFrame(fHALFLIFE_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
+    fHALFLIFE_PARENT -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetHalfParent(const Char_t *)");
+  
+	TGLabel *lUNIT_PARENT = new TGLabel(fCompositeFrame6, "Units");
+    lUNIT_PARENT -> SetTextJustify(kTextLeft);
+    lUNIT_PARENT-> SetMargins(0, 0, 0, 0);
+    lUNIT_PARENT-> SetWrapLength(-1);
+    fCompositeFrame6 -> AddFrame(lUNIT_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
+    lUNIT_PARENT-> MoveResize(100, 250, 100, 20);
+ 
+	TGComboBox *fUNIT_PARENT = new TGComboBox(fCompositeFrame6,-1,kHorizontalFrame | kSunkenFrame | kOwnBackground);
+	fUNIT_PARENT->SetName("Units");
+	fUNIT_PARENT->AddEntry("Year",0);
+	fUNIT_PARENT->AddEntry("Day",1);
+	fUNIT_PARENT->AddEntry("H",2);
+	fUNIT_PARENT->AddEntry("M",3);
+	fUNIT_PARENT->AddEntry("s",4);
+	fUNIT_PARENT->AddEntry("ms",5);
+	fUNIT_PARENT->AddEntry("us ",6);
+	fUNIT_PARENT->Resize(100,20);
+	fUNIT_PARENT->Select(-1);
+	fCompositeFrame6->AddFrame(fUNIT_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
+	fUNIT_PARENT->MoveResize(250,250,100,20);
+	fUNIT_PARENT->Connect("Selected(Int_t)", "BMgui", this, "SetUnit(Int_t)");
+  
+	TGLabel *lQ_PARENT = new TGLabel(fCompositeFrame6, "Q-value (MeV)");
+    lQ_PARENT -> SetTextJustify(kTextLeft);
+    lQ_PARENT-> SetMargins(0, 0, 0, 0);
+    lQ_PARENT-> SetWrapLength(-1);
+    fCompositeFrame6 -> AddFrame(lQ_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
+    lQ_PARENT-> MoveResize(100, 300, 100, 20);
+     
+    TGNumberEntryField *fQ_PARENT = new TGNumberEntryField(fCompositeFrame6, 0, 0, TGNumberFormat::kNESReal, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 100);
+    fQ_PARENT->MoveResize(250,300,100,20);
+    fCompositeFrame6->AddFrame(fQ_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
+    fQ_PARENT -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetQParent(const Char_t *)");
+    
+	TGLabel *lE_PARENT = new TGLabel(fCompositeFrame6, "Level Energy (keV)");
+    lE_PARENT -> SetTextJustify(kTextLeft);
+    lE_PARENT-> SetMargins(0, 0, 0, 0);
+    lE_PARENT-> SetWrapLength(-1);
+    fCompositeFrame6 -> AddFrame(lE_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
+    lE_PARENT-> MoveResize(100, 350, 120, 20);
+     
+    TGNumberEntryField *fE_PARENT = new TGNumberEntryField(fCompositeFrame6, 0, 0, TGNumberFormat::kNESReal, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 10000);
+    fE_PARENT->MoveResize(250,350,100,20);
+    fCompositeFrame6->AddFrame(fE_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
+    fE_PARENT -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetEParent(const Char_t *)");
+      
+	TGLabel *lD_INFO = new TGLabel(fCompositeFrame6, "Daughter Information");
+    lD_INFO -> SetTextJustify(kTextLeft);
+    lD_INFO-> SetMargins(0, 0, 0, 0);
+    lD_INFO-> SetWrapLength(-1);
+    fCompositeFrame6 -> AddFrame(lD_INFO, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
+    lD_INFO-> MoveResize(600, 100, 500, 20);
+     
+	TGLabel *lE_DAUT = new TGLabel(fCompositeFrame6, "Level Energy (keV)");
+    lE_DAUT -> SetTextJustify(kTextLeft);
+    lE_DAUT-> SetMargins(0, 0, 0, 0);
+    lE_DAUT-> SetWrapLength(-1);
+    fCompositeFrame6 -> AddFrame(lE_DAUT, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
+    lE_DAUT-> MoveResize(600, 150, 120, 20);
+     
+    TGNumberEntryField *fE_DAUT = new TGNumberEntryField(fCompositeFrame6, 0, 0, TGNumberFormat::kNESReal, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 10000);
+    fE_DAUT->MoveResize(750,150,100,20);
+    fCompositeFrame6->AddFrame(fE_DAUT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
+    fE_DAUT -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetEDaut(const Char_t *)");
+      
+	TGLabel *lP_DAUT = new TGLabel(fCompositeFrame6, "Intensity (0 to 1)");
+    lP_DAUT -> SetTextJustify(kTextLeft);
+    lP_DAUT-> SetMargins(0, 0, 0, 0);
+    lP_DAUT-> SetWrapLength(-1);
+    fCompositeFrame6 -> AddFrame(lP_DAUT, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
+    lP_DAUT-> MoveResize(600, 200, 100, 20);
+     
+    TGNumberEntryField *fP_DAUT = new TGNumberEntryField(fCompositeFrame6, 0, 0, TGNumberFormat::kNESReal, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 1);
+    fP_DAUT->MoveResize(750,200,100,20);
+    fCompositeFrame6->AddFrame(fP_DAUT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
+    fP_DAUT -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetPDaut(const Char_t *)");
+
+    TGTextButton *LOGFT = new TGTextButton(fCompositeFrame6,"Calculate",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
+    LOGFT -> Connect("Clicked()", "BMgui", this, "logft()");
+    LOGFT->SetTextJustify(36);
+    LOGFT->SetMargins(0,0,0,0);
+    LOGFT->SetWrapLength(-1);
+    LOGFT->Resize(100,35);
+    fCompositeFrame1->AddFrame(LOGFT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
+    LOGFT->MoveResize(600,250,100,35);
     
         
     fTab1 -> SetTab(0);
@@ -897,8 +1053,8 @@ void BMgui::checktimetoy(Bool_t value)
     }
 }
 
-void BMgui::checkhalftype(Bool_t value)
-{
+void BMgui::checkhalftype(Int_t value)
+{	
     if (value==0)
     {
         halftype = 1;
@@ -971,4 +1127,77 @@ void BMgui::HandleMenu(Int_t menu_id)
 void BMgui::TerminatePro()
 {
 	gApplication->Terminate(0);
+}
+
+void BMgui::SetZParent(const Char_t *value)
+{
+	ZParent = atoi(value);
+}
+
+void BMgui::SetHalfParent(const Char_t *value)
+{
+	HalfParent = atof(value);
+}
+
+void BMgui::SetQParent(const Char_t *value)
+{
+	QParent = atof(value);
+}
+
+void BMgui::SetEParent(const Char_t *value)
+{
+	EParent = atof(value);
+}
+
+void BMgui::SetEDaut(const Char_t *value)
+{
+	EDaut = atof(value);
+}
+
+void BMgui::SetPDaut(const Char_t *value)
+{
+	PDaut = atof(value);
+}
+
+void BMgui::SetUnit(Int_t value)
+{
+	if (value == 0) //year
+	{
+		unit = 31536000;
+	}
+	
+	if (value == 1) //day
+	{
+		unit = 86400;
+	}
+
+	if (value == 2) //hour
+	{
+		unit = 3600;
+	}
+	
+	if (value == 3) //minute
+	{
+		unit = 60;
+	}
+
+	if (value == 4) //second
+	{
+		unit = 1;
+	}
+	
+	if (value == 5) //ms
+	{
+		unit = 1.0E-3;
+	}
+
+	if (value == 6) //us
+	{
+		unit = 1.0E-6;
+	}
+}
+
+void BMgui::logft()
+{
+	star.Hlogft(ZParent, HalfParent, QParent, EParent, EDaut, PDaut, unit);
 }

@@ -2,7 +2,7 @@
 ***************************STARWARE CLASS HEADER FILE*******************************
 Made by Byul Moon from Korea University
 All functions are contained for STARWARE.
-Last refine : 09.01.2017, beta ver.1.0
+Last refine : 09.Mar.2017, beta ver.1.2
 Copyright by B. Moon
 ***********************************************************************************/
 
@@ -75,6 +75,7 @@ class BMspec
 		void Htimegrow(Int_t &timeaxis1, Int_t &timeaxis2, Int_t &peak);
 		void Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &peaksvalue, TCanvas *tempcvs);
 		void peakfind(TString &openFile);
+		void Hlogft(Int_t &ZParent, Double_t &HalfParent, Double_t &QParent, Double_t &EParent, Double_t &EDaut, Double_t &PDaut, Double_t &unit);
 //	ClassDef(BMspec, 1);
 };
 //#endif
@@ -369,24 +370,11 @@ void BMspec::intro()
 {
     cout << "-----------------------------STARWARE(SpecTroscopy Analysis for gamma-Ray softWARE)---------------------------------" << endl;
     cout << "------------------------------------------Byul means 'star' in Korean.----------------------------------------------" << endl;
-    cout << "----------------------------------Gamma-ray Spectroscopy Analysis Tool Beta Ver.1.0--------------------------------------" << endl;
+    cout << "----------------------------------Gamma-ray Spectroscopy Analysis Tool Beta Ver.1.2--------------------------------------" << endl;
     cout << "The Data analysis from coincidence event matrices." << endl;
-    cout << "Functions are different from the gg matrix's and the tg matrix's." << endl;
     cout << "Made by Byul Moon(B.Moon) from Korea University" << endl;
     cout << "Since Jan. 2016." << endl;
-    cout << "Latest Update : Jan. 2017." << endl;
-    cout << "alpha ver.1.2 Update News 1 : The decaygate function now cotains the elimination of the background." << endl;
-    cout << "alpha ver.1.2 Update News 2 : The decaygate function now asks the degree of the data compression(the bin size)." << endl;
-    cout << "alpha ver.1.3 Update News 1 : The netarea function now uses the gaussian fitting to get the exact net area including the error." << endl;
-    cout << "alpha ver.1.4 Update News 1 : The netarea function now does not remove the background by using TSpectrum. Instead, now the function fits the background with the linear function to remove the background." << endl;
-    cout << "alpha ver.1.5 Update News 1 : This program now performs the efficiency calibration by using the external data file." << endl;
-    cout << "alpha ver.2.0 Update News 1 : Now this program works with its own CLASS header file." << endl;
-    cout << "alpha ver.2.1 Update News 1 : The timegrow function now works with the fit process not using TSpectrum anymore." << endl;
-    cout << "alpha ver.3.0 Update News 1 : Now you can use the mouse double-click to set the gate condition. If you want to set the gate, please zoom in the spectrum and double-click the bin point." << endl;
-    cout << "alpha ver.3.0 Update News 2 : Now this program works with RADWARE data foramt(.mat)." << endl;
-    cout << "alpha ver.3.1 Update News 1 : Now this program provides halflife measurement using gamma-rays" << endl;
-    cout << "alpha ver.4.0 Update News 1 : Now this program is based on the GUI system." << endl;
-    cout << "beta ver.1.0 Update News 1 (09.01.2017) : The interface for STARWARE is now fixed." << endl;
+    cout << "Latest Update : Mar. 2017." << endl;
 } 
 
 void BMspec::main(TString &directory, TString &openFile)
@@ -1194,3 +1182,33 @@ void BMspec::peakfind(TString &openFile)
 	gated_hist = (TH1*) open -> Get("gated_histogram");
 }
 	
+Double_t flogf(Int_t &ZParent, Double_t &QParent, Double_t &EParent, Double_t &EDaut)
+{
+	Double_t E0 = QParent + EParent*0.001 - EDaut*0.001;
+	Double_t logf = 4.0*log10(E0) + 0.78 + 0.02*(ZParent+1) - 0.005*(ZParent)*log10(E0);
+	return logf;
+}
+	
+Double_t flogt(Double_t &HalfParent, Double_t &PDaut, Double_t &unit)
+{
+	Double_t logt = log10(HalfParent*unit/PDaut);
+	return logt;
+}
+
+void BMspec::Hlogft(Int_t &ZParent, Double_t &HalfParent, Double_t &QParent, Double_t &EParent, Double_t &EDaut, Double_t &PDaut, Double_t &unit)
+{
+	Double_t logf = flogf(ZParent, QParent, EParent, EDaut);
+	Double_t logt = flogt(HalfParent, PDaut, unit);
+
+	Double_t logft = logf+ logt;
+
+	cout << "Z of Parent : " << ZParent << endl;
+	cout << "Halflife of Parent : " << HalfParent*unit << " s" << endl;
+	cout << "Energy of Parent : " << EParent << " keV"<< endl;
+	cout << "Q-value of Parent : " << QParent << " MeV"<< endl;
+	cout << "Energy of Daughter : " << EDaut << " keV"<< endl;
+	cout << "Intensity of Level : " << PDaut*100 << " %"<< endl;
+	cout << "logf : " << logf << endl;
+	cout << "logt : " << logt << endl;
+	cout << "logft : " << logft << endl;
+}
