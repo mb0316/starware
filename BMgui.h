@@ -72,7 +72,7 @@ Since Jan. 2016.\n\
 Current Version : Beta ver.1.2\n\
 Last Update : 8.Mar.2017.\n\
 By Byul Moon from Korea University\n\
-alpha ver.1.2 Update News 1 : The decaygate function now cotains the elimination of the background.\n\
+alpha ver.1.2 Update News 1 : The decaygate function now contains the elimination of the background.\n\
 alpha ver.1.2 Update News 2 : The decaygate function now asks the degree of the data compression(the bin size).\n\
 alpha ver.1.3 Update News 1 : The netarea function now uses the gaussian fitting to get the exact net area including the error.\n\
 alpha ver.1.4 Update News 1 : The netarea function now does not remove the background by using TSpectrum. Instead, now the function fits the background with the linear function to remove the background.\n\
@@ -202,10 +202,33 @@ using namespace std;
 vector <int> peaksvalue;
 void BMgui::starware()
 {
-    gStyle -> SetOptStat(0);
-    
+	gStyle -> SetPadLeftMargin(0.13);
+	gStyle -> SetPadRightMargin(0.06);
+	gStyle -> SetPadTopMargin(0.15);
+	gStyle -> SetPadBottomMargin(0.15);
+	gStyle -> SetTitleOffset(1.0, "x");
+	gStyle -> SetTitleOffset(0.8, "y");
+	gStyle -> SetTitleOffset(0.5, "z");
+	gStyle -> SetTextFont(132);
+	gStyle -> SetTextSize(0.070);
+	gStyle -> SetTitleSize(0.07, "");
+	gStyle -> SetTitleSize(0.07, "x");
+	gStyle -> SetTitleSize(0.07, "y");
+	gStyle -> SetTitleSize(0.07, "z");
+	gStyle -> SetLabelSize(0.07, "x");
+	gStyle -> SetLabelSize(0.07, "y");
+	gStyle -> SetLabelSize(0.07, "z");
+	gStyle -> SetTitleFont(132, "");
+	gStyle -> SetTitleFont(132, "x");
+	gStyle -> SetTitleFont(132, "y");
+	gStyle -> SetTitleFont(132, "z");
+	gStyle -> SetLabelFont(132, "x");
+	gStyle -> SetLabelFont(132, "y");
+	gStyle -> SetLabelFont(132, "z");
+	gStyle -> SetOptStat(0);
+
     // main frame
-    TGMainFrame *fMainFrame1073 = new TGMainFrame(gClient->GetRoot(),1200,600,kMainFrame | kVerticalFrame);
+    TGMainFrame *fMainFrame1073 = new TGMainFrame(gClient->GetRoot(),1200,650,kMainFrame | kVerticalFrame);
     fMainFrame1073->SetName("STARWARE");
     fMainFrame1073->SetLayoutBroken(kTRUE);
 
@@ -233,15 +256,15 @@ void BMgui::starware()
 	fStatusBar->SetParts(parts, 4);
 	fStatusBar->Draw3DCorner(kFALSE);
 	fMainFrame1073->AddFrame(fStatusBar, new TGLayoutHints(kLHintsExpandX, 0, 0, 10, 0));
-	fStatusBar->MoveResize(20,575,1000,20);
-  
+	fStatusBar->MoveResize(20,590,1000,20);
+
     TGLabel *lCOPY = new TGLabel(fMainFrame1073, "Copyright by B. Moon");
     lCOPY-> SetTextJustify(kTextLeft);
     lCOPY-> SetMargins(0, 0, 0, 0);
     lCOPY-> SetWrapLength(-1);
     fMainFrame1073 -> AddFrame(lCOPY, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
-    lCOPY-> MoveResize(1050, 575, 200, 20);
-     
+    lCOPY-> MoveResize(1050, 590, 200, 20);
+
     // tab widget
     TGTab *fTab1 = new TGTab(fMainFrame1073, 1180, 550);
 
@@ -382,7 +405,7 @@ void BMgui::starware()
     star.cvs2 = new TCanvas("cvs2", 10, 10, wProjectedSpectrum);
     ProjectedSpectrum_Y->AdoptCanvas(star.cvs2);
     fCompositeFrame1->AddFrame(ProjectedSpectrum_Y, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    ProjectedSpectrum_Y->MoveResize(10,250,1000,250);
+    ProjectedSpectrum_Y->MoveResize(10,270,1000,250);
 
     // container of "Tab2"
     TGCompositeFrame *fCompositeFrame2;
@@ -408,6 +431,7 @@ void BMgui::starware()
     gated_spec->AdoptCanvas(cvs3);
     fCompositeFrame2->AddFrame(gated_spec, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     gated_spec->MoveResize(10,10,1000,250);
+
     TRootEmbeddedCanvas *gated_decay = new TRootEmbeddedCanvas(0,fCompositeFrame2,1000,250,kSunkenFrame);
     gated_decay->SetName("Gated Decay Curve");
     Int_t wgated_decay = gated_decay->GetCanvasWindowId();
@@ -415,8 +439,8 @@ void BMgui::starware()
     cvs4 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "BMgui", this, "EventInfo(Int_t, Int_t, Int_t, TObject*)");
     gated_decay->AdoptCanvas(cvs4);
     fCompositeFrame2->AddFrame(gated_decay, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    gated_decay->MoveResize(10,250,1000,250);
-    
+    gated_decay->MoveResize(10,270,1000,250);
+   
     // container of "Tab3"
     TGCompositeFrame *fCompositeFrame3;
     fCompositeFrame3 = fTab1 -> AddTab("T.Gated Spectrum");
@@ -522,6 +546,7 @@ void BMgui::starware()
     cvs5 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "BMgui", this, "EventInfo(Int_t, Int_t, Int_t, TObject*)");
     fCompositeFrame3->AddFrame(tgated_spec, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     tgated_spec->MoveResize(10,10,1000,250);
+
     TRootEmbeddedCanvas *tdiff_spec = new TRootEmbeddedCanvas(0,fCompositeFrame3,1000,250,kSunkenFrame);
     tdiff_spec->SetName("Time Difference");
     Int_t wtdiff_spec = tdiff_spec->GetCanvasWindowId();
@@ -529,7 +554,7 @@ void BMgui::starware()
     cvs6 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "BMgui", this, "EventInfo(Int_t, Int_t, Int_t, TObject*)");
     tdiff_spec->AdoptCanvas(cvs6);
     fCompositeFrame3->AddFrame(tdiff_spec, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    tdiff_spec->MoveResize(10,250,1000,250);
+    tdiff_spec->MoveResize(10,270,1000,250);
     
     // container of "Tab4"
     TGCompositeFrame *fCompositeFrame4;
@@ -748,14 +773,14 @@ void BMgui::starware()
     fTab1 -> SetTab(0);
     fTab1->Resize(fTab1->GetDefaultSize());
     fMainFrame1073->AddFrame(fTab1, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    fTab1->MoveResize(10,25,1180,540);
+    fTab1->MoveResize(10,25,1180,560);
     
     fMainFrame1073->SetMWMHints(kMWMDecorAll, kMWMFuncAll, kMWMInputModeless);
     fMainFrame1073->MapSubwindows();
     
     fMainFrame1073->Resize(fMainFrame1073->GetDefaultSize());
     fMainFrame1073->MapWindow();
-    fMainFrame1073->Resize(1200,600);
+    fMainFrame1073->Resize(1200,620);
 
 	fMainFrame1073->SetWindowName("STARWARE Beta Ver.1.2");
 	fMainFrame1073->MapSubwindows();
