@@ -23,6 +23,7 @@ Copyright by B. Moon
 #include <iostream>
 #include "TPad.h"
 #include "TLatex.h"
+#include "TMath.h"
 #include <RQ_OBJECT.h>
 #include <vector>
 
@@ -76,6 +77,8 @@ class BMspec
 		void Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &peaksvalue, TCanvas *tempcvs);
 		void peakfind(TString &openFile);
 		void Hlogft(Int_t &ZParent, Double_t &HalfParent, Double_t &QParent, Double_t &EParent, Double_t &EDaut, Double_t &PDaut, Double_t &unit);
+		void BGT(Int_t &ZParent, Double_t &HalfParent, Double_t &QParent, Double_t &EParent, Double_t &EDaut, Double_t &PDaut, Double_t &unit);
+		void HBMUL(Int_t &Multitype, Double_t &Energy, Double_t &Halflife, Double_t &unit);
 //	ClassDef(BMspec, 1);
 };
 //#endif
@@ -1205,7 +1208,7 @@ void BMspec::Hlogft(Int_t &ZParent, Double_t &HalfParent, Double_t &QParent, Dou
 	Double_t logf = flogf(ZParent, QParent, EParent, EDaut);
 	Double_t logt = flogt(HalfParent, PDaut, unit);
 
-	Double_t logft = logf+ logt;
+	Double_t logft = logf + logt; 
 
 	cout << "Z of Parent : " << ZParent << endl;
 	cout << "Halflife of Parent : " << HalfParent*unit << " s" << endl;
@@ -1217,3 +1220,50 @@ void BMspec::Hlogft(Int_t &ZParent, Double_t &HalfParent, Double_t &QParent, Dou
 	cout << "logt : " << logt << endl;
 	cout << "logft : " << logft << endl;
 }
+
+void BMspec::BGT(Int_t &ZParent, Double_t &HalfParent, Double_t &QParent, Double_t &EParent, Double_t &EDaut, Double_t &PDaut, Double_t &unit)
+{
+	Double_t logft = flogf(ZParent, QParent, EParent, EDaut) + flogt(HalfParent, PDaut, unit);
+	Double_t Bgt = (1/TMath::Power(10, logft))*(6147/TMath::Power(1.262, 2));
+
+	cout << "B(GT) value : " << Bgt << endl;
+}
+
+void BMspec::HBMUL(Int_t &Multitype, Double_t &Energy, Double_t &Halflife, Double_t &unit)
+{
+	Energy = Energy*(1.0E-3);
+	Halflife = log(2)/(Halflife*unit);
+	Double_t bmulti = 0;
+	if (Multitype == 0)
+	{
+		bmulti = Halflife/((1.587E15)*TMath::Power(Energy, 3));
+		cout << "B(E1) = " << bmulti << " " << "e^2fm^2" << endl;
+	}
+	if (Multitype == 1)
+	{
+		bmulti = Halflife/((1.779E13)*TMath::Power(Energy, 3));
+		cout << "B(M1) = " << bmulti << " " << "(ehbar2Mc)^2" << endl;
+	}
+	if (Multitype == 2)
+	{
+		bmulti = Halflife/((1.223E9)*TMath::Power(Energy, 5));
+		cout << "B(E2) = " << bmulti << " " << "e^2fm^4" << endl;
+	}
+	if (Multitype == 3)
+	{
+		bmulti = Halflife/((1.371E7)*TMath::Power(Energy, 5));
+		cout << "B(M2) = " << bmulti << " " << "(ehbar2Mc)^2fm^2" << endl;
+	}
+	if (Multitype == 4)
+	{
+		bmulti = Halflife/((5.698E2)*TMath::Power(Energy, 7));
+		cout << "B(E3) = " << bmulti << " " << "e^2fm^6" << endl;
+	}
+	if (Multitype == 5)
+	{
+		bmulti = Halflife/((6.387)*TMath::Power(Energy, 7));
+		cout << "B(M3) = " << bmulti << " " << "(ehbar2Mc)^2fm^4" << endl;
+	}
+}
+
+	

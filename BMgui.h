@@ -141,6 +141,10 @@ class BMgui
 		Double_t PDaut;
 		Double_t unit;
 
+		Int_t multitype;
+		Double_t benergy;
+		Double_t bhalf;
+		Double_t bunit;
 
 		TGStatusBar* fStatusBar;
 
@@ -182,7 +186,13 @@ class BMgui
 		void SetEDaut(const Char_t *value);
 		void SetPDaut(const Char_t *value);
 		void logft();
+		void bgt();
 		void SetUnit(Int_t value);
+		void SetMulti(Int_t value);
+		void SetBEnergy(const Char_t *value);
+		void SetBHalf(const Char_t *value);
+		void SetHalfUnit(Int_t value);
+		void bmulti();
 //	ClassDef(BMgui, 1);
 };
 //#endif
@@ -648,26 +658,33 @@ void BMgui::starware()
 
 	// container of "Tab6"
 	TGCompositeFrame *fCompositeFrame6;
-	fCompositeFrame6 = fTab1 -> AddTab("LOGFT Calculation");
+	fCompositeFrame6 = fTab1 -> AddTab("Calculations");
 	fCompositeFrame6 -> SetLayoutManager(new TGVerticalLayout(fCompositeFrame6));
 	fCompositeFrame6 ->SetLayoutBroken(kTRUE);
+   
+	TGLabel *lP_LOGFT = new TGLabel(fCompositeFrame6, "LOGFT Calculation");
+    lP_LOGFT -> SetTextJustify(kTextLeft);
+    lP_LOGFT-> SetMargins(0, 0, 0, 0);
+    lP_LOGFT-> SetWrapLength(-1);
+    fCompositeFrame6 -> AddFrame(lP_LOGFT, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
+    lP_LOGFT-> MoveResize(100, 10, 500, 20);
   
 	TGLabel *lP_INFO = new TGLabel(fCompositeFrame6, "Parent Information");
     lP_INFO -> SetTextJustify(kTextLeft);
     lP_INFO-> SetMargins(0, 0, 0, 0);
     lP_INFO-> SetWrapLength(-1);
     fCompositeFrame6 -> AddFrame(lP_INFO, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
-    lP_INFO-> MoveResize(100, 100, 500, 20);
+    lP_INFO-> MoveResize(100, 40, 500, 20);
      
 	TGLabel *lZ_PARENT = new TGLabel(fCompositeFrame6, "Z");
     lZ_PARENT -> SetTextJustify(kTextLeft);
     lZ_PARENT-> SetMargins(0, 0, 0, 0);
     lZ_PARENT-> SetWrapLength(-1);
     fCompositeFrame6 -> AddFrame(lZ_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
-    lZ_PARENT-> MoveResize(100, 150, 100, 20);
+    lZ_PARENT-> MoveResize(100, 70, 100, 20);
      
     TGNumberEntryField *fZ_PARENT = new TGNumberEntryField(fCompositeFrame6, 0, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 113);
-    fZ_PARENT->MoveResize(250,150,100,20);
+    fZ_PARENT->MoveResize(250,70,100,20);
     fCompositeFrame6->AddFrame(fZ_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     fZ_PARENT -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetZParent(const Char_t *)");
   
@@ -676,10 +693,10 @@ void BMgui::starware()
     lHALFLIFE_PARENT-> SetMargins(0, 0, 0, 0);
     lHALFLIFE_PARENT-> SetWrapLength(-1);
     fCompositeFrame6 -> AddFrame(lHALFLIFE_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
-    lHALFLIFE_PARENT-> MoveResize(100, 200, 100, 20);
+    lHALFLIFE_PARENT-> MoveResize(100, 100, 100, 20);
      
     TGNumberEntryField *fHALFLIFE_PARENT = new TGNumberEntryField(fCompositeFrame6, 0, 0, TGNumberFormat::kNESReal, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 10000);
-    fHALFLIFE_PARENT->MoveResize(250,200,100,20);
+    fHALFLIFE_PARENT->MoveResize(250,100,100,20);
     fCompositeFrame6->AddFrame(fHALFLIFE_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     fHALFLIFE_PARENT -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetHalfParent(const Char_t *)");
   
@@ -688,7 +705,7 @@ void BMgui::starware()
     lUNIT_PARENT-> SetMargins(0, 0, 0, 0);
     lUNIT_PARENT-> SetWrapLength(-1);
     fCompositeFrame6 -> AddFrame(lUNIT_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
-    lUNIT_PARENT-> MoveResize(100, 250, 100, 20);
+    lUNIT_PARENT-> MoveResize(100, 130, 100, 20);
  
 	TGComboBox *fUNIT_PARENT = new TGComboBox(fCompositeFrame6,-1,kHorizontalFrame | kSunkenFrame | kOwnBackground);
 	fUNIT_PARENT->SetName("Units");
@@ -702,7 +719,7 @@ void BMgui::starware()
 	fUNIT_PARENT->Resize(100,20);
 	fUNIT_PARENT->Select(-1);
 	fCompositeFrame6->AddFrame(fUNIT_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-	fUNIT_PARENT->MoveResize(250,250,100,20);
+	fUNIT_PARENT->MoveResize(250,130,100,20);
 	fUNIT_PARENT->Connect("Selected(Int_t)", "BMgui", this, "SetUnit(Int_t)");
   
 	TGLabel *lQ_PARENT = new TGLabel(fCompositeFrame6, "Q-value (MeV)");
@@ -710,10 +727,10 @@ void BMgui::starware()
     lQ_PARENT-> SetMargins(0, 0, 0, 0);
     lQ_PARENT-> SetWrapLength(-1);
     fCompositeFrame6 -> AddFrame(lQ_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
-    lQ_PARENT-> MoveResize(100, 300, 100, 20);
+    lQ_PARENT-> MoveResize(100, 160, 100, 20);
      
     TGNumberEntryField *fQ_PARENT = new TGNumberEntryField(fCompositeFrame6, 0, 0, TGNumberFormat::kNESReal, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 100);
-    fQ_PARENT->MoveResize(250,300,100,20);
+    fQ_PARENT->MoveResize(250,160,100,20);
     fCompositeFrame6->AddFrame(fQ_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     fQ_PARENT -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetQParent(const Char_t *)");
     
@@ -722,10 +739,10 @@ void BMgui::starware()
     lE_PARENT-> SetMargins(0, 0, 0, 0);
     lE_PARENT-> SetWrapLength(-1);
     fCompositeFrame6 -> AddFrame(lE_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
-    lE_PARENT-> MoveResize(100, 350, 120, 20);
+    lE_PARENT-> MoveResize(100, 190, 120, 20);
      
     TGNumberEntryField *fE_PARENT = new TGNumberEntryField(fCompositeFrame6, 0, 0, TGNumberFormat::kNESReal, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 10000);
-    fE_PARENT->MoveResize(250,350,100,20);
+    fE_PARENT->MoveResize(250,190,100,20);
     fCompositeFrame6->AddFrame(fE_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     fE_PARENT -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetEParent(const Char_t *)");
       
@@ -734,17 +751,17 @@ void BMgui::starware()
     lD_INFO-> SetMargins(0, 0, 0, 0);
     lD_INFO-> SetWrapLength(-1);
     fCompositeFrame6 -> AddFrame(lD_INFO, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
-    lD_INFO-> MoveResize(600, 100, 500, 20);
+    lD_INFO-> MoveResize(600, 40, 500, 20);
      
 	TGLabel *lE_DAUT = new TGLabel(fCompositeFrame6, "Level Energy (keV)");
     lE_DAUT -> SetTextJustify(kTextLeft);
     lE_DAUT-> SetMargins(0, 0, 0, 0);
     lE_DAUT-> SetWrapLength(-1);
     fCompositeFrame6 -> AddFrame(lE_DAUT, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
-    lE_DAUT-> MoveResize(600, 150, 120, 20);
+    lE_DAUT-> MoveResize(600, 70, 120, 20);
      
     TGNumberEntryField *fE_DAUT = new TGNumberEntryField(fCompositeFrame6, 0, 0, TGNumberFormat::kNESReal, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 10000);
-    fE_DAUT->MoveResize(750,150,100,20);
+    fE_DAUT->MoveResize(750,70,100,20);
     fCompositeFrame6->AddFrame(fE_DAUT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     fE_DAUT -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetEDaut(const Char_t *)");
       
@@ -753,23 +770,116 @@ void BMgui::starware()
     lP_DAUT-> SetMargins(0, 0, 0, 0);
     lP_DAUT-> SetWrapLength(-1);
     fCompositeFrame6 -> AddFrame(lP_DAUT, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
-    lP_DAUT-> MoveResize(600, 200, 100, 20);
+    lP_DAUT-> MoveResize(600, 100, 100, 20);
      
     TGNumberEntryField *fP_DAUT = new TGNumberEntryField(fCompositeFrame6, 0, 0, TGNumberFormat::kNESReal, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 1);
-    fP_DAUT->MoveResize(750,200,100,20);
+    fP_DAUT->MoveResize(750,100,100,20);
     fCompositeFrame6->AddFrame(fP_DAUT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     fP_DAUT -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetPDaut(const Char_t *)");
 
-    TGTextButton *LOGFT = new TGTextButton(fCompositeFrame6,"Calculate",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
+    TGTextButton *LOGFT = new TGTextButton(fCompositeFrame6,"Get LOGFT",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
     LOGFT -> Connect("Clicked()", "BMgui", this, "logft()");
     LOGFT->SetTextJustify(36);
     LOGFT->SetMargins(0,0,0,0);
     LOGFT->SetWrapLength(-1);
     LOGFT->Resize(100,35);
-    fCompositeFrame1->AddFrame(LOGFT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    LOGFT->MoveResize(600,250,100,35);
-    
-        
+    fCompositeFrame6->AddFrame(LOGFT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
+    LOGFT->MoveResize(600,130,100,35);
+     
+    TGTextButton *BGT = new TGTextButton(fCompositeFrame6,"Get B(GT)",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
+    BGT -> Connect("Clicked()", "BMgui", this, "bgt()");
+    BGT->SetTextJustify(36);
+    BGT->SetMargins(0,0,0,0);
+    BGT->SetWrapLength(-1);
+    BGT->Resize(100,35);
+    fCompositeFrame6->AddFrame(BGT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
+    BGT->MoveResize(600,180,100,35);
+   
+	TGLabel *lB_INFO = new TGLabel(fCompositeFrame6, "Reduced Matrix Element Calculation");
+    lB_INFO -> SetTextJustify(kTextLeft);
+    lB_INFO-> SetMargins(0, 0, 0, 0);
+    lB_INFO-> SetWrapLength(-1);
+    fCompositeFrame6 -> AddFrame(lB_INFO, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
+    lB_INFO-> MoveResize(100, 230, 500, 20);
+     
+	TGLabel *lB_TYPE = new TGLabel(fCompositeFrame6, "Multipole");
+    lB_TYPE -> SetTextJustify(kTextLeft);
+    lB_TYPE-> SetMargins(0, 0, 0, 0);
+    lB_TYPE-> SetWrapLength(-1);
+    fCompositeFrame6 -> AddFrame(lB_TYPE, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
+    lB_TYPE-> MoveResize(100, 260, 100, 20);
+ 
+	TGComboBox *fTYPE_MUL = new TGComboBox(fCompositeFrame6,-1,kHorizontalFrame | kSunkenFrame | kOwnBackground);
+	fTYPE_MUL->SetName("Multipole");
+	fTYPE_MUL->AddEntry("E1",0);
+	fTYPE_MUL->AddEntry("M1",1);
+	fTYPE_MUL->AddEntry("E2",2);
+	fTYPE_MUL->AddEntry("M2",3);
+	fTYPE_MUL->AddEntry("E3",4);
+	fTYPE_MUL->AddEntry("M3",5);
+	fTYPE_MUL->Select(-1);
+	fCompositeFrame6->AddFrame(fTYPE_MUL, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
+	fTYPE_MUL->MoveResize(250,260,100,20);
+	fTYPE_MUL->Connect("Selected(Int_t)", "BMgui", this, "SetMulti(Int_t)");
+   
+	TGLabel *lB_E = new TGLabel(fCompositeFrame6, "Energy (keV)");
+    lB_E -> SetTextJustify(kTextLeft);
+    lB_E-> SetMargins(0, 0, 0, 0);
+    lB_E-> SetWrapLength(-1);
+    fCompositeFrame6 -> AddFrame(lB_E, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
+    lB_E-> MoveResize(600, 260, 100, 20);
+  
+    TGNumberEntryField *fB_E = new TGNumberEntryField(fCompositeFrame6, 0, 0, TGNumberFormat::kNESReal, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 10000);
+    fB_E->MoveResize(750,260,100,20);
+    fCompositeFrame6->AddFrame(fB_E, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
+    fB_E -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetBEnergy(const Char_t *)");
+ 
+	TGLabel *lVAL_HALF = new TGLabel(fCompositeFrame6, "Half-life");
+    lVAL_HALF -> SetTextJustify(kTextLeft);
+    lVAL_HALF-> SetMargins(0, 0, 0, 0);
+    lVAL_HALF-> SetWrapLength(-1);
+    fCompositeFrame6 -> AddFrame(lVAL_HALF, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
+    lVAL_HALF-> MoveResize(100, 290, 100, 20);
+   
+    TGNumberEntryField *fVAL_HALF = new TGNumberEntryField(fCompositeFrame6, 0, 0, TGNumberFormat::kNESReal, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 10000);
+    fVAL_HALF->MoveResize(250,290,100,20);
+    fCompositeFrame6->AddFrame(fVAL_HALF, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
+    fVAL_HALF -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetBHalf(const Char_t *)");
+  
+	TGLabel *lUNIT_HALF = new TGLabel(fCompositeFrame6, "Units");
+    lUNIT_HALF -> SetTextJustify(kTextLeft);
+    lUNIT_HALF-> SetMargins(0, 0, 0, 0);
+    lUNIT_HALF-> SetWrapLength(-1);
+    fCompositeFrame6 -> AddFrame(lUNIT_HALF, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
+    lUNIT_HALF-> MoveResize(600, 290, 100, 20);
+ 
+	TGComboBox *fUNIT_HALF = new TGComboBox(fCompositeFrame6,-1,kHorizontalFrame | kSunkenFrame | kOwnBackground);
+	fUNIT_HALF->SetName("Units");
+	fUNIT_HALF->AddEntry("s",0);
+	fUNIT_HALF->AddEntry("ms",1);
+	fUNIT_HALF->AddEntry("us",2);
+	fUNIT_HALF->AddEntry("ns",3);
+	fUNIT_HALF->AddEntry("ps",4);
+	fUNIT_HALF->Resize(100,20);
+	fUNIT_HALF->Select(-1);
+	fCompositeFrame6->AddFrame(fUNIT_HALF, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
+	fUNIT_HALF->MoveResize(750,290,100,20);
+	fUNIT_HALF->Connect("Selected(Int_t)", "BMgui", this, "SetHalfUnit(Int_t)");
+ 
+    TGTextButton *BMUL = new TGTextButton(fCompositeFrame6,"Calculate",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
+    BMUL -> Connect("Clicked()", "BMgui", this, "bmulti()");
+    BMUL->SetTextJustify(36);
+    BMUL->SetMargins(0,0,0,0);
+    BMUL->SetWrapLength(-1);
+    BMUL->Resize(100,35);
+    fCompositeFrame6->AddFrame(BMUL, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
+    BMUL->MoveResize(900,260,100,35);
+     
+ 
+
+     
+
+ 
     fTab1 -> SetTab(0);
     fTab1->Resize(fTab1->GetDefaultSize());
     fMainFrame1073->AddFrame(fTab1, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
@@ -1232,4 +1342,53 @@ void BMgui::SetUnit(Int_t value)
 void BMgui::logft()
 {
 	star.Hlogft(ZParent, HalfParent, QParent, EParent, EDaut, PDaut, unit);
+}
+	
+void BMgui::bgt()
+{
+	star.BGT(ZParent, HalfParent, QParent, EParent, EDaut, PDaut, unit);
+}
+
+void BMgui::SetMulti(Int_t value)
+{
+	multitype = value;
+}
+
+void BMgui::SetBEnergy(const Char_t *value)
+{
+	benergy = atof(value);
+}
+
+void BMgui::SetBHalf(const Char_t *value)
+{
+	bhalf = atof(value);
+}
+
+void BMgui::SetHalfUnit(Int_t value)
+{
+	if (value == 0)
+	{
+		bunit = 1;
+	}
+	if (value == 1)
+	{
+		bunit = 1E-3;
+	}
+	if (value == 2)
+	{
+		bunit = 1E-6;
+	}
+	if (value == 3)
+	{
+		bunit = 1E-9;
+	}
+	if (value == 4)
+	{
+		bunit = 1E-12;
+	}
+}
+
+void BMgui::bmulti()
+{
+	star.HBMUL(multitype, benergy, bhalf, bunit);
 }
