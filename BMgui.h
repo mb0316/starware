@@ -4,7 +4,7 @@
 *************************STARWARE GUI CONSTRUCTOR FILE******************************
 Made by Byul Moon from Korea University
 GUI constructor for STARWARE program.
-Last refine : 09.Mar.2017, ver.1.2
+Last refine : 13.Mar.2017, ver.1.2
 Copyright by B. Moon
 ***********************************************************************************/
 
@@ -86,6 +86,7 @@ alpha ver.4.0 Update News 1 : Now this program is based on the GUI system.\n\
 beta ver.1.0 Update News 1 (09.Jan.2017) : The interface for STARWARE is now fixed.\n\
 beta ver.1.1 Update News 1 (22.Feb.2017) : The analysis for the half-life of the daughter nucleus has been added.\n\
 beta ver.1.2 Update News 1 (08.Mar.2017) : The logft calculation has been added.\n\
+beta ver.1.2 Update News 2 (13.Mar.2017) : The reduced matrix element calculation has been added.\n\
 ";
 
 const char gCOPYRIGHT[] = "\
