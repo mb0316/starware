@@ -11,7 +11,7 @@ Copyright by B. Moon
 #ifndef BMGUI
 #define BMGUI
 
-#include "TGStatusbar.h"
+#include "TGStatusBar.h"
 #include "Riostream.h"
 #include "BMspec.h"
 #include <stdio.h>
