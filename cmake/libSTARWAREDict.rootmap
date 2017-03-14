@@ -1,6 +1,0 @@
-[ libSTARWAREDict.so ]
-# List of selected classes
-class BMgui
-class BMspec
-header BMgui.h
-header BMspec.h
