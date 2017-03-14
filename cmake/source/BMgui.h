@@ -8,9 +8,10 @@ Last refine : 13.Mar.2017, ver.1.2
 Copyright by B. Moon
 ***********************************************************************************/
 
-#ifdef BMGUI
+#ifndef BMGUI
 #define BMGUI
 
+#include "TGStatusbar.h"
 #include "Riostream.h"
 #include "BMspec.h"
 #include <stdio.h>
@@ -27,7 +28,7 @@ Copyright by B. Moon
 #include "TObject.h"
 #include "TObjArray.h"
 #include "TObjString.h"
-#include "RTypes.h"
+#include "Rtypes.h"
 
 class BMgui
 {

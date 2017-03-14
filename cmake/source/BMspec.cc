@@ -26,7 +26,7 @@ Copyright by B. Moon
 #include <sstream>
 #include <cmath>
 #include <arpa/inet.h>
-#include "RTypes.h"
+#include "Rtypes.h"
 #include "BMspec.h"
 #include "TObject.h"
 

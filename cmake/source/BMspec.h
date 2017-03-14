@@ -6,7 +6,7 @@ Last refine : 09.Mar.2017, beta ver.1.2
 Copyright by B. Moon
 ***********************************************************************************/
 
-#ifdef BMSPEC
+#ifndef BMSPEC
 #define BMSPEC
 
 //#include "TROOT.h"
@@ -26,7 +26,7 @@ Copyright by B. Moon
 #include "TMath.h"
 #include <RQ_OBJECT.h>
 #include <vector>
-#include "RTypes.h"
+#include "Rtypes.h"
 #include "TObject.h"
 
 using namespace std;

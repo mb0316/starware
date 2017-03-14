@@ -70,7 +70,7 @@ Copyright by B. Moon
 #include "TObjString.h"
 #include "BMgui.h"
 #include "BMspec.h"
-#include "RTypes.h"
+#include "Rtypes.h"
 
 //ClassImp(BMgui);
 
@@ -871,7 +871,7 @@ void BMgui::openfile()
     TString openingFile = ((TObjString *) decomposedFileNameWithPath -> Last()) -> GetString();
     TString directory = filenameWithPath.ReplaceAll(openingFile, "");
     
-    new BMspec(directory, openingFile);
+    star.main(directory, openingFile);
     star.cvs1 -> cd();
     star.cvs1 -> ToggleEventStatus();
     star.hist_X -> Draw();
