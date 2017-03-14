@@ -1,12 +1,14 @@
 #include "TROOT.h"
 #include "TApplication.h"
 #include "BMgui.h"
+#include "TSystem.h"
+#include "TGClient.h"
 
-	BMgui gui;
+BMgui gui;
 
 void starware()
 {
-//	gui.starware();
+//	gui.BMgui();
 }
 
 /*
