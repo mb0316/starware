@@ -27,7 +27,6 @@ Copyright by B. Moon
 #include <RQ_OBJECT.h>
 #include <vector>
 
-using namespace std;
 
 class BMspec
 {
