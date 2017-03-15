@@ -31,13 +31,3 @@ G__STARWAREDict.cxx
 )
 
 target_link_libraries(STARWARE ${ROOT_LIBRARIES})
-
-
-#set(SOURCES ${CMAKE_SOURCE_DIR}/source/starware.cpp
-#${CMAKE_SOURCE_DIR}/source/BMgui.cc
-#${CMAKE_SOURCE_DIR}/source/BMspec.cc
-#LINKDEF ${CMAKE_SOURCE_DIR}/source/STARWARELinkDef.h
-#) 
-
-#add_executable(STARWARE ${LIBSTDCXX} ${SOURCES}) 
-
