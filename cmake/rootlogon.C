@@ -4,5 +4,5 @@
 	if (gSystem -> Load(lib) != -1)
 		cout << "STAWARE system has been successfully loaded." << endl;
 	else
-		cout << "Cannot load BMspec" << endl;
+		cout << "Fail to load STARWARE." << endl;
 }
