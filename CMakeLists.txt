@@ -18,7 +18,7 @@ ${CMAKE_SOURCE_DIR}/src
 )
 add_definitions(${ROOT_CXX_FLAGS})
 
-ROOT_GENERATE_DICTIONARY(G__STARWAREDict
+ROOT_GENERATE_DICTIONARY(STARWAREDict
 ${CMAKE_SOURCE_DIR}/include/BMspec.h
 ${CMAKE_SOURCE_DIR}/include/BMgui.h
 )
@@ -27,7 +27,7 @@ ${CMAKE_SOURCE_DIR}/include/BMgui.h
 add_library(STARWARE SHARED
 ${CMAKE_SOURCE_DIR}/src/BMgui.cc
 ${CMAKE_SOURCE_DIR}/src/BMspec.cc
-G__STARWAREDict.cxx
+STARWAREDict.cxx
 )
 
 target_link_libraries(STARWARE ${ROOT_LIBRARIES})

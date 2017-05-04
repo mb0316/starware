@@ -5,7 +5,7 @@
 Made by Byul Moon from Korea University
 GUI constructor for STARWARE program.
 Last refine : 13.Mar.2017, ver.1.2
-Copyright by B. Moon
+Copyright 2017. B. Moon
 ***********************************************************************************/
 #include "TGDockableFrame.h"
 #include "TGMenu.h"
@@ -106,7 +106,7 @@ const char gCOPYRIGHT[] = "\
 			STARWARE COPYRIGHT\n\
 STARWARE is made by Byul Moon from Korea University.\n\
 \n\
-Copyright by B. Moon\n\
+Copyright 2017. B. Moon\n\
 ";
 
 const char gMANUAL[] ="\
@@ -190,7 +190,7 @@ BMgui::BMgui()
 	fMainFrame1073->AddFrame(fStatusBar, new TGLayoutHints(kLHintsExpandX, 0, 0, 10, 0));
 	fStatusBar->MoveResize(20,590,1000,20);
 
-    TGLabel *lCOPY = new TGLabel(fMainFrame1073, "Copyright by B. Moon");
+    TGLabel *lCOPY = new TGLabel(fMainFrame1073, "Copyright 2017. B. Moon");
     lCOPY-> SetTextJustify(kTextLeft);
     lCOPY-> SetMargins(0, 0, 0, 0);
     lCOPY-> SetWrapLength(-1);
@@ -973,35 +973,35 @@ void BMgui::decaygate()
 
 void BMgui::netarea()
 {
-	if (effdatafile.Length() >= 1)
-	{
-	    star.Hnetarea(cvs3, effdatafile);
-    
-	    cvs3 -> Modified();
+//	if (effdatafile.Length() >= 1)
+//	{
+		star.Hnetarea(cvs3, effdatafile);
+
+		cvs3 -> Modified();
 		cvs3 -> Update();
-	}
-	if (effdatafile.Length() == 0)
-	{
-		cout << "The efficiency data has not been loaded. Please load the efficiency data file." << endl;
-	}
+//	}
+//	if (effdatafile.Length() == 0)
+//	{
+//		cout << "The efficiency data has not been loaded. Please load the efficiency data file." << endl;
+//	}
+
 }
 
 void BMgui::netarea2()
 {
-	if (effdatafile.Length() >= 1)
-	{
-
+//	if (effdatafile.Length() >= 1)
+//	{
 		star.Hnetarea2(cvs3, effdatafile, tstart, tend);
 
 		cvs3 -> Modified();
 		cvs3 -> Update();
-	}
-	if (effdatafile.Length() == 0)
-	{
-		cout << "The efficiency data has not been loaded. Please load the efficiency data file." << endl;
-	}
-}
+//	}
+//	if (effdatafile.Length() == 0)
+//	{
+//		cout << "The efficiency data has not been loaded. Please load the efficiency data file." << endl;
+//	}
 
+}
 void BMgui::timediff()
 {
     star.Htimediff(timeaxis1, timeaxis2, dstart1, dend1, dstart2, dend2);
@@ -1016,14 +1016,23 @@ void BMgui::timediff()
 
 void BMgui::timegrow()
 {
-    star.Htimegrow(timeaxis1, timeaxis2, tgrow);
-    
-    cvs7 -> cd();
-    cvs7 -> ToggleEventStatus();
-    star.graph -> Draw();
-    cvs7 -> Modified();
-    cvs7 -> Update();
-    
+//	if (effdatafile.Length() >= 1)
+//	{
+		star.Htimegrow(effdatafile, timeaxis1, timeaxis2, tgrow);
+
+		cvs7 -> cd();
+		cvs7 -> ToggleEventStatus();
+		star.graph -> Draw();
+		cvs7 -> Modified();
+		cvs7 -> Update();
+//	}
+//	if (effdatafile.Length() == 0)
+//	{
+//		star.Hnetarea2(cvs3, effdatafile, tstart, tend);
+//
+//		cvs3 -> Modified();
+//		cvs3 -> Update();
+//	}
 }
 
 void BMgui::halflife()

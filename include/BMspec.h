@@ -80,7 +80,7 @@ class BMspec
 		void Hnetarea(TCanvas *tempcvs, TString &openFile);
 		void Hnetarea2(TCanvas *tempcvs, TString &openFile, Int_t &tstart, Int_t &tend);
 		void Htimediff(Int_t &timeaxis1, Int_t &timeaxis2, Int_t &first, Int_t &second, Int_t &third, Int_t &forth);
-		void Htimegrow(Int_t &timeaxis1, Int_t &timeaxis2, Int_t &peak);
+		void Htimegrow(TString &openFile, Int_t &timeaxis1, Int_t &timeaxis2, Int_t &peak);
 		void Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &peaksvalue, TCanvas *tempcvs);
 		void peakfind(TString &openFile);
 		void Hlogft(Int_t &ZParent, Double_t &HalfParent, Double_t &QParent, Double_t &EParent, Double_t &EDaut, Double_t &PDaut, Double_t &unit);
