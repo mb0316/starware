@@ -973,34 +973,18 @@ void BMgui::decaygate()
 
 void BMgui::netarea()
 {
-//	if (effdatafile.Length() >= 1)
-//	{
-		star.Hnetarea(cvs3, effdatafile);
+	star.Hnetarea(cvs3, effdatafile);
 
-		cvs3 -> Modified();
-		cvs3 -> Update();
-//	}
-//	if (effdatafile.Length() == 0)
-//	{
-//		cout << "The efficiency data has not been loaded. Please load the efficiency data file." << endl;
-//	}
-
+	cvs3 -> Modified();
+	cvs3 -> Update();
 }
 
 void BMgui::netarea2()
 {
-//	if (effdatafile.Length() >= 1)
-//	{
-		star.Hnetarea2(cvs3, effdatafile, tstart, tend);
+	star.Hnetarea2(cvs3, effdatafile, tstart, tend);
 
-		cvs3 -> Modified();
-		cvs3 -> Update();
-//	}
-//	if (effdatafile.Length() == 0)
-//	{
-//		cout << "The efficiency data has not been loaded. Please load the efficiency data file." << endl;
-//	}
-
+	cvs3 -> Modified();
+	cvs3 -> Update();
 }
 void BMgui::timediff()
 {
@@ -1016,23 +1000,13 @@ void BMgui::timediff()
 
 void BMgui::timegrow()
 {
-//	if (effdatafile.Length() >= 1)
-//	{
-		star.Htimegrow(effdatafile, timeaxis1, timeaxis2, tgrow);
+	star.Htimegrow(effdatafile, timeaxis1, timeaxis2, tgrow);
 
-		cvs7 -> cd();
-		cvs7 -> ToggleEventStatus();
-		star.graph -> Draw();
-		cvs7 -> Modified();
-		cvs7 -> Update();
-//	}
-//	if (effdatafile.Length() == 0)
-//	{
-//		star.Hnetarea2(cvs3, effdatafile, tstart, tend);
-//
-//		cvs3 -> Modified();
-//		cvs3 -> Update();
-//	}
+	cvs7 -> cd();
+	cvs7 -> ToggleEventStatus();
+	star.graph -> Draw();
+	cvs7 -> Modified();
+	cvs7 -> Update();
 }
 
 void BMgui::halflife()
