@@ -2,7 +2,7 @@
 ***************************STARWARE CLASS HEADER FILE*******************************
 Made by Byul Moon from Korea University
 All functions are contained for STARWARE.
-Last refine : 09.Mar.2017, beta ver.1.2
+Last refine : 07.May.2017, beta ver.1.2
 Copyright by B. Moon
 ***********************************************************************************/
 #include "TF1.h"
@@ -648,7 +648,7 @@ void BMspec::Hnetarea(TCanvas *tempcvs, TString &openFile)
 			deverror = (gaussian -> GetParError(2))/dev;
 			netcount = sqrt(2*pi)*ampl*dev;
 			neterror = sqrt(amplerror*amplerror + deverror*deverror)*netcount;
-			peakerrors = sqrt(peakerror*peakerror + dev*dev);
+			peakerrors = sqrt(peakerror*peakerror + dev*dev/netcount);
 			peak = 0;
 			ampl = 0;
 			amplerror = 0;
@@ -668,8 +668,8 @@ void BMspec::Hnetarea(TCanvas *tempcvs, TString &openFile)
 			back_fit -> Draw("same");
 
 			// represent total results for the request
-			cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
-			//		cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
+			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
+			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
 			gatevalueX.clear();
 		}
 
@@ -703,7 +703,7 @@ void BMspec::Hnetarea(TCanvas *tempcvs, TString &openFile)
 			deverror = (gaussian -> GetParError(2))/dev;
 			netcount = sqrt(2*pi)*ampl*dev;
 			neterror = sqrt(amplerror*amplerror + deverror*deverror)*netcount;
-			peakerrors = sqrt(peakerror*peakerror + dev*dev);
+			peakerrors = sqrt(peakerror*peakerror + dev*dev/netcount);
 			peak = 0;
 			ampl = 0;
 			amplerror = 0;
@@ -724,8 +724,8 @@ void BMspec::Hnetarea(TCanvas *tempcvs, TString &openFile)
 			back_fit -> Draw("same");
 
 			// represent total results for the request
-			cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
-			//		cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
+			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
+			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
 			gatevalueY.clear();
 		}
 
@@ -774,7 +774,7 @@ void BMspec::Hnetarea(TCanvas *tempcvs, TString &openFile)
 			deverror = (gaussian -> GetParError(2))/dev;
 			netcount = sqrt(2*pi)*ampl*dev*(100/(fcn -> Eval(peak)));
 			neterror = sqrt(amplerror*amplerror + deverror*deverror)*netcount;
-			peakerrors = sqrt(peakerror*peakerror + dev*dev);
+			peakerrors = sqrt(peakerror*peakerror + dev*dev/netcount);
 			peak = 0;
 			ampl = 0;
 			amplerror = 0;
@@ -794,8 +794,8 @@ void BMspec::Hnetarea(TCanvas *tempcvs, TString &openFile)
 			back_fit -> Draw("same");
 
 			// represent total results for the request
-			cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
-			//		cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
+			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
+			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
 			gatevalueX.clear();
 		}
 
@@ -832,7 +832,7 @@ void BMspec::Hnetarea(TCanvas *tempcvs, TString &openFile)
 			deverror = (gaussian -> GetParError(2))/dev;
 			netcount = sqrt(2*pi)*ampl*dev*(100/(fcn -> Eval(peak)));
 			neterror = sqrt(amplerror*amplerror + deverror*deverror)*netcount;
-			peakerrors = sqrt(peakerror*peakerror + dev*dev);
+			peakerrors = sqrt(peakerror*peakerror + dev*dev/netcount);
 			peak = 0;
 			ampl = 0;
 			amplerror = 0;
@@ -853,8 +853,8 @@ void BMspec::Hnetarea(TCanvas *tempcvs, TString &openFile)
 			back_fit -> Draw("same");
 
 			// represent total results for the request
-			cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
-			//		cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
+			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
+			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
 			gatevalueY.clear();
 		}
 
@@ -906,7 +906,7 @@ void BMspec::Hnetarea2(TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int_t 
 			deverror = (gaussian -> GetParError(2))/dev;
 			netcount = sqrt(2*pi)*ampl*dev;
 			neterror = sqrt(amplerror*amplerror + deverror*deverror)*netcount;
-			peakerrors = sqrt(peakerror*peakerror + dev*dev);
+			peakerrors = sqrt(peakerror*peakerror + dev*dev/netcount);
 			peak = 0;
 			ampl = 0;
 			amplerror = 0;
@@ -926,8 +926,8 @@ void BMspec::Hnetarea2(TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int_t 
 			back_fit -> Draw("same");
 
 			// represent total results for the request
-			cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
-			//		cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
+			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
+			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
 			gatevalueX.clear();
 		}
 
@@ -961,7 +961,7 @@ void BMspec::Hnetarea2(TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int_t 
 			deverror = (gaussian -> GetParError(2))/dev;
 			netcount = sqrt(2*pi)*ampl*dev;
 			neterror = sqrt(amplerror*amplerror + deverror*deverror)*netcount;
-			peakerrors = sqrt(peakerror*peakerror + dev*dev);
+			peakerrors = sqrt(peakerror*peakerror + dev*dev/netcount);
 			peak = 0;
 			ampl = 0;
 			amplerror = 0;
@@ -982,8 +982,8 @@ void BMspec::Hnetarea2(TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int_t 
 			back_fit -> Draw("same");
 
 			// represent total results for the request
-			cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
-			//		cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
+			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
+			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
 			gatevalueY.clear();
 		}
 
@@ -1032,7 +1032,7 @@ void BMspec::Hnetarea2(TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int_t 
 			deverror = (gaussian -> GetParError(2))/dev;
 			netcount = sqrt(2*pi)*ampl*dev*(100/(fcn -> Eval(peak)));
 			neterror = sqrt(amplerror*amplerror + deverror*deverror)*netcount;
-			peakerrors = sqrt(peakerror*peakerror + dev*dev);
+			peakerrors = sqrt(peakerror*peakerror + dev*dev/netcount);
 			peak = 0;
 			ampl = 0;
 			amplerror = 0;
@@ -1052,8 +1052,8 @@ void BMspec::Hnetarea2(TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int_t 
 			back_fit -> Draw("same");
 
 			// represent total results for the request
-			cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
-			//		cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
+			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
+			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
 			gatevalueX.clear();
 		}
 
@@ -1090,7 +1090,7 @@ void BMspec::Hnetarea2(TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int_t 
 			deverror = (gaussian -> GetParError(2))/dev;
 			netcount = sqrt(2*pi)*ampl*dev*(100/(fcn -> Eval(peak)));
 			neterror = sqrt(amplerror*amplerror + deverror*deverror)*netcount;
-			peakerrors = sqrt(peakerror*peakerror + dev*dev);
+			peakerrors = sqrt(peakerror*peakerror + dev*dev/netcount);
 			peak = 0;
 			ampl = 0;
 			amplerror = 0;
@@ -1111,8 +1111,8 @@ void BMspec::Hnetarea2(TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int_t 
 			back_fit -> Draw("same");
 
 			// represent total results for the request
-			cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
-			//		cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
+			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
+			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
 			gatevalueY.clear();
 		}
 
@@ -1447,10 +1447,14 @@ void BMspec::peakfind(TString &openFile)
 	gated_hist = (TH1*) open -> Get("gated_histogram");
 }
 	
-Double_t flogf(Int_t &ZParent, Double_t &QParent, Double_t &EParent, Double_t &EDaut)
+Double_t flogf(Int_t &DecayType, Int_t &ZParent, Double_t &QParent, Double_t &EParent, Double_t &EDaut)
 {
 	Double_t E0 = QParent + EParent*0.001 - EDaut*0.001;
-	Double_t logf = 4.0*log10(E0) + 0.78 + 0.02*(ZParent+1) - 0.005*(ZParent)*log10(E0);
+	Double_t logf;
+	if (DecayType == 0)	logf = 4.0*log10(E0) + 0.78 + 0.02*(ZParent+1) - 0.005*(ZParent)*log10(E0);
+	if (DecayType == 1)	logf = 4.0*log10(E0) + 0.79 + 0.007*(ZParent-1) - 0.009*(ZParent)*log10(E0/3)*log10(E0/3);
+	if (DecayType == 2)	logf = 2.0*log10(E0) - 5.6 + 3.5*log10(ZParent);
+
 	return logf;
 }
 	
@@ -1460,13 +1464,16 @@ Double_t flogt(Double_t &HalfParent, Double_t &PDaut, Double_t &unit)
 	return logt;
 }
 
-void BMspec::Hlogft(Int_t &ZParent, Double_t &HalfParent, Double_t &QParent, Double_t &EParent, Double_t &EDaut, Double_t &PDaut, Double_t &unit)
+void BMspec::Hlogft(Int_t &DecayType, Int_t &ZParent, Double_t &HalfParent, Double_t &QParent, Double_t &EParent, Double_t &EDaut, Double_t &PDaut, Double_t &unit)
 {
-	Double_t logf = flogf(ZParent, QParent, EParent, EDaut);
+	Double_t logf = flogf(DecayType, ZParent, QParent, EParent, EDaut);
 	Double_t logt = flogt(HalfParent, PDaut, unit);
 
 	Double_t logft = logf + logt; 
 
+	if (DecayType == 0)	cout << "Decay Type : Beta-" << endl;
+	if (DecayType == 1)	cout << "Decay Type : Beta+" << endl;
+	if (DecayType == 2)	cout << "Decay Type : EC" << endl;
 	cout << "Z of Parent : " << ZParent << endl;
 	cout << "Halflife of Parent : " << HalfParent*unit << " s" << endl;
 	cout << "Energy of Parent : " << EParent << " keV"<< endl;
@@ -1478,9 +1485,9 @@ void BMspec::Hlogft(Int_t &ZParent, Double_t &HalfParent, Double_t &QParent, Dou
 	cout << "logft : " << logft << endl;
 }
 
-void BMspec::BGT(Int_t &ZParent, Double_t &HalfParent, Double_t &QParent, Double_t &EParent, Double_t &EDaut, Double_t &PDaut, Double_t &unit)
+void BMspec::BGT(Int_t &DecayType, Int_t &ZParent, Double_t &HalfParent, Double_t &QParent, Double_t &EParent, Double_t &EDaut, Double_t &PDaut, Double_t &unit)
 {
-	Double_t logft = flogf(ZParent, QParent, EParent, EDaut) + flogt(HalfParent, PDaut, unit);
+	Double_t logft = flogf(DecayType, ZParent, QParent, EParent, EDaut) + flogt(HalfParent, PDaut, unit);
 	Double_t Bgt = (1/TMath::Power(10, logft))*(6147/TMath::Power(1.262, 2));
 
 	cout << "B(GT) value : " << Bgt << endl;

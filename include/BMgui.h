@@ -1,10 +1,8 @@
-// Mainframe macro generated from application: /Users/MoonByul/root/bin/root.exe
-// By ROOT version 6.08/00 on 2016-12-20 20:20:27
 /***********************************************************************************
 *************************STARWARE GUI CONSTRUCTOR FILE******************************
 Made by Byul Moon from Korea University
 GUI constructor for STARWARE program.
-Last refine : 13.Mar.2017, ver.1.2
+Last refine : 07.May.2017, ver.1.2
 Copyright by B. Moon
 ***********************************************************************************/
 
@@ -42,34 +40,35 @@ class BMgui
 		TCanvas* cvs7;
 		TCanvas* cvs8;
 
-		Int_t tbin;
-		Int_t tstart;
-		Int_t tend;
-		Int_t dstart1;
-		Int_t dend1;
-		Int_t dstart2;
-		Int_t dend2;
-		Int_t tgrow;
-		Int_t halfpeak;
-		Int_t half_parent;
+		Int_t tbin = 0;
+		Int_t tstart = 0;
+		Int_t tend = 0;
+		Int_t dstart1 = 0;
+		Int_t dend1 = 0;
+		Int_t dstart2 = 0;
+		Int_t dend2 = 0;
+		Int_t tgrow = 0;
+		Int_t halfpeak = 0;
+		Int_t half_parent = 0;
 		TString effdatafile;
 		TString gatedatafile;
-		Int_t timeaxis1=1;
-		Int_t timeaxis2=1; //timeaxis1 : x axis is time, timeaxis2: y axis is time; 0 : enable, 1 : unable
-		Int_t halftype=1; //halftype=1 : mother nucleus decay, halftype=0 : daughter nucleus decay
+		Int_t timeaxis1 = 1;
+		Int_t timeaxis2 = 1; //timeaxis1 : x axis is time, timeaxis2: y axis is time; 0 : enable, 1 : unable
+		Int_t halftype = 1; //halftype=1 : mother nucleus decay, halftype=0 : daughter nucleus decay
 
-		Int_t ZParent;
-		Double_t HalfParent;
-		Double_t QParent;
-		Double_t EParent;
-		Double_t EDaut;
-		Double_t PDaut;
-		Double_t unit;
+		Int_t ZParent = 0;
+		Double_t HalfParent = 0;
+		Double_t QParent = 0;
+		Double_t EParent = 0;
+		Double_t EDaut = 0;
+		Double_t PDaut = 0;
+		Double_t unit = 0;
+		Int_t DecayType = 0;
 
-		Int_t multitype;
-		Double_t benergy;
-		Double_t bhalf;
-		Double_t bunit;
+		Int_t multitype = 0;
+		Double_t benergy = 0;
+		Double_t bhalf = 0;
+		Double_t bunit = 0;
 
 		TGStatusBar* fStatusBar;
 
@@ -77,7 +76,6 @@ class BMgui
 
 	public :
 		BMgui();
-//		void starware();
 		void clearall();
 		void openfile();
 		void openeff();
@@ -114,6 +112,7 @@ class BMgui
 		void SetEParent(const Char_t *value);
 		void SetEDaut(const Char_t *value);
 		void SetPDaut(const Char_t *value);
+		void SetDecayType(Int_t value);
 		void logft();
 		void bgt();
 		void SetUnit(Int_t value);
@@ -123,7 +122,6 @@ class BMgui
 		void SetHalfUnit(Int_t value);
 		void bmulti();
 
-//	ClassDef(BMgui, 1);
 };
 #endif
 

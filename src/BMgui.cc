@@ -4,7 +4,7 @@
 *************************STARWARE GUI CONSTRUCTOR FILE******************************
 Made by Byul Moon from Korea University
 GUI constructor for STARWARE program.
-Last refine : 13.Mar.2017, ver.1.2
+Last refine : 07.May.2017, ver.1.2
 Copyright 2017. B. Moon
 ***********************************************************************************/
 #include "TGDockableFrame.h"
@@ -698,7 +698,25 @@ BMgui::BMgui()
     fP_DAUT->MoveResize(750,100,100,20);
     fCompositeFrame6->AddFrame(fP_DAUT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     fP_DAUT -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetPDaut(const Char_t *)");
-
+       
+	TGLabel *lDECAYTYPE = new TGLabel(fCompositeFrame6, "Decay Type");
+    lDECAYTYPE -> SetTextJustify(kTextLeft);
+    lDECAYTYPE-> SetMargins(0, 0, 0, 0);
+    lDECAYTYPE-> SetWrapLength(-1);
+    fCompositeFrame6 -> AddFrame(lDECAYTYPE, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
+    lDECAYTYPE-> MoveResize(600, 130, 100, 20);
+ 
+	TGComboBox *fDECAYTYPE = new TGComboBox(fCompositeFrame6,-1,kHorizontalFrame | kSunkenFrame | kOwnBackground);
+	fDECAYTYPE->SetName("Decay Type");
+	fDECAYTYPE->AddEntry("Beta-",0);
+	fDECAYTYPE->AddEntry("Beta+",1);
+	fDECAYTYPE->AddEntry("EC",2);
+	fDECAYTYPE->Resize(100,20);
+	fDECAYTYPE->Select(-1);
+	fCompositeFrame6->AddFrame(fDECAYTYPE, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
+	fDECAYTYPE->MoveResize(750,130,100,20);
+	fDECAYTYPE->Connect("Selected(Int_t)", "BMgui", this, "SetUnit(Int_t)");
+ 
     TGTextButton *LOGFT = new TGTextButton(fCompositeFrame6,"Get LOGFT",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
     LOGFT -> Connect("Clicked()", "BMgui", this, "logft()");
     LOGFT->SetTextJustify(36);
@@ -706,7 +724,7 @@ BMgui::BMgui()
     LOGFT->SetWrapLength(-1);
     LOGFT->Resize(100,35);
     fCompositeFrame6->AddFrame(LOGFT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    LOGFT->MoveResize(600,130,100,35);
+    LOGFT->MoveResize(600,180,100,35);
      
     TGTextButton *BGT = new TGTextButton(fCompositeFrame6,"Get B(GT)",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
     BGT -> Connect("Clicked()", "BMgui", this, "bgt()");
@@ -715,7 +733,7 @@ BMgui::BMgui()
     BGT->SetWrapLength(-1);
     BGT->Resize(100,35);
     fCompositeFrame6->AddFrame(BGT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    BGT->MoveResize(600,180,100,35);
+    BGT->MoveResize(750,180,100,35);
    
 	TGLabel *lB_INFO = new TGLabel(fCompositeFrame6, "Reduced Matrix Element Calculation");
     lB_INFO -> SetTextJustify(kTextLeft);
@@ -1244,14 +1262,21 @@ void BMgui::SetUnit(Int_t value)
 	}
 }
 
+void BMgui::SetDecayType(Int_t value)
+{
+	if (value == 0)	DecayType = 0;
+	if (value == 1)	DecayType = 1;
+	if (value == 2)	DecayType = 2;
+}
+
 void BMgui::logft()
 {
-	star.Hlogft(ZParent, HalfParent, QParent, EParent, EDaut, PDaut, unit);
+	star.Hlogft(DecayType, ZParent, HalfParent, QParent, EParent, EDaut, PDaut, unit);
 }
 	
 void BMgui::bgt()
 {
-	star.BGT(ZParent, HalfParent, QParent, EParent, EDaut, PDaut, unit);
+	star.BGT(DecayType, ZParent, HalfParent, QParent, EParent, EDaut, PDaut, unit);
 }
 
 void BMgui::SetMulti(Int_t value)

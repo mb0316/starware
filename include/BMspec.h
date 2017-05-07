@@ -2,14 +2,13 @@
 ***************************STARWARE CLASS HEADER FILE*******************************
 Made by Byul Moon from Korea University
 All functions are contained for STARWARE.
-Last refine : 09.Mar.2017, beta ver.1.2
+Last refine : 07.May.2017, beta ver.1.2
 Copyright by B. Moon
 ***********************************************************************************/
 
 #ifndef BMSPEC
 #define BMSPEC
 
-//#include "TROOT.h"
 #include "TF1.h"
 #include "TFile.h"
 #include "TH1D.h"
@@ -66,7 +65,6 @@ class BMspec
 		TLatex* bgr1;
 		TLatex* bgr2;
 
-//		BMspec(TString &directory, TString &openFile);
 		void reset();
 		void GetCoorX(Int_t event, Int_t px, Int_t, TObject *);
 		void GetCoorY(Int_t event, Int_t px, Int_t, TObject *);
@@ -83,11 +81,10 @@ class BMspec
 		void Htimegrow(TString &openFile, Int_t &timeaxis1, Int_t &timeaxis2, Int_t &peak);
 		void Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &peaksvalue, TCanvas *tempcvs);
 		void peakfind(TString &openFile);
-		void Hlogft(Int_t &ZParent, Double_t &HalfParent, Double_t &QParent, Double_t &EParent, Double_t &EDaut, Double_t &PDaut, Double_t &unit);
-		void BGT(Int_t &ZParent, Double_t &HalfParent, Double_t &QParent, Double_t &EParent, Double_t &EDaut, Double_t &PDaut, Double_t &unit);
+		void Hlogft(Int_t &DecayType, Int_t &ZParent, Double_t &HalfParent, Double_t &QParent, Double_t &EParent, Double_t &EDaut, Double_t &PDaut, Double_t &unit);
+		void BGT(Int_t &DecayType, Int_t &ZParent, Double_t &HalfParent, Double_t &QParent, Double_t &EParent, Double_t &EDaut, Double_t &PDaut, Double_t &unit);
 		void HBMUL(Int_t &Multitype, Double_t &Energy, Double_t &Halflife, Double_t &unit);
 
-//	ClassDef(BMspec, 1);
 };
 #endif
 
