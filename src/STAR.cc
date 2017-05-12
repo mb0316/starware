@@ -1,24 +1,17 @@
 /***********************************************************************************
-***************************STARWARE CLASS HEADER FILE*******************************
+***************************STARWARE CLASS SOURCE FILE*******************************
 Made by Byul Moon from Korea University
 All functions are contained for STARWARE.
-Last refine : 07.May.2017, beta ver.1.2
-Copyright by B. Moon
+Last refine : 12.May.2017, ver.1.0
+Copyright. 2017. B. Moon
 ***********************************************************************************/
-#include "TF1.h"
-#include "TFile.h"
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TCanvas.h"
-#include "TTree.h"
-#include "TGraph.h"
-#include "TGraphErrors.h"
 #include "TStyle.h"
-#include "TFitter.h"
 #include <iostream>
 #include "TPad.h"
 #include "TLatex.h"
-#include "TMath.h"
 #include <RQ_OBJECT.h>
 #include <vector>
 #include <iomanip>
@@ -29,7 +22,6 @@ Copyright by B. Moon
 #include "Rtypes.h"
 #include "STAR.h"
 #include "TObject.h"
-
 
 using namespace std;
 
@@ -64,13 +56,36 @@ void STAR::reset()
     gatevalueX.clear();
     gatevalueY.clear();
     cout << "gate information has been deleted." << endl;
-	if (gate1 != nullptr) gate1 -> Delete();
-	if (gate2 != nullptr) gate2 -> Delete();
-	if (bgl1 != nullptr) bgl1 -> Delete();
-	if (bgl2 != nullptr) bgl2 -> Delete();
-	if (bgr1 != nullptr) bgr1 -> Delete();
-	if (bgr2 != nullptr) bgr2 -> Delete();
-
+	if (gate1 != nullptr)
+	{
+		gate1 -> Delete();
+		gate1 = nullptr;
+	}
+	if (gate2 != nullptr)
+	{
+		gate2 -> Delete();
+		gate2 = nullptr;
+	}
+	if (bgl1 != nullptr)
+	{
+		bgl1 -> Delete();
+		bgl1 = nullptr;
+	}
+	if (bgl2 != nullptr)
+	{
+		bgl2 -> Delete();
+		bgl2 = nullptr;
+	}
+	if (bgr1 != nullptr)
+	{
+		bgr1 -> Delete();
+		bgr1 = nullptr;
+	}
+	if (bgr2 != nullptr)
+	{
+		bgr2 -> Delete();
+		bgr2 = nullptr;
+	}
 }
 
 void STAR::GetCoorX(Int_t event, Int_t px, Int_t, TObject *)
@@ -320,11 +335,11 @@ void STAR::intro()
 {
     cout << "-----------------------------STARWARE(SpecTroscopy Analysis for gamma-Ray softWARE)---------------------------------" << endl;
     cout << "------------------------------------------Byul means 'star' in Korean.----------------------------------------------" << endl;
-    cout << "-------------------------------Gamma-ray Spectroscopy Analysis Tool Beta Ver.1.2------------------------------------" << endl;
+    cout << "----------------------------------Gamma-ray Spectroscopy Analysis Tool Ver.1.2--------------------------------------" << endl;
     cout << "The Data analysis from coincidence event matrices." << endl;
     cout << "Made by Byul Moon(B.Moon) from Korea University" << endl;
     cout << "Since Jan. 2016." << endl;
-    cout << "Latest Update : Mar. 2017." << endl;
+    cout << "Latest Update : May. 2017." << endl;
 } 
 
 void STAR::manual()

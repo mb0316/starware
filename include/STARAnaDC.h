@@ -2,8 +2,8 @@
 ***************************STARWARE CLASS HEADER FILE*******************************
 Made by Byul Moon from Korea University
 All functions are contained for STARWARE.
-Last refine : 07.May.2017, beta ver.1.2
-Copyright by B. Moon
+Last refine : 12.May.2017, ver.1.0
+Copyright. 2017. B. Moon
 ***********************************************************************************/
 
 #ifndef STARANADC_H

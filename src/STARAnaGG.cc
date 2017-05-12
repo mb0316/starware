@@ -1,20 +1,14 @@
 /***********************************************************************************
-***************************STARWARE CLASS HEADER FILE*******************************
+***************************STARWARE CLASS SOURCE FILE*******************************
 Made by Byul Moon from Korea University
 All functions are contained for STARWARE.
-Last refine : 07.May.2017, beta ver.1.2
-Copyright by B. Moon
+Last refine : 12.May.2017, ver.1.0
+Copyright. 2017. B. Moon
 ***********************************************************************************/
-#include "TF1.h"
 #include "TFile.h"
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TCanvas.h"
-#include "TTree.h"
-#include "TGraph.h"
-#include "TGraphErrors.h"
-#include "TStyle.h"
-#include "TFitter.h"
 #include <iostream>
 #include "TPad.h"
 #include "TLatex.h"

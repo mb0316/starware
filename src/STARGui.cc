@@ -1,5 +1,3 @@
-// Mainframe macro generated from application: /Users/MoonByul/root/bin/root.exe
-// By ROOT version 6.08/00 on 2016-12-20 20:20:27
 /***********************************************************************************
 *************************STARWARE GUI CONSTRUCTOR FILE******************************
 Made by Byul Moon from Korea University
@@ -88,8 +86,8 @@ This program operates with a GUI system.\n\
 STARWARE only accepts the data format with ~.mat.\n\
 \n\
 Since Jan. 2016.\n\
-Current Version : Beta ver.1.2\n\
-Last Update : 8.Mar.2017.\n\
+Current Version : ver.1.0\n\
+Last Update : 12.May.2017.\n\
 By Byul Moon from Korea University\n\
 alpha ver.1.2 Update News 1 : The decaygate function now contains the elimination of the background.\n\
 alpha ver.1.2 Update News 2 : The decaygate function now asks the degree of the data compression(the bin size).\n\
@@ -106,6 +104,7 @@ beta ver.1.0 Update News 1 (09.Jan.2017) : The interface for STARWARE is now fix
 beta ver.1.1 Update News 1 (22.Feb.2017) : The analysis for the half-life of the daughter nucleus has been added.\n\
 beta ver.1.2 Update News 1 (08.Mar.2017) : The logft calculation has been added.\n\
 beta ver.1.2 Update News 2 (13.Mar.2017) : The reduced matrix element calculation has been added.\n\
+ver.1.0 Update News 1 (12.May.2017) : Fixed bugs.\n\
 ";
 
 const char gCOPYRIGHT[] = "\
@@ -721,7 +720,7 @@ STARGui::STARGui()
 	fDECAYTYPE->Select(-1);
 	fCompositeFrame6->AddFrame(fDECAYTYPE, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
 	fDECAYTYPE->MoveResize(750,130,100,20);
-	fDECAYTYPE->Connect("Selected(Int_t)", "STARGui", this, "SetUnit(Int_t)");
+	fDECAYTYPE->Connect("Selected(Int_t)", "STARGui", this, "SetDecayType(Int_t)");
  
     TGTextButton *LOGFT = new TGTextButton(fCompositeFrame6,"Get LOGFT",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
     LOGFT -> Connect("Clicked()", "STARGui", this, "logft()");
@@ -838,7 +837,7 @@ STARGui::STARGui()
     fMainFrame1073->MapWindow();
     fMainFrame1073->Resize(1200,620);
 
-	fMainFrame1073->SetWindowName("STARWARE Beta Ver.1.2");
+	fMainFrame1073->SetWindowName("STARWARE Ver.1.0");
 	fMainFrame1073->MapSubwindows();
 	fMainFrame1073->Connect("CloseWindow()", "STARGui", this, "TerminatePro()");
 
