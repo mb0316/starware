@@ -6,12 +6,17 @@ Last refine : 07.May.2017, ver.1.2
 Copyright by B. Moon
 ***********************************************************************************/
 
-#ifndef BMGUI
-#define BMGUI
+#ifndef STARGUI_H
+#define STARGUI_H
 
 #include "TGStatusBar.h"
 #include "Riostream.h"
-#include "BMspec.h"
+#include "STAR.h"
+#include "STARAnaGG.h"
+#include "STARAnaTG.h"
+#include "STARAnaDC.h"
+#include "STARAnaDis.h"
+#include "STARCal.h"
 #include <stdio.h>
 #include <vector>
 #include "TStyle.h"
@@ -28,10 +33,14 @@ Copyright by B. Moon
 #include "TObjString.h"
 #include "Rtypes.h"
 
-class BMgui
+class STARGui : public STAR
 {
 	private :
-		BMspec star;
+		STARAnaGG stargg;
+		STARAnaTG startg;
+		STARAnaDC stardc;
+		STARAnaDis stardis;
+		STARCal starcal;
 		vector <int> peaksvalue;
 		TCanvas* cvs3;
 		TCanvas* cvs4;
@@ -75,7 +84,8 @@ class BMgui
 
 
 	public :
-		BMgui();
+		STARGui();
+		void main(TString &directory, TString &openFile);
 		void clearall();
 		void openfile();
 		void openeff();

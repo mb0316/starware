@@ -61,6 +61,7 @@ Copyright 2017. B. Moon
 #include <iomanip>
 #include <sstream>
 #include <arpa/inet.h>
+#include <algorithm>
 
 #include "TApplication.h"
 #include "TSystem.h"
@@ -68,11 +69,16 @@ Copyright 2017. B. Moon
 #include "TObject.h"
 #include "TObjArray.h"
 #include "TObjString.h"
-#include "BMgui.h"
-#include "BMspec.h"
+#include "STARGui.h"
+#include "STAR.h"
+#include "STARAnaGG.h"
+#include "STARAnaTG.h"
+#include "STARAnaDC.h"
+#include "STARAnaDis.h"
+#include "STARCal.h"
 #include "Rtypes.h"
+#include "TString.h"
 
-//ClassImp(BMgui);
 
 const char gAboutSTARWARE[] = "\
 			STARWARE\n\
@@ -132,7 +138,7 @@ enum EMyMessageTypes
 };
 
 using namespace std;
-BMgui::BMgui()
+STARGui::STARGui()
 {
 	gStyle -> SetPadLeftMargin(0.13);
 	gStyle -> SetPadRightMargin(0.06);
@@ -169,7 +175,7 @@ BMgui::BMgui()
 	fMenuFile->AddEntry(" &Open", M_FILE_OPEN, 0, gClient->GetPicture("bld_open.png")); 
 	fMenuFile->AddSeparator();
 	fMenuFile->AddEntry(" E&xit", M_FILE_EXIT, 0, gClient->GetPicture("bld_exit.png"));
-	fMenuFile->Connect("Activated(Int_t)", "BMgui", this, "HandleMenu(Int_t)");
+	fMenuFile->Connect("Activated(Int_t)", "STARGui", this, "HandleMenu(Int_t)");
 	fMenuBar->AddPopup("&File", fMenuFile, new TGLayoutHints(kLHintsTop|kLHintsLeft, 0, 4, 0, 0));
 
 	TGPopupMenu* fMenuHelp = new TGPopupMenu(gClient->GetRoot());
@@ -177,7 +183,7 @@ BMgui::BMgui()
 	fMenuHelp->AddEntry(" &STARWARE Copyright", M_HELP_COPYRIGHT);
 	fMenuHelp->AddEntry(" &STARWARE Manual", M_HELP_MANUAL);
 	fMenuHelp->AddEntry(" &STARWARE Contact Info.", M_HELP_CONTACT);
-	fMenuHelp->Connect("Activated(Int_t)", "BMgui", this, "HandleMenu(Int_t)");
+	fMenuHelp->Connect("Activated(Int_t)", "STARGui", this, "HandleMenu(Int_t)");
 	fMenuBar->AddPopup("&Help", fMenuHelp, new TGLayoutHints(kLHintsTop|kLHintsLeft));
 
 	fMainFrame1073 -> AddFrame(fMenuBar, new TGLayoutHints(kLHintsTop | kLHintsExpandX, 2, 2, 2, 5));
@@ -207,7 +213,7 @@ BMgui::BMgui()
     fCompositeFrame1 ->SetLayoutBroken(kTRUE);
     
     TGTextButton *GATE = new TGTextButton(fCompositeFrame1,"GATE",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
-    GATE -> Connect("Clicked()", "BMgui", this, "gate()");
+    GATE -> Connect("Clicked()", "STARGui", this, "gate()");
     GATE->SetTextJustify(36);
     GATE->SetMargins(0,0,0,0);
     GATE->SetWrapLength(-1);
@@ -225,10 +231,10 @@ BMgui::BMgui()
     TGNumberEntryField *fTIMEBIN = new TGNumberEntryField(fCompositeFrame1, 0, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 4096);
     fTIMEBIN->MoveResize(1030,100,100,20);
     fCompositeFrame1->AddFrame(fTIMEBIN, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    fTIMEBIN -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetTimeBin(const Char_t *)");
+    fTIMEBIN -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetTimeBin(const Char_t *)");
     
     TGTextButton *DECAYGATE = new TGTextButton(fCompositeFrame1,"DECAY GATE",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
-    DECAYGATE -> Connect("Clicked()", "BMgui", this, "decaygate()");
+    DECAYGATE -> Connect("Clicked()", "STARGui", this, "decaygate()");
     DECAYGATE->SetTextJustify(36);
     DECAYGATE->SetMargins(0,0,0,0);
     DECAYGATE->SetWrapLength(-1);
@@ -237,7 +243,7 @@ BMgui::BMgui()
     DECAYGATE->MoveResize(1030,125,100,35);
     
     TGTextButton *NETAREA = new TGTextButton(fCompositeFrame1,"NET AREA",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
-    NETAREA -> Connect("Clicked()", "BMgui", this, "netarea()");
+    NETAREA -> Connect("Clicked()", "STARGui", this, "netarea()");
     NETAREA->SetTextJustify(36);
     NETAREA->SetMargins(0,0,0,0);
     NETAREA->SetWrapLength(-1);
@@ -255,7 +261,7 @@ BMgui::BMgui()
     TGNumberEntryField *fTSTARTBIN = new TGNumberEntryField(fCompositeFrame1, 1, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 4096);
     fTSTARTBIN->MoveResize(1030,240,100,20);
     fCompositeFrame1->AddFrame(fTSTARTBIN, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    fTSTARTBIN -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetTimeStart(const Char_t *)");
+    fTSTARTBIN -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetTimeStart(const Char_t *)");
     
     TGLabel *lENDBIN = new TGLabel(fCompositeFrame1, "Input the end time value.");
     lENDBIN -> SetTextJustify(kTextLeft);
@@ -267,10 +273,10 @@ BMgui::BMgui()
     TGNumberEntryField *fTENDBIN = new TGNumberEntryField(fCompositeFrame1, 2, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 4096);
     fTENDBIN->MoveResize(1030,290,100,20);
     fCompositeFrame1->AddFrame(fTENDBIN, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    fTENDBIN -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetTimeEnd(const Char_t *)");
+    fTENDBIN -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetTimeEnd(const Char_t *)");
     
     TGTextButton *TIMEGATE = new TGTextButton(fCompositeFrame1,"TIME GATE",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
-    TIMEGATE -> Connect("Clicked()", "BMgui", this, "timegate()");
+    TIMEGATE -> Connect("Clicked()", "STARGui", this, "timegate()");
     TIMEGATE->SetTextJustify(36);
     TIMEGATE->SetMargins(0,0,0,0);
     TIMEGATE->SetWrapLength(-1);
@@ -288,10 +294,10 @@ BMgui::BMgui()
     TGNumberEntryField *fTGROW = new TGNumberEntryField(fCompositeFrame1, 2, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 4096);
     fTGROW->MoveResize(1030,385,100,20);
     fCompositeFrame1->AddFrame(fTGROW, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    fTGROW -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetTimeGrow(const Char_t *)");
+    fTGROW -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetTimeGrow(const Char_t *)");
     
     TGTextButton *TIMEGROW = new TGTextButton(fCompositeFrame1,"TIME GROW",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
-    TIMEGROW -> Connect("Clicked()", "BMgui", this, "timegrow()");
+    TIMEGROW -> Connect("Clicked()", "STARGui", this, "timegrow()");
     TIMEGROW->SetTextJustify(36);
     TIMEGROW->SetMargins(0,0,0,0);
     TIMEGROW->SetWrapLength(-1);
@@ -307,7 +313,7 @@ BMgui::BMgui()
     lCheck-> MoveResize(1030, 455, 200, 20);
     
     TGCheckButton *fCheckTX = new TGCheckButton(fCompositeFrame1,"x");
-    fCheckTX->Connect("Toggled(Bool_t)", "BMgui", this, "checktimetox(Bool_t)");
+    fCheckTX->Connect("Toggled(Bool_t)", "STARGui", this, "checktimetox(Bool_t)");
     fCheckTX->SetTextJustify(kTextLeft);
     fCheckTX->SetMargins(0,0,0,0);
     fCheckTX->SetWrapLength(-1);
@@ -315,7 +321,7 @@ BMgui::BMgui()
     fCheckTX->Move(1030,485);
     
     TGCheckButton *fCheckTY = new TGCheckButton(fCompositeFrame1,"y");
-    fCheckTY->Connect("Toggled(Bool_t)", "BMgui", this, "checktimetoy(Bool_t)");
+    fCheckTY->Connect("Toggled(Bool_t)", "STARGui", this, "checktimetoy(Bool_t)");
     fCheckTY->SetTextJustify(kTextLeft);
     fCheckTY->SetMargins(0,0,0,0);
     fCheckTY->SetWrapLength(-1);
@@ -326,16 +332,16 @@ BMgui::BMgui()
     TRootEmbeddedCanvas *ProjectedSpectrum_X = new TRootEmbeddedCanvas(0,fCompositeFrame1,1000,250,kSunkenFrame);
     ProjectedSpectrum_X->SetName("ProjectedSpectrum_X");
     Int_t wProjectedSpectrum_X = ProjectedSpectrum_X->GetCanvasWindowId();
-    star.cvs1 = new TCanvas("cvs1", 10, 10, wProjectedSpectrum_X);
-    ProjectedSpectrum_X->AdoptCanvas(star.cvs1);
+    cvs1 = new TCanvas("cvs1", 10, 10, wProjectedSpectrum_X);
+    ProjectedSpectrum_X->AdoptCanvas(cvs1);
     fCompositeFrame1->AddFrame(ProjectedSpectrum_X, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     ProjectedSpectrum_X->MoveResize(10,10,1000,250);
 
     TRootEmbeddedCanvas *ProjectedSpectrum_Y = new TRootEmbeddedCanvas(0,fCompositeFrame1,1000,250,kSunkenFrame);
     ProjectedSpectrum_Y->SetName("ProjectedSpectrum_Y");
     Int_t wProjectedSpectrum = ProjectedSpectrum_Y->GetCanvasWindowId();
-    star.cvs2 = new TCanvas("cvs2", 10, 10, wProjectedSpectrum);
-    ProjectedSpectrum_Y->AdoptCanvas(star.cvs2);
+    cvs2 = new TCanvas("cvs2", 10, 10, wProjectedSpectrum);
+    ProjectedSpectrum_Y->AdoptCanvas(cvs2);
     fCompositeFrame1->AddFrame(ProjectedSpectrum_Y, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     ProjectedSpectrum_Y->MoveResize(10,270,1000,250);
 
@@ -346,7 +352,7 @@ BMgui::BMgui()
     fCompositeFrame2 ->SetLayoutBroken(kTRUE);
         
     TGTextButton *OPENSPECTRUM = new TGTextButton(fCompositeFrame2,"OPEN SPEC.",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
-    OPENSPECTRUM -> Connect("Clicked()", "BMgui", this, "gatedspectrum()");
+    OPENSPECTRUM -> Connect("Clicked()", "STARGui", this, "gatedspectrum()");
     OPENSPECTRUM->SetTextJustify(36);
     OPENSPECTRUM->SetMargins(0,0,0,0);
     OPENSPECTRUM->SetWrapLength(-1);
@@ -359,7 +365,7 @@ BMgui::BMgui()
     gated_spec->SetName("Gated Spectrum");
     Int_t wgated_spec = gated_spec->GetCanvasWindowId();
     cvs3 = new TCanvas("cvs3", 10, 10, wgated_spec);
-    cvs3 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "BMgui", this, "EventInfo(Int_t, Int_t, Int_t, TObject*)");
+    cvs3 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "STARGui", this, "EventInfo(Int_t, Int_t, Int_t, TObject*)");
     gated_spec->AdoptCanvas(cvs3);
     fCompositeFrame2->AddFrame(gated_spec, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     gated_spec->MoveResize(10,10,1000,250);
@@ -368,7 +374,7 @@ BMgui::BMgui()
     gated_decay->SetName("Gated Decay Curve");
     Int_t wgated_decay = gated_decay->GetCanvasWindowId();
     cvs4 = new TCanvas("cvs4", 10, 10, wgated_decay);
-    cvs4 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "BMgui", this, "EventInfo(Int_t, Int_t, Int_t, TObject*)");
+    cvs4 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "STARGui", this, "EventInfo(Int_t, Int_t, Int_t, TObject*)");
     gated_decay->AdoptCanvas(cvs4);
     fCompositeFrame2->AddFrame(gated_decay, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     gated_decay->MoveResize(10,270,1000,250);
@@ -403,12 +409,12 @@ BMgui::BMgui()
     TGNumberEntryField *fDSTARTBIN1 = new TGNumberEntryField(fCompositeFrame3, 1, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 4096);
     fDSTARTBIN1->MoveResize(1050,80,40,20);
     fCompositeFrame3->AddFrame(fDSTARTBIN1, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    fDSTARTBIN1 -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetDiffStart1(const Char_t *)");
+    fDSTARTBIN1 -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetDiffStart1(const Char_t *)");
     
     TGNumberEntryField *fDENDBIN1 = new TGNumberEntryField(fCompositeFrame3, 2, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 4096);
     fDENDBIN1->MoveResize(1100,80,40,20);
     fCompositeFrame3->AddFrame(fDENDBIN1, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    fDENDBIN1 -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetDiffEnd1(const Char_t *)");
+    fDENDBIN1 -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetDiffEnd1(const Char_t *)");
     
     TGLabel *lDSECOND = new TGLabel(fCompositeFrame3, "2nd Spectrum");
     lDSECOND-> SetTextJustify(kTextLeft);
@@ -434,15 +440,15 @@ BMgui::BMgui()
     TGNumberEntryField *fDSTARTBIN2 = new TGNumberEntryField(fCompositeFrame3, 1, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 4096);
     fDSTARTBIN2->MoveResize(1050,165,40,20);
     fCompositeFrame3->AddFrame(fDSTARTBIN2, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    fDSTARTBIN2 -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetDiffStart2(const Char_t *)");
+    fDSTARTBIN2 -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetDiffStart2(const Char_t *)");
     
     TGNumberEntryField *fDENDBIN2 = new TGNumberEntryField(fCompositeFrame3, 2, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 4096);
     fDENDBIN2->MoveResize(1100,165,40,20);
     fCompositeFrame3->AddFrame(fDENDBIN2, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    fDENDBIN2 -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetDiffEnd2(const Char_t *)");
+    fDENDBIN2 -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetDiffEnd2(const Char_t *)");
     
     TGTextButton *TDIFF = new TGTextButton(fCompositeFrame3,"TIME DIFF",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
-    TDIFF -> Connect("Clicked()", "BMgui", this, "timediff()");
+    TDIFF -> Connect("Clicked()", "STARGui", this, "timediff()");
     TDIFF->SetTextJustify(36);
     TDIFF->SetMargins(0,0,0,0);
     TDIFF->SetWrapLength(-1);
@@ -451,7 +457,7 @@ BMgui::BMgui()
     TDIFF->MoveResize(1050,190,100,35);
     
     TGTextButton *NETAREA2 = new TGTextButton(fCompositeFrame3,"NET AREA",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
-    NETAREA2 -> Connect("Clicked()", "BMgui", this, "netarea2()");
+    NETAREA2 -> Connect("Clicked()", "STARGui", this, "netarea2()");
     NETAREA2->SetTextJustify(36);
     NETAREA2->SetMargins(0,0,0,0);
     NETAREA2->SetWrapLength(-1);
@@ -460,7 +466,7 @@ BMgui::BMgui()
     NETAREA2->MoveResize(1050,250,100,35);
     
     TGTextButton *EFFOPEN = new TGTextButton(fCompositeFrame3,"EFF. OPEN",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
-    EFFOPEN -> Connect("Clicked()", "BMgui", this, "openeff()");
+    EFFOPEN -> Connect("Clicked()", "STARGui", this, "openeff()");
     EFFOPEN->SetTextJustify(36);
     EFFOPEN->SetMargins(0,0,0,0);
     EFFOPEN->SetWrapLength(-1);
@@ -474,8 +480,8 @@ BMgui::BMgui()
     Int_t wtgated_spec = tgated_spec->GetCanvasWindowId();
     cvs5 = new TCanvas("cvs5", 10, 10, wtgated_spec);
     tgated_spec->AdoptCanvas(cvs5);
-    cvs5 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "BMspec", &star, "GetCoorY(Int_t, Int_t, Int_t, TObject*)");
-    cvs5 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "BMgui", this, "EventInfo(Int_t, Int_t, Int_t, TObject*)");
+    cvs5 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "STARGui", this, "GetCoorY(Int_t, Int_t, Int_t, TObject*)");
+    cvs5 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "STARGui", this, "EventInfo(Int_t, Int_t, Int_t, TObject*)");
     fCompositeFrame3->AddFrame(tgated_spec, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     tgated_spec->MoveResize(10,10,1000,250);
 
@@ -483,7 +489,7 @@ BMgui::BMgui()
     tdiff_spec->SetName("Time Difference");
     Int_t wtdiff_spec = tdiff_spec->GetCanvasWindowId();
     cvs6 = new TCanvas("cvs6", 10, 10, wtdiff_spec);
-    cvs6 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "BMgui", this, "EventInfo(Int_t, Int_t, Int_t, TObject*)");
+    cvs6 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "STARGui", this, "EventInfo(Int_t, Int_t, Int_t, TObject*)");
     tdiff_spec->AdoptCanvas(cvs6);
     fCompositeFrame3->AddFrame(tdiff_spec, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     tdiff_spec->MoveResize(10,270,1000,250);
@@ -519,10 +525,10 @@ BMgui::BMgui()
     TGNumberEntryField *fSETPEAK = new TGNumberEntryField(fCompositeFrame5, 2, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 4096);
     fSETPEAK->MoveResize(1020,65,40,20);
     fCompositeFrame5->AddFrame(fSETPEAK, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    fSETPEAK -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetPeakValue(const Char_t *)");
+    fSETPEAK -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetPeakValue(const Char_t *)");
     
     TGTextButton *TSETPEAK = new TGTextButton(fCompositeFrame5,"SET PEAK",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
-    TSETPEAK -> Connect("Clicked()", "BMgui", this, "setpeaks()");
+    TSETPEAK -> Connect("Clicked()", "STARGui", this, "setpeaks()");
     TSETPEAK->SetTextJustify(36);
     TSETPEAK->SetMargins(0,0,0,0);
     TSETPEAK->SetWrapLength(-1);
@@ -531,7 +537,7 @@ BMgui::BMgui()
     TSETPEAK->MoveResize(1020,90,100,35);
     
     TGTextButton *TGETHALF = new TGTextButton(fCompositeFrame5,"GET HALFLIFE",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
-    TGETHALF-> Connect("Clicked()", "BMgui", this, "halflife()");
+    TGETHALF-> Connect("Clicked()", "STARGui", this, "halflife()");
     TGETHALF->SetTextJustify(36);
     TGETHALF->SetMargins(0,0,0,0);
     TGETHALF->SetWrapLength(-1);
@@ -554,12 +560,12 @@ BMgui::BMgui()
 	fTYPE_DECAY->Select(-1);
 	fCompositeFrame5->AddFrame(fTYPE_DECAY, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
 	fTYPE_DECAY->MoveResize(1020,210,100,20);
-	fTYPE_DECAY->Connect("Selected(Int_t)", "BMgui", this, "checkhalftype(Int_t)");
+	fTYPE_DECAY->Connect("Selected(Int_t)", "STARGui", this, "checkhalftype(Int_t)");
 
     TGNumberEntryField *fHALF_P = new TGNumberEntryField(fCompositeFrame5, 0, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 4096);
     fHALF_P->MoveResize(1020,280,100,20);
     fCompositeFrame5->AddFrame(fHALF_P, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    fHALF_P -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetHalfLife(const Char_t *)");
+    fHALF_P -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetHalfLife(const Char_t *)");
   
 	TGLabel *lHalf_P = new TGLabel(fCompositeFrame5, "half-life of parent");
     lHalf_P -> SetTextJustify(kTextLeft);
@@ -608,7 +614,7 @@ BMgui::BMgui()
     TGNumberEntryField *fZ_PARENT = new TGNumberEntryField(fCompositeFrame6, 0, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 113);
     fZ_PARENT->MoveResize(250,70,100,20);
     fCompositeFrame6->AddFrame(fZ_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    fZ_PARENT -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetZParent(const Char_t *)");
+    fZ_PARENT -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetZParent(const Char_t *)");
   
 	TGLabel *lHALFLIFE_PARENT = new TGLabel(fCompositeFrame6, "Halflife");
     lHALFLIFE_PARENT -> SetTextJustify(kTextLeft);
@@ -620,7 +626,7 @@ BMgui::BMgui()
     TGNumberEntryField *fHALFLIFE_PARENT = new TGNumberEntryField(fCompositeFrame6, 0, 0, TGNumberFormat::kNESReal, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 10000);
     fHALFLIFE_PARENT->MoveResize(250,100,100,20);
     fCompositeFrame6->AddFrame(fHALFLIFE_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    fHALFLIFE_PARENT -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetHalfParent(const Char_t *)");
+    fHALFLIFE_PARENT -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetHalfParent(const Char_t *)");
   
 	TGLabel *lUNIT_PARENT = new TGLabel(fCompositeFrame6, "Units");
     lUNIT_PARENT -> SetTextJustify(kTextLeft);
@@ -642,7 +648,7 @@ BMgui::BMgui()
 	fUNIT_PARENT->Select(-1);
 	fCompositeFrame6->AddFrame(fUNIT_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
 	fUNIT_PARENT->MoveResize(250,130,100,20);
-	fUNIT_PARENT->Connect("Selected(Int_t)", "BMgui", this, "SetUnit(Int_t)");
+	fUNIT_PARENT->Connect("Selected(Int_t)", "STARGui", this, "SetUnit(Int_t)");
   
 	TGLabel *lQ_PARENT = new TGLabel(fCompositeFrame6, "Q-value (MeV)");
     lQ_PARENT -> SetTextJustify(kTextLeft);
@@ -654,7 +660,7 @@ BMgui::BMgui()
     TGNumberEntryField *fQ_PARENT = new TGNumberEntryField(fCompositeFrame6, 0, 0, TGNumberFormat::kNESReal, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 100);
     fQ_PARENT->MoveResize(250,160,100,20);
     fCompositeFrame6->AddFrame(fQ_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    fQ_PARENT -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetQParent(const Char_t *)");
+    fQ_PARENT -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetQParent(const Char_t *)");
     
 	TGLabel *lE_PARENT = new TGLabel(fCompositeFrame6, "Level Energy (keV)");
     lE_PARENT -> SetTextJustify(kTextLeft);
@@ -666,7 +672,7 @@ BMgui::BMgui()
     TGNumberEntryField *fE_PARENT = new TGNumberEntryField(fCompositeFrame6, 0, 0, TGNumberFormat::kNESReal, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 10000);
     fE_PARENT->MoveResize(250,190,100,20);
     fCompositeFrame6->AddFrame(fE_PARENT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    fE_PARENT -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetEParent(const Char_t *)");
+    fE_PARENT -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetEParent(const Char_t *)");
       
 	TGLabel *lD_INFO = new TGLabel(fCompositeFrame6, "Daughter Information");
     lD_INFO -> SetTextJustify(kTextLeft);
@@ -685,7 +691,7 @@ BMgui::BMgui()
     TGNumberEntryField *fE_DAUT = new TGNumberEntryField(fCompositeFrame6, 0, 0, TGNumberFormat::kNESReal, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 10000);
     fE_DAUT->MoveResize(750,70,100,20);
     fCompositeFrame6->AddFrame(fE_DAUT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    fE_DAUT -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetEDaut(const Char_t *)");
+    fE_DAUT -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetEDaut(const Char_t *)");
       
 	TGLabel *lP_DAUT = new TGLabel(fCompositeFrame6, "Intensity (0 to 1)");
     lP_DAUT -> SetTextJustify(kTextLeft);
@@ -697,7 +703,7 @@ BMgui::BMgui()
     TGNumberEntryField *fP_DAUT = new TGNumberEntryField(fCompositeFrame6, 0, 0, TGNumberFormat::kNESReal, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 1);
     fP_DAUT->MoveResize(750,100,100,20);
     fCompositeFrame6->AddFrame(fP_DAUT, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    fP_DAUT -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetPDaut(const Char_t *)");
+    fP_DAUT -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetPDaut(const Char_t *)");
        
 	TGLabel *lDECAYTYPE = new TGLabel(fCompositeFrame6, "Decay Type");
     lDECAYTYPE -> SetTextJustify(kTextLeft);
@@ -715,10 +721,10 @@ BMgui::BMgui()
 	fDECAYTYPE->Select(-1);
 	fCompositeFrame6->AddFrame(fDECAYTYPE, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
 	fDECAYTYPE->MoveResize(750,130,100,20);
-	fDECAYTYPE->Connect("Selected(Int_t)", "BMgui", this, "SetUnit(Int_t)");
+	fDECAYTYPE->Connect("Selected(Int_t)", "STARGui", this, "SetUnit(Int_t)");
  
     TGTextButton *LOGFT = new TGTextButton(fCompositeFrame6,"Get LOGFT",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
-    LOGFT -> Connect("Clicked()", "BMgui", this, "logft()");
+    LOGFT -> Connect("Clicked()", "STARGui", this, "logft()");
     LOGFT->SetTextJustify(36);
     LOGFT->SetMargins(0,0,0,0);
     LOGFT->SetWrapLength(-1);
@@ -727,7 +733,7 @@ BMgui::BMgui()
     LOGFT->MoveResize(600,180,100,35);
      
     TGTextButton *BGT = new TGTextButton(fCompositeFrame6,"Get B(GT)",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
-    BGT -> Connect("Clicked()", "BMgui", this, "bgt()");
+    BGT -> Connect("Clicked()", "STARGui", this, "bgt()");
     BGT->SetTextJustify(36);
     BGT->SetMargins(0,0,0,0);
     BGT->SetWrapLength(-1);
@@ -760,7 +766,7 @@ BMgui::BMgui()
 	fTYPE_MUL->Select(-1);
 	fCompositeFrame6->AddFrame(fTYPE_MUL, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
 	fTYPE_MUL->MoveResize(250,260,100,20);
-	fTYPE_MUL->Connect("Selected(Int_t)", "BMgui", this, "SetMulti(Int_t)");
+	fTYPE_MUL->Connect("Selected(Int_t)", "STARGui", this, "SetMulti(Int_t)");
    
 	TGLabel *lB_E = new TGLabel(fCompositeFrame6, "Energy (keV)");
     lB_E -> SetTextJustify(kTextLeft);
@@ -772,7 +778,7 @@ BMgui::BMgui()
     TGNumberEntryField *fB_E = new TGNumberEntryField(fCompositeFrame6, 0, 0, TGNumberFormat::kNESReal, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 10000);
     fB_E->MoveResize(750,260,100,20);
     fCompositeFrame6->AddFrame(fB_E, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    fB_E -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetBEnergy(const Char_t *)");
+    fB_E -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetBEnergy(const Char_t *)");
  
 	TGLabel *lVAL_HALF = new TGLabel(fCompositeFrame6, "Half-life");
     lVAL_HALF -> SetTextJustify(kTextLeft);
@@ -784,7 +790,7 @@ BMgui::BMgui()
     TGNumberEntryField *fVAL_HALF = new TGNumberEntryField(fCompositeFrame6, 0, 0, TGNumberFormat::kNESReal, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 10000);
     fVAL_HALF->MoveResize(250,290,100,20);
     fCompositeFrame6->AddFrame(fVAL_HALF, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    fVAL_HALF -> Connect("TextChanged(const Char_t *)", "BMgui", this, "SetBHalf(const Char_t *)");
+    fVAL_HALF -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetBHalf(const Char_t *)");
   
 	TGLabel *lUNIT_HALF = new TGLabel(fCompositeFrame6, "Units");
     lUNIT_HALF -> SetTextJustify(kTextLeft);
@@ -804,10 +810,10 @@ BMgui::BMgui()
 	fUNIT_HALF->Select(-1);
 	fCompositeFrame6->AddFrame(fUNIT_HALF, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
 	fUNIT_HALF->MoveResize(750,290,100,20);
-	fUNIT_HALF->Connect("Selected(Int_t)", "BMgui", this, "SetHalfUnit(Int_t)");
+	fUNIT_HALF->Connect("Selected(Int_t)", "STARGui", this, "SetHalfUnit(Int_t)");
  
     TGTextButton *BMUL = new TGTextButton(fCompositeFrame6,"Calculate",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
-    BMUL -> Connect("Clicked()", "BMgui", this, "bmulti()");
+    BMUL -> Connect("Clicked()", "STARGui", this, "bmulti()");
     BMUL->SetTextJustify(36);
     BMUL->SetMargins(0,0,0,0);
     BMUL->SetWrapLength(-1);
@@ -834,17 +840,30 @@ BMgui::BMgui()
 
 	fMainFrame1073->SetWindowName("STARWARE Beta Ver.1.2");
 	fMainFrame1073->MapSubwindows();
-	fMainFrame1073->Connect("CloseWindow()", "BMgui", this, "TerminatePro()");
+	fMainFrame1073->Connect("CloseWindow()", "STARGui", this, "TerminatePro()");
 
-	star.intro();
+	intro();
 }
 
-void BMgui::clearall()
+void STARGui::main(TString &directory, TString &openFile)
 {
-    star.cvs1 -> Disconnect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)");
-    star.cvs2 -> Disconnect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)");
-    star.cvs1 -> Clear();
-    star.cvs2 -> Clear();
+	STAR::main(directory, openFile);
+	stargg.hist_Tot = hist_Tot;
+	stargg.direc = direc;
+	startg.hist_Tot = hist_Tot;
+	startg.direc = direc;
+	stardc.hist_Tot = hist_Tot;
+	stardc.direc = direc;
+	stardis.hist_Tot = hist_Tot;
+	stardis.direc = direc;
+}
+
+void STARGui::clearall()
+{
+    cvs1 -> Disconnect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)");
+    cvs2 -> Disconnect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)");
+    cvs1 -> Clear();
+    cvs2 -> Clear();
     cvs3 -> Clear();
     cvs4 -> Clear();
     cvs5 -> Clear();
@@ -852,10 +871,10 @@ void BMgui::clearall()
     cvs7 -> Clear();
     cvs8 -> Clear();
     
-    star.cvs1 -> Modified();
-    star.cvs1 -> Update();
-    star.cvs2 -> Modified();
-    star.cvs2 -> Update();
+    cvs1 -> Modified();
+    cvs1 -> Update();
+    cvs2 -> Modified();
+    cvs2 -> Update();
     cvs3 -> Modified();
     cvs3 -> Update();
     cvs4 -> Modified();
@@ -870,7 +889,7 @@ void BMgui::clearall()
     cvs8 -> Update();
 }
 
-void BMgui::openfile()
+void STARGui::openfile()
 {
     clearall();
     
@@ -889,28 +908,28 @@ void BMgui::openfile()
     TString openingFile = ((TObjString *) decomposedFileNameWithPath -> Last()) -> GetString();
     TString directory = filenameWithPath.ReplaceAll(openingFile, "");
     
-    star.main(directory, openingFile);
-    star.cvs1 -> cd();
-    star.cvs1 -> ToggleEventStatus();
-    star.hist_X -> Draw();
-    star.cvs1 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "BMspec", &star, "GetCoorX(Int_t, Int_t, Int_t, TObject*)");
-    star.cvs1 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "BMgui", this, "EventInfo(Int_t, Int_t, Int_t, TObject*)");
-    star.cvs1 -> Modified();
-    star.cvs1 -> Update();
-    star.cvs2 -> cd();
-    star.cvs2 -> ToggleEventStatus();
-    star.hist_Y -> Draw();
-    star.cvs2 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "BMspec", &star, "GetCoorY(Int_t, Int_t, Int_t, TObject*)");
-    star.cvs2 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "BMgui", this, "EventInfo(Int_t, Int_t, Int_t, TObject*)");
-    star.cvs2 -> Modified();
-    star.cvs2 -> Update();
+    main(directory, openingFile);
+    cvs1 -> cd();
+    cvs1 -> ToggleEventStatus();
+    hist_X -> Draw();
+    cvs1 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "STARGui", this, "GetCoorX(Int_t, Int_t, Int_t, TObject*)");
+    cvs1 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "STARGui", this, "EventInfo(Int_t, Int_t, Int_t, TObject*)");
+    cvs1 -> Modified();
+    cvs1 -> Update();
+    cvs2 -> cd();
+    cvs2 -> ToggleEventStatus();
+    hist_Y -> Draw();
+    cvs2 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "STARGui", this, "GetCoorY(Int_t, Int_t, Int_t, TObject*)");
+    cvs2 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "STARGui", this, "EventInfo(Int_t, Int_t, Int_t, TObject*)");
+    cvs2 -> Modified();
+    cvs2 -> Update();
     
-    star.manual();
+    manual();
     
     delete decomposedFileNameWithPath;
 }
 
-void BMgui::openeff()
+void STARGui::openeff()
 {
     TGFileInfo effInfo;
     const Char_t *effType[4] = {"ROOT File", "*.root", 0, 0};
@@ -932,7 +951,7 @@ void BMgui::openeff()
 
 }
 
-void BMgui::gatedspectrum()
+void STARGui::gatedspectrum()
 {
 	TGFileInfo gateInfo;
 	const Char_t *gateType[4] = {"ROOT File", "*.root", 0, 0};
@@ -948,88 +967,148 @@ void BMgui::gatedspectrum()
 	{
 		cout << "The gated spectrum data file has been successfully read." << endl;
 		gatedatafile = gateInfo.fFilename;
-		star.peakfind(gatedatafile);
+		stardis.peakfind(gatedatafile);
 		cvs4 -> cd();
-		star.gated_hist -> Draw();
+		stardis.gated_hist -> Draw();
 		cvs4 -> Update();
 		cvs4 -> Modified();
 	}
 }
 
-void BMgui::gate()
+void STARGui::gate()
 {
-    star.Hgate();
+	for (Int_t i = 0; i < int(gatevalueX.size()); i++)
+	{
+		stargg.gatevalueX.push_back(gatevalueX[i]);
+	}
+	for (Int_t i = 0; i < int(gatevalueY.size()); i++)
+	{
+		stargg.gatevalueY.push_back(gatevalueY[i]);
+	}
+	
+    stargg.Hgate();
+	reset();
+	cvs1 -> Modified();
+	cvs1 -> Update();
+    cvs2 -> Modified();
+	cvs2 -> Update();
     
     cvs3 -> cd();
     cvs3 -> ToggleEventStatus();
-    star.hist_P -> Draw();
+    stargg.hist_P -> Draw();
     cvs3 -> Modified();
     cvs3 -> Update();
 }
 
-void BMgui::timegate()
+void STARGui::timegate()
 {
-    star.Htimegate(timeaxis1, timeaxis2, tstart, tend);
+    startg.Htimegate(timeaxis1, timeaxis2, tstart, tend);
     
     cvs5 -> cd();
     cvs5 -> ToggleEventStatus();
-    star.hist_TY -> Draw();
+    startg.hist_TY -> Draw();
     cvs5 -> Modified();
     cvs5 -> Update();
 }
 
-void BMgui::decaygate()
+void STARGui::decaygate()
 {
-    star.Hdecaygate(tbin);
-    
+	for (Int_t i = 0; i < int(gatevalueX.size()); i++)
+	{
+		stardc.gatevalueX.push_back(gatevalueX[i]);
+	}
+	for (Int_t i = 0; i < int(gatevalueY.size()); i++)
+	{
+		stardc.gatevalueY.push_back(gatevalueY[i]);
+	}
+	
+    stardc.Hdecaygate(tbin);
+
+	reset();
+   	cvs1 -> Modified();
+	cvs1 -> Update();
+    cvs2 -> Modified();
+	cvs2 -> Update();
+
     cvs4 -> cd();
     cvs4 -> ToggleEventStatus();
-    star.hist_D -> Draw();
+    stardc.hist_D -> Draw();
     cvs4 -> Modified();
     cvs4 -> Update();
 }
 
-void BMgui::netarea()
+void STARGui::netarea()
 {
-	star.Hnetarea(cvs3, effdatafile);
+	for (Int_t i = 0; i < int(gatevalueX.size()); i++)
+	{
+		startg.gatevalueX.push_back(gatevalueX[i]);
+	}
+	for (Int_t i = 0; i < int(gatevalueY.size()); i++)
+	{
+		startg.gatevalueY.push_back(gatevalueY[i]);
+	}
+	
+	startg.Hnetarea(cvs3, effdatafile);
+	reset();
+	cvs1 -> Modified();
+	cvs1 -> Update();
+    cvs2 -> Modified();
+	cvs2 -> Update();
+
 
 	cvs3 -> Modified();
 	cvs3 -> Update();
 }
 
-void BMgui::netarea2()
+void STARGui::netarea2()
 {
-	star.Hnetarea2(cvs3, effdatafile, tstart, tend);
+	for (Int_t i = 0; i < int(gatevalueX.size()); i++)
+	{
+		startg.gatevalueX.push_back(gatevalueX[i]);
+	}
+	for (Int_t i = 0; i < int(gatevalueY.size()); i++)
+	{
+		startg.gatevalueY.push_back(gatevalueY[i]);
+	}
+	
+	startg.Hnetarea2(cvs3, effdatafile, tstart, tend);
+
+	reset();
+	cvs1 -> Modified();
+	cvs1 -> Update();
+    cvs2 -> Modified();
+	cvs2 -> Update();
 
 	cvs3 -> Modified();
 	cvs3 -> Update();
 }
-void BMgui::timediff()
+
+void STARGui::timediff()
 {
-    star.Htimediff(timeaxis1, timeaxis2, dstart1, dend1, dstart2, dend2);
+    stardis.Htimediff(timeaxis1, timeaxis2, dstart1, dend1, dstart2, dend2);
     
     cvs6 -> cd();
     cvs6 -> ToggleEventStatus();
-    star.hist1 -> Draw();
-    star.hist2 -> Draw("same");
+    stardis.hist1 -> Draw();
+    stardis.hist2 -> Draw("same");
     cvs6 -> Modified();
     cvs6 -> Update();
 }
 
-void BMgui::timegrow()
+void STARGui::timegrow()
 {
-	star.Htimegrow(effdatafile, timeaxis1, timeaxis2, tgrow);
+	startg.Htimegrow(effdatafile, timeaxis1, timeaxis2, tgrow);
 
 	cvs7 -> cd();
 	cvs7 -> ToggleEventStatus();
-	star.graph -> Draw();
+	startg.graph -> Draw();
 	cvs7 -> Modified();
 	cvs7 -> Update();
 }
 
-void BMgui::halflife()
+void STARGui::halflife()
 {
-    star.Hhalflife(halftype, half_parent, peaksvalue, cvs8);
+    stardc.Hhalflife(halftype, half_parent, peaksvalue, cvs8);
     
     cvs8 -> Modified();
     cvs8 -> Update();
@@ -1037,64 +1116,64 @@ void BMgui::halflife()
     peaksvalue.clear();
 }
 
-void BMgui::setpeaks()
+void STARGui::setpeaks()
 {
     peaksvalue.push_back(halfpeak);
     
     cout << halfpeak << " keV has ben saved." << endl;
 }
 
-void BMgui::SetTimeBin(const Char_t *value)
+void STARGui::SetTimeBin(const Char_t *value)
 {
     tbin = atoi(value);
 } 
 
-void BMgui::SetTimeStart(const Char_t *value)
+void STARGui::SetTimeStart(const Char_t *value)
 {
     tstart = atoi(value);
 } 
 
-void BMgui::SetTimeEnd(const Char_t *value)
+void STARGui::SetTimeEnd(const Char_t *value)
 {
     tend = atoi(value);
 } 
 
-void BMgui::SetDiffStart1(const Char_t *value)
+void STARGui::SetDiffStart1(const Char_t *value)
 {
     dstart1 = atoi(value);
 } 
 
-void BMgui::SetDiffEnd1(const Char_t *value)
+void STARGui::SetDiffEnd1(const Char_t *value)
 {
     dend1 = atoi(value);
 } 
 
-void BMgui::SetDiffStart2(const Char_t *value)
+void STARGui::SetDiffStart2(const Char_t *value)
 {
     dstart2 = atoi(value);
 } 
 
-void BMgui::SetDiffEnd2(const Char_t *value)
+void STARGui::SetDiffEnd2(const Char_t *value)
 {
     dend2 = atoi(value);
 } 
 
-void BMgui::SetTimeGrow(const Char_t *value)
+void STARGui::SetTimeGrow(const Char_t *value)
 {
     tgrow = atoi(value);
 }
 
-void BMgui::SetPeakValue(const Char_t *value)
+void STARGui::SetPeakValue(const Char_t *value)
 {
     halfpeak = atoi(value);
 }
 
-void BMgui::SetHalfLife(const Char_t *value)
+void STARGui::SetHalfLife(const Char_t *value)
 {
     half_parent = atoi(value);
 }
 
-void BMgui::checktimetox(Bool_t value)
+void STARGui::checktimetox(Bool_t value)
 {
     if (value==0)
     {
@@ -1106,7 +1185,7 @@ void BMgui::checktimetox(Bool_t value)
     }
 }
 
-void BMgui::checktimetoy(Bool_t value)
+void STARGui::checktimetoy(Bool_t value)
 {
     if (value==0)
     {
@@ -1118,7 +1197,7 @@ void BMgui::checktimetoy(Bool_t value)
     }
 }
 
-void BMgui::checkhalftype(Int_t value)
+void STARGui::checkhalftype(Int_t value)
 {	
     if (value==0)
     {
@@ -1131,7 +1210,7 @@ void BMgui::checkhalftype(Int_t value)
 }
 
 
-void BMgui::EventInfo(Int_t event, Int_t px, Int_t py, TObject *selected)
+void STARGui::EventInfo(Int_t event, Int_t px, Int_t py, TObject *selected)
 {
 
 	const char *text0, *text1, *text3;
@@ -1149,12 +1228,12 @@ void BMgui::EventInfo(Int_t event, Int_t px, Int_t py, TObject *selected)
 	SetStatusText(text3,3);
 }
 
-void BMgui::SetStatusText(const char *text, Int_t pi)
+void STARGui::SetStatusText(const char *text, Int_t pi)
 {
 	fStatusBar->SetText(text, pi);
 }
 
-void BMgui::HandleMenu(Int_t menu_id)
+void STARGui::HandleMenu(Int_t menu_id)
 {
 	// Handle menu events.
 	TRootHelpDialog *hd;
@@ -1189,42 +1268,42 @@ void BMgui::HandleMenu(Int_t menu_id)
 	}
 }
 
-void BMgui::TerminatePro()
+void STARGui::TerminatePro()
 {
 	gApplication->Terminate(0);
 }
 
-void BMgui::SetZParent(const Char_t *value)
+void STARGui::SetZParent(const Char_t *value)
 {
 	ZParent = atoi(value);
 }
 
-void BMgui::SetHalfParent(const Char_t *value)
+void STARGui::SetHalfParent(const Char_t *value)
 {
 	HalfParent = atof(value);
 }
 
-void BMgui::SetQParent(const Char_t *value)
+void STARGui::SetQParent(const Char_t *value)
 {
 	QParent = atof(value);
 }
 
-void BMgui::SetEParent(const Char_t *value)
+void STARGui::SetEParent(const Char_t *value)
 {
 	EParent = atof(value);
 }
 
-void BMgui::SetEDaut(const Char_t *value)
+void STARGui::SetEDaut(const Char_t *value)
 {
 	EDaut = atof(value);
 }
 
-void BMgui::SetPDaut(const Char_t *value)
+void STARGui::SetPDaut(const Char_t *value)
 {
 	PDaut = atof(value);
 }
 
-void BMgui::SetUnit(Int_t value)
+void STARGui::SetUnit(Int_t value)
 {
 	if (value == 0) //year
 	{
@@ -1262,39 +1341,39 @@ void BMgui::SetUnit(Int_t value)
 	}
 }
 
-void BMgui::SetDecayType(Int_t value)
+void STARGui::SetDecayType(Int_t value)
 {
 	if (value == 0)	DecayType = 0;
 	if (value == 1)	DecayType = 1;
 	if (value == 2)	DecayType = 2;
 }
 
-void BMgui::logft()
+void STARGui::logft()
 {
-	star.Hlogft(DecayType, ZParent, HalfParent, QParent, EParent, EDaut, PDaut, unit);
+	starcal.Hlogft(DecayType, ZParent, HalfParent, QParent, EParent, EDaut, PDaut, unit);
 }
 	
-void BMgui::bgt()
+void STARGui::bgt()
 {
-	star.BGT(DecayType, ZParent, HalfParent, QParent, EParent, EDaut, PDaut, unit);
+	starcal.BGT(DecayType, ZParent, HalfParent, QParent, EParent, EDaut, PDaut, unit);
 }
 
-void BMgui::SetMulti(Int_t value)
+void STARGui::SetMulti(Int_t value)
 {
 	multitype = value;
 }
 
-void BMgui::SetBEnergy(const Char_t *value)
+void STARGui::SetBEnergy(const Char_t *value)
 {
 	benergy = atof(value);
 }
 
-void BMgui::SetBHalf(const Char_t *value)
+void STARGui::SetBHalf(const Char_t *value)
 {
 	bhalf = atof(value);
 }
 
-void BMgui::SetHalfUnit(Int_t value)
+void STARGui::SetHalfUnit(Int_t value)
 {
 	if (value == 0)
 	{
@@ -1318,16 +1397,8 @@ void BMgui::SetHalfUnit(Int_t value)
 	}
 }
 
-void BMgui::bmulti()
+void STARGui::bmulti()
 {
-	star.HBMUL(multitype, benergy, bhalf, bunit);
+	starcal.HBMUL(multitype, benergy, bhalf, bunit);
 }
 
-Int_t main(int argc, char **argv)
-{
-  TApplication theApp("STARWARE", &argc, argv);
-  new BMgui();
-  theApp.Run();
-
-  return 0;
-}

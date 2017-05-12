@@ -1,0 +1,706 @@
+/***********************************************************************************
+***************************STARWARE CLASS HEADER FILE*******************************
+Made by Byul Moon from Korea University
+All functions are contained for STARWARE.
+Last refine : 07.May.2017, beta ver.1.2
+Copyright by B. Moon
+***********************************************************************************/
+#include "TF1.h"
+#include "TFile.h"
+#include "TH1D.h"
+#include "TH2D.h"
+#include "TCanvas.h"
+#include "TTree.h"
+#include "TGraph.h"
+#include "TGraphErrors.h"
+#include "TStyle.h"
+#include "TFitter.h"
+#include <iostream>
+#include "TPad.h"
+#include "TLatex.h"
+#include "TMath.h"
+#include <RQ_OBJECT.h>
+#include <vector>
+#include <iomanip>
+#include <fstream>
+#include <sstream>
+#include <cmath>
+#include <arpa/inet.h>
+#include "Rtypes.h"
+#include "STAR.h"
+#include "STARAnaTG.h"
+#include "TObject.h"
+
+
+using namespace std;
+
+void STARAnaTG::Htimegate(Int_t &timeaxis1, Int_t &timeaxis2, Int_t &start, Int_t &end)
+{
+    if (timeaxis1 == 0 && timeaxis2 == 1)
+    {
+        cout << "Input the start value of the gate : " << start << endl; //gate start
+        cout << "Input the end value of the gate : " << end << endl; //gate end
+        
+        hist_TY = hist_Tot -> ProjectionY("Pro_Y_time", start, end, ""); // singles spectrum with the time interval
+        
+        // saving the result data
+        TFile* out = new TFile(Form("%s%dto%dmsspectrum.root", direc.Data(), start, end), "RECREATE");
+        out -> cd();
+        hist_TY -> Write();
+        out -> Close();
+        cout << start << "to" << end << "msspectrum.root outfile has been created." << endl;
+    }
+    if (timeaxis1 == 1 && timeaxis2 == 0)
+    {
+        cout << "Input the start value of the gate : " << start << endl; //gate start
+        cout << "Input the end value of the gate : " << end << endl; //gate end
+        
+        hist_TY = hist_Tot -> ProjectionX("Pro_X_time", start, end, ""); // singles spectrum with the time interval
+        
+        // saving the result data
+        TFile* out = new TFile(Form("%s%dto%dmsspectrum.root", direc.Data(), start, end), "RECREATE");
+        out -> cd();
+        hist_TY -> Write();
+        out -> Close();
+        cout << start << "to" << end << "msspectrum.root outfile has been created." << endl;
+    }
+    if ((timeaxis1 == 0 && timeaxis2 == 0) || (timeaxis1 == 1 && timeaxis2 == 1))
+    {
+        cout << "Error : The time axis is not properly setted. Please check again." << endl;
+        hist_TY = new TH1D();
+    }
+    
+}
+
+void STARAnaTG::Hnetarea(TCanvas *tempcvs, TString &openFile)
+{
+    
+    Int_t start, end;
+
+	if (openFile.Length() == 0)
+	{
+		cout << "The efficiency data has not been loaded. The netarea will be calculated without an efficiency calibration." << endl;    
+
+		if (gatevalueX.size() > 0 && gatevalueY.size() == 0)
+		{
+			start = gatevalueX[0];
+			end = gatevalueX[1];
+
+
+			hist_N = hist_Tot -> ProjectionX("Pro_X_net1");
+
+			//algorithm for the calculation of the netarea
+			Double_t peaks;
+			Double_t netcount;
+			Double_t neterror;
+			Double_t peakerrors;
+			Double_t peak, ampl, peakerror, amplerror, deverror;
+			Double_t dev = 1.0;
+			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", 0, 3000);
+			Double_t pi = 3.14;
+			hist_N -> GetXaxis() -> SetRange(start, end);
+			peak = hist_N-> GetMaximumBin();
+			ampl = hist_N -> GetMaximum();
+			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
+			hist_N -> Fit(gaussian, "MQN", "", start, end);
+			peaks = gaussian -> GetParameter(1);
+			peakerror = gaussian -> GetParError(1);
+			ampl = gaussian -> GetParameter(0);
+			dev = gaussian -> GetParameter(2);
+			amplerror = (gaussian -> GetParError(0))/ampl;
+			deverror = (gaussian -> GetParError(2))/dev;
+			netcount = sqrt(2*pi)*ampl*dev;
+			neterror = sqrt(amplerror*amplerror + deverror*deverror)*netcount;
+			peakerrors = sqrt(peakerror*peakerror + dev*dev/netcount);
+			peak = 0;
+			ampl = 0;
+			amplerror = 0;
+			deverror = 0;
+			dev = 1.0;
+			// showing the result
+			TF1* gaussian_fit = new TF1("gau", "gaus(0)", 0, 3000);
+			TF1* back_fit = new TF1("back_fit", "[0]*x + [1]", 0, 3000);
+
+			gaussian_fit -> SetParameters(gaussian -> GetParameter(0), gaussian -> GetParameter(1), gaussian -> GetParameter(2));
+			back_fit -> SetParameters(gaussian -> GetParameter(3), gaussian -> GetParameter(4));
+
+			tempcvs -> cd();
+			hist_N -> Draw();
+			gaussian -> Draw("same");
+			gaussian_fit -> Draw("same");
+			back_fit -> Draw("same");
+
+			// represent total results for the request
+			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
+			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
+			gatevalueX.clear();
+		}
+
+		if (gatevalueY.size() > 0 && gatevalueX.size() == 0)
+		{
+			start = gatevalueY[0];
+			end = gatevalueY[1];
+
+
+			hist_N = hist_Tot -> ProjectionY("Pro_Y_net1");
+
+			//algorithm for the calculation of the netarea
+			Double_t peaks;
+			Double_t netcount;
+			Double_t neterror;
+			Double_t peakerrors;
+			Double_t peak, ampl, peakerror, amplerror, deverror;
+			Double_t dev = 1.0;
+			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", 0, 3000);
+			Double_t pi = 3.14;
+			hist_N -> GetXaxis() -> SetRange(start, end);
+			peak = hist_N-> GetMaximumBin();
+			ampl = hist_N -> GetMaximum();
+			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
+			hist_N -> Fit(gaussian, "MQN", "", start, end);
+			peaks = gaussian -> GetParameter(1);
+			peakerror = gaussian -> GetParError(1);
+			ampl = gaussian -> GetParameter(0);
+			dev = gaussian -> GetParameter(2);
+			amplerror = (gaussian -> GetParError(0))/ampl;
+			deverror = (gaussian -> GetParError(2))/dev;
+			netcount = sqrt(2*pi)*ampl*dev;
+			neterror = sqrt(amplerror*amplerror + deverror*deverror)*netcount;
+			peakerrors = sqrt(peakerror*peakerror + dev*dev/netcount);
+			peak = 0;
+			ampl = 0;
+			amplerror = 0;
+			deverror = 0;
+			dev = 1.0;
+
+			// showing the result
+			TF1* gaussian_fit = new TF1("gau", "gaus(0)", 0, 3000);
+			TF1* back_fit = new TF1("back_fit", "[0]*x + [1]", 0, 3000);
+
+			gaussian_fit -> SetParameters(gaussian -> GetParameter(0), gaussian -> GetParameter(1), gaussian -> GetParameter(2));
+			back_fit -> SetParameters(gaussian -> GetParameter(3), gaussian -> GetParameter(4));
+
+			tempcvs -> cd();
+			hist_N -> Draw();
+			gaussian -> Draw("same");
+			gaussian_fit -> Draw("same");
+			back_fit -> Draw("same");
+
+			// represent total results for the request
+			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
+			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
+			gatevalueY.clear();
+		}
+	}
+
+	if (openFile.Length() >= 1)
+	{
+
+		if (gatevalueX.size() > 0 && gatevalueY.size() == 0)
+		{
+			start = gatevalueX[0];
+			end = gatevalueX[1];
+
+			//loading the efficiency data
+			TFile* eff_read = new TFile(Form("%s", openFile.Data()), "READ"); //eff_data_gc.root : for gecluster, eff_data_add.root : for addback
+			TF1* fcn = (TF1*) eff_read -> Get(eff_read->GetListOfKeys()->At(0)->GetName());
+
+			hist_N = hist_Tot -> ProjectionX("Pro_X_net1");
+
+			//algorithm for the calculation of the netarea
+			Double_t peaks;
+			Double_t netcount;
+			Double_t neterror;
+			Double_t peakerrors;
+			Double_t peak, ampl, peakerror, amplerror, deverror;
+			Double_t dev = 1.0;
+			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", 0, 3000);
+			Double_t pi = 3.14;
+			hist_N -> GetXaxis() -> SetRange(start, end);
+			peak = hist_N-> GetMaximumBin();
+			ampl = hist_N -> GetMaximum();
+			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
+			hist_N -> Fit(gaussian, "MQN", "", start, end);
+			peaks = gaussian -> GetParameter(1);
+			peakerror = gaussian -> GetParError(1);
+			ampl = gaussian -> GetParameter(0);
+			dev = gaussian -> GetParameter(2);
+			amplerror = (gaussian -> GetParError(0))/ampl;
+			deverror = (gaussian -> GetParError(2))/dev;
+			netcount = sqrt(2*pi)*ampl*dev*(100/(fcn -> Eval(peak)));
+			neterror = sqrt(amplerror*amplerror + deverror*deverror)*netcount;
+			peakerrors = sqrt(peakerror*peakerror + dev*dev/netcount);
+			peak = 0;
+			ampl = 0;
+			amplerror = 0;
+			deverror = 0;
+			dev = 1.0;
+			// showing the result
+			TF1* gaussian_fit = new TF1("gau", "gaus(0)", 0, 3000);
+			TF1* back_fit = new TF1("back_fit", "[0]*x + [1]", 0, 3000);
+
+			gaussian_fit -> SetParameters(gaussian -> GetParameter(0), gaussian -> GetParameter(1), gaussian -> GetParameter(2));
+			back_fit -> SetParameters(gaussian -> GetParameter(3), gaussian -> GetParameter(4));
+
+			tempcvs -> cd();
+			hist_N -> Draw();
+			gaussian -> Draw("same");
+			gaussian_fit -> Draw("same");
+			back_fit -> Draw("same");
+
+			// represent total results for the request
+			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
+			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
+			gatevalueX.clear();
+		}
+
+		if (gatevalueY.size() > 0 && gatevalueX.size() == 0)
+		{
+			start = gatevalueY[0];
+			end = gatevalueY[1];
+
+			//loading the efficiency data
+			TFile* eff_read = new TFile(Form("%s", openFile.Data()), "READ"); //eff_data_gc.root : for gecluster, eff_data_add.root : for addback
+			TF1* fcn = (TF1*) eff_read -> Get(eff_read->GetListOfKeys()->At(0)->GetName());
+
+			hist_N = hist_Tot -> ProjectionY("Pro_Y_net1");
+
+			//algorithm for the calculation of the netarea
+			Double_t peaks;
+			Double_t netcount;
+			Double_t neterror;
+			Double_t peakerrors;
+			Double_t peak, ampl, peakerror, amplerror, deverror;
+			Double_t dev = 1.0;
+			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", 0, 3000);
+			Double_t pi = 3.14;
+			hist_N -> GetXaxis() -> SetRange(start, end);
+			peak = hist_N-> GetMaximumBin();
+			ampl = hist_N -> GetMaximum();
+			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
+			hist_N -> Fit(gaussian, "MQN", "", start, end);
+			peaks = gaussian -> GetParameter(1);
+			peakerror = gaussian -> GetParError(1);
+			ampl = gaussian -> GetParameter(0);
+			dev = gaussian -> GetParameter(2);
+			amplerror = (gaussian -> GetParError(0))/ampl;
+			deverror = (gaussian -> GetParError(2))/dev;
+			netcount = sqrt(2*pi)*ampl*dev*(100/(fcn -> Eval(peak)));
+			neterror = sqrt(amplerror*amplerror + deverror*deverror)*netcount;
+			peakerrors = sqrt(peakerror*peakerror + dev*dev/netcount);
+			peak = 0;
+			ampl = 0;
+			amplerror = 0;
+			deverror = 0;
+			dev = 1.0;
+
+			// showing the result
+			TF1* gaussian_fit = new TF1("gau", "gaus(0)", 0, 3000);
+			TF1* back_fit = new TF1("back_fit", "[0]*x + [1]", 0, 3000);
+
+			gaussian_fit -> SetParameters(gaussian -> GetParameter(0), gaussian -> GetParameter(1), gaussian -> GetParameter(2));
+			back_fit -> SetParameters(gaussian -> GetParameter(3), gaussian -> GetParameter(4));
+
+			tempcvs -> cd();
+			hist_N -> Draw();
+			gaussian -> Draw("same");
+			gaussian_fit -> Draw("same");
+			back_fit -> Draw("same");
+
+			// represent total results for the request
+			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
+			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
+			gatevalueY.clear();
+		}
+	}
+}
+
+void STARAnaTG::Hnetarea2(TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int_t &tend)
+{
+    
+    Int_t start, end;
+ 
+	if (openFile.Length() == 0)
+	{
+		cout << "The efficiency data has not been loaded. The netarea will be calculated without an efficiency calibration." << endl;    
+
+		if (gatevalueX.size() > 0 && gatevalueY.size() == 0)
+		{
+			start = gatevalueX[0];
+			end = gatevalueX[1];
+
+
+			hist_N = hist_Tot -> ProjectionX("Pro_X_net2", tstart, tend, "");
+
+			//algorithm for the calculation of the netarea
+			Double_t peaks;
+			Double_t netcount;
+			Double_t neterror;
+			Double_t peakerrors;
+			Double_t peak, ampl, peakerror, amplerror, deverror;
+			Double_t dev = 1.0;
+			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", 0, 3000);
+			Double_t pi = 3.14;
+			hist_N -> GetXaxis() -> SetRange(start, end);
+			peak = hist_N-> GetMaximumBin();
+			ampl = hist_N -> GetMaximum();
+			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
+			hist_N -> Fit(gaussian, "MQN", "", start, end);
+			peaks = gaussian -> GetParameter(1);
+			peakerror = gaussian -> GetParError(1);
+			ampl = gaussian -> GetParameter(0);
+			dev = gaussian -> GetParameter(2);
+			amplerror = (gaussian -> GetParError(0))/ampl;
+			deverror = (gaussian -> GetParError(2))/dev;
+			netcount = sqrt(2*pi)*ampl*dev;
+			neterror = sqrt(amplerror*amplerror + deverror*deverror)*netcount;
+			peakerrors = sqrt(peakerror*peakerror + dev*dev/netcount);
+			peak = 0;
+			ampl = 0;
+			amplerror = 0;
+			deverror = 0;
+			dev = 1.0;
+			// showing the result
+			TF1* gaussian_fit = new TF1("gau", "gaus(0)", 0, 3000);
+			TF1* back_fit = new TF1("back_fit", "[0]*x + [1]", 0, 3000);
+
+			gaussian_fit -> SetParameters(gaussian -> GetParameter(0), gaussian -> GetParameter(1), gaussian -> GetParameter(2));
+			back_fit -> SetParameters(gaussian -> GetParameter(3), gaussian -> GetParameter(4));
+
+			tempcvs -> cd();
+			hist_N -> Draw();
+			gaussian -> Draw("same");
+			gaussian_fit -> Draw("same");
+			back_fit -> Draw("same");
+
+			// represent total results for the request
+			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
+			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
+			gatevalueX.clear();
+		}
+
+		if (gatevalueY.size() > 0 && gatevalueX.size() == 0)
+		{
+			start = gatevalueY[0];
+			end = gatevalueY[1];
+
+
+			hist_N = hist_Tot -> ProjectionY("Pro_Y_net2", tstart, tend, "");
+
+			//algorithm for the calculation of the netarea
+			Double_t peaks;
+			Double_t netcount;
+			Double_t neterror;
+			Double_t peakerrors;
+			Double_t peak, ampl, peakerror, amplerror, deverror;
+			Double_t dev = 1.0;
+			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", 0, 3000);
+			Double_t pi = 3.14;
+			hist_N -> GetXaxis() -> SetRange(start, end);
+			peak = hist_N-> GetMaximumBin();
+			ampl = hist_N -> GetMaximum();
+			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
+			hist_N -> Fit(gaussian, "MQN", "", start, end);
+			peaks = gaussian -> GetParameter(1);
+			peakerror = gaussian -> GetParError(1);
+			ampl = gaussian -> GetParameter(0);
+			dev = gaussian -> GetParameter(2);
+			amplerror = (gaussian -> GetParError(0))/ampl;
+			deverror = (gaussian -> GetParError(2))/dev;
+			netcount = sqrt(2*pi)*ampl*dev;
+			neterror = sqrt(amplerror*amplerror + deverror*deverror)*netcount;
+			peakerrors = sqrt(peakerror*peakerror + dev*dev/netcount);
+			peak = 0;
+			ampl = 0;
+			amplerror = 0;
+			deverror = 0;
+			dev = 1.0;
+
+			// showing the result
+			TF1* gaussian_fit = new TF1("gau", "gaus(0)", 0, 3000);
+			TF1* back_fit = new TF1("back_fit", "[0]*x + [1]", 0, 3000);
+
+			gaussian_fit -> SetParameters(gaussian -> GetParameter(0), gaussian -> GetParameter(1), gaussian -> GetParameter(2));
+			back_fit -> SetParameters(gaussian -> GetParameter(3), gaussian -> GetParameter(4));
+
+			tempcvs -> cd();
+			hist_N -> Draw();
+			gaussian -> Draw("same");
+			gaussian_fit -> Draw("same");
+			back_fit -> Draw("same");
+
+			// represent total results for the request
+			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
+			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
+			gatevalueY.clear();
+		}
+	}
+
+	if (openFile.Length() >= 1)
+	{
+
+		if (gatevalueX.size() > 0 && gatevalueY.size() == 0)
+		{
+			start = gatevalueX[0];
+			end = gatevalueX[1];
+
+			//loading the efficiency data
+			TFile* eff_read = new TFile(Form("%s", openFile.Data()), "READ"); //eff_data_gc.root : for gecluster, eff_data_add.root : for addback
+			TF1* fcn = (TF1*) eff_read -> Get(eff_read->GetListOfKeys()->At(0)->GetName());
+
+			hist_N = hist_Tot -> ProjectionX("Pro_X_net2", tstart, tend, "");
+
+			//algorithm for the calculation of the netarea
+			Double_t peaks;
+			Double_t netcount;
+			Double_t neterror;
+			Double_t peakerrors;
+			Double_t peak, ampl, peakerror, amplerror, deverror;
+			Double_t dev = 1.0;
+			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", 0, 3000);
+			Double_t pi = 3.14;
+			hist_N -> GetXaxis() -> SetRange(start, end);
+			peak = hist_N-> GetMaximumBin();
+			ampl = hist_N -> GetMaximum();
+			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
+			hist_N -> Fit(gaussian, "MQN", "", start, end);
+			peaks = gaussian -> GetParameter(1);
+			peakerror = gaussian -> GetParError(1);
+			ampl = gaussian -> GetParameter(0);
+			dev = gaussian -> GetParameter(2);
+			amplerror = (gaussian -> GetParError(0))/ampl;
+			deverror = (gaussian -> GetParError(2))/dev;
+			netcount = sqrt(2*pi)*ampl*dev*(100/(fcn -> Eval(peak)));
+			neterror = sqrt(amplerror*amplerror + deverror*deverror)*netcount;
+			peakerrors = sqrt(peakerror*peakerror + dev*dev/netcount);
+			peak = 0;
+			ampl = 0;
+			amplerror = 0;
+			deverror = 0;
+			dev = 1.0;
+			// showing the result
+			TF1* gaussian_fit = new TF1("gau", "gaus(0)", 0, 3000);
+			TF1* back_fit = new TF1("back_fit", "[0]*x + [1]", 0, 3000);
+
+			gaussian_fit -> SetParameters(gaussian -> GetParameter(0), gaussian -> GetParameter(1), gaussian -> GetParameter(2));
+			back_fit -> SetParameters(gaussian -> GetParameter(3), gaussian -> GetParameter(4));
+
+			tempcvs -> cd();
+			hist_N -> Draw();
+			gaussian -> Draw("same");
+			gaussian_fit -> Draw("same");
+			back_fit -> Draw("same");
+
+			// represent total results for the request
+			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
+			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
+			gatevalueX.clear();
+		}
+
+		if (gatevalueY.size() > 0 && gatevalueX.size() == 0)
+		{
+			start = gatevalueY[0];
+			end = gatevalueY[1];
+
+			//loading the efficiency data
+			TFile* eff_read = new TFile(Form("%s", openFile.Data()), "READ"); //eff_data_gc.root : for gecluster, eff_data_add.root : for addback
+			TF1* fcn = (TF1*) eff_read -> Get(eff_read->GetListOfKeys()->At(0)->GetName());
+
+			hist_N = hist_Tot -> ProjectionY("Pro_Y_net2", tstart, tend, "");
+
+			//algorithm for the calculation of the netarea
+			Double_t peaks;
+			Double_t netcount;
+			Double_t neterror;
+			Double_t peakerrors;
+			Double_t peak, ampl, peakerror, amplerror, deverror;
+			Double_t dev = 1.0;
+			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", 0, 3000);
+			Double_t pi = 3.14;
+			hist_N -> GetXaxis() -> SetRange(start, end);
+			peak = hist_N-> GetMaximumBin();
+			ampl = hist_N -> GetMaximum();
+			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
+			hist_N -> Fit(gaussian, "MQN", "", start, end);
+			peaks = gaussian -> GetParameter(1);
+			peakerror = gaussian -> GetParError(1);
+			ampl = gaussian -> GetParameter(0);
+			dev = gaussian -> GetParameter(2);
+			amplerror = (gaussian -> GetParError(0))/ampl;
+			deverror = (gaussian -> GetParError(2))/dev;
+			netcount = sqrt(2*pi)*ampl*dev*(100/(fcn -> Eval(peak)));
+			neterror = sqrt(amplerror*amplerror + deverror*deverror)*netcount;
+			peakerrors = sqrt(peakerror*peakerror + dev*dev/netcount);
+			peak = 0;
+			ampl = 0;
+			amplerror = 0;
+			deverror = 0;
+			dev = 1.0;
+
+			// showing the result
+			TF1* gaussian_fit = new TF1("gau", "gaus(0)", 0, 3000);
+			TF1* back_fit = new TF1("back_fit", "[0]*x + [1]", 0, 3000);
+
+			gaussian_fit -> SetParameters(gaussian -> GetParameter(0), gaussian -> GetParameter(1), gaussian -> GetParameter(2));
+			back_fit -> SetParameters(gaussian -> GetParameter(3), gaussian -> GetParameter(4));
+
+			tempcvs -> cd();
+			hist_N -> Draw();
+			gaussian -> Draw("same");
+			gaussian_fit -> Draw("same");
+			back_fit -> Draw("same");
+
+			// represent total results for the request
+			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
+			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
+			gatevalueY.clear();
+		}
+	}
+}
+
+void STARAnaTG::Htimegrow(TString &openFile, Int_t &timeaxis1, Int_t &timeaxis2, Int_t &peak)
+{
+	if (openFile.Length() == 0)
+	{
+		TH1D* hist[10]; //setting 10 histograms to store 10 different spectra for different time interval
+		Int_t time[10] = {50, 100, 200, 300, 400, 500, 700, 1000, 1500, 2000}; //for short lived isotopes
+
+		// making 10 different spectra
+		if (timeaxis1 == 0 && timeaxis2 == 1)
+		{
+			for (Int_t i = 0; i < 10; i++)
+			{
+				hist[i] = hist_Tot -> ProjectionY(Form("hist_grow%d", i), 0, time[i], "");
+			}
+		}
+		if (timeaxis1 == 1 && timeaxis2 == 0)
+		{
+			for (Int_t i = 0; i < 10; i++)
+			{
+				hist[i] = hist_Tot -> ProjectionX(Form("hist_grow%d", i), 0, time[i], "");
+			}
+		}
+		//algorithm for the calculation of the netarea
+		if ((timeaxis1 == 0 && timeaxis2 == 1) || (timeaxis1 == 1 && timeaxis2 == 0))
+		{
+			Double_t netcount[10];
+			Double_t neterror[10];
+			Double_t ampl, peakerror, amplerror, deverror;
+			Double_t dev = 1.0;
+			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", 0, 3000);
+			Double_t pi = 3.14;
+			for (Int_t i = 0; i < 10; i++)
+			{
+				ampl = hist[i] -> GetBinContent(peak+1);
+				gaussian -> SetParameters(ampl, peak, dev, 0, 0);
+				gaussian -> SetParLimits(0, 1.0, ampl+20);
+				gaussian -> SetParLimits(2, 0.5, 1.5);
+				hist[i] -> Fit(gaussian, "MQN", "", peak-3, peak+5);
+				ampl = gaussian -> GetParameter(0);
+				dev = gaussian -> GetParameter(2);
+				amplerror = (gaussian -> GetParError(0))/ampl;
+				deverror = (gaussian -> GetParError(2))/dev;
+				netcount[i] = sqrt(2*pi)*ampl*dev;
+				neterror[i] = sqrt(amplerror*amplerror + deverror*deverror)*netcount[i];
+				ampl = 0;
+				amplerror = 0;
+				deverror = 0;
+				dev = 1.0;
+			}    
+
+
+			// algorithm for the time growing curve
+			for (Int_t i = 0; i < 10; i++)
+			{
+				graph -> SetPoint(i, time[i], netcount[i]);
+				graph -> SetPointError(i, 0, neterror[i]);
+			}
+
+			// fitting the time growing curve
+			TF1* ftn = new TF1("time growing", "[0]*(1-exp(-x/[1]))", 200, 2000);
+			ftn -> SetParameters(1000.000, 550.000);
+			graph -> Fit(ftn, "M");
+		}
+
+		if ((timeaxis1 == 0 && timeaxis2 == 0) || (timeaxis1 == 1 && timeaxis2 == 1))
+		{
+			cout << "Error : The time axis is not properly setted. Please check again." << endl;
+		}
+
+
+	}
+
+	if (openFile >= 1)
+	{
+		// loading the efficiency data
+		TFile* eff_read = new TFile(Form("%s", openFile.Data()), "READ"); //eff_data_gc.root : for gecluster, eff_data_add.root : for addback
+		TF1* fcn = (TF1*) eff_read -> Get(eff_read->GetListOfKeys()->At(0)->GetName());
+
+
+		TH1D* hist[10]; //setting 10 histograms to store 10 different spectra for different time interval
+		Int_t time[10] = {50, 100, 200, 300, 400, 500, 700, 1000, 1500, 2000}; //for short lived isotopes
+
+		// making 10 different spectra
+		if (timeaxis1 == 0 && timeaxis2 == 1)
+		{
+			for (Int_t i = 0; i < 10; i++)
+			{
+				hist[i] = hist_Tot -> ProjectionY(Form("hist_grow%d", i), 0, time[i], "");
+			}
+		}
+		if (timeaxis1 == 1 && timeaxis2 == 0)
+		{
+			for (Int_t i = 0; i < 10; i++)
+			{
+				hist[i] = hist_Tot -> ProjectionX(Form("hist_grow%d", i), 0, time[i], "");
+			}
+		}
+		//algorithm for the calculation of the netarea
+		if ((timeaxis1 == 0 && timeaxis2 == 1) || (timeaxis1 == 1 && timeaxis2 == 0))
+		{
+			Double_t netcount[10];
+			Double_t neterror[10];
+			Double_t ampl, peakerror, amplerror, deverror;
+			Double_t dev = 1.0;
+			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", 0, 3000);
+			Double_t pi = 3.14;
+			for (Int_t i = 0; i < 10; i++)
+			{
+				ampl = hist[i] -> GetBinContent(peak+1);
+				gaussian -> SetParameters(ampl, peak, dev, 0, 0);
+				gaussian -> SetParLimits(0, 1.0, ampl+20);
+				gaussian -> SetParLimits(2, 0.5, 1.5);
+				hist[i] -> Fit(gaussian, "MQN", "", peak-3, peak+5);
+				ampl = gaussian -> GetParameter(0);
+				dev = gaussian -> GetParameter(2);
+				amplerror = (gaussian -> GetParError(0))/ampl;
+				deverror = (gaussian -> GetParError(2))/dev;
+				netcount[i] = sqrt(2*pi)*ampl*dev*(100/(fcn -> Eval(peak)));
+				neterror[i] = sqrt(amplerror*amplerror + deverror*deverror)*netcount[i];
+				ampl = 0;
+				amplerror = 0;
+				deverror = 0;
+				dev = 1.0;
+			}    
+
+
+			// algorithm for the time growing curve
+			for (Int_t i = 0; i < 10; i++)
+			{
+				graph -> SetPoint(i, time[i], netcount[i]);
+				graph -> SetPointError(i, 0, neterror[i]);
+			}
+
+			// fitting the time growing curve
+			TF1* ftn = new TF1("time growing", "[0]*(1-exp(-x/[1]))", 200, 2000);
+			ftn -> SetParameters(1000.000, 550.000);
+			graph -> Fit(ftn, "M");
+		}
+
+		if ((timeaxis1 == 0 && timeaxis2 == 0) || (timeaxis1 == 1 && timeaxis2 == 1))
+		{
+			cout << "Error : The time axis is not properly setted. Please check again." << endl;
+		}
+	}   
+}
+
