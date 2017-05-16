@@ -91,9 +91,9 @@ void STARAnaTG::Hnetarea(TCanvas *tempcvs, TString &openFile)
 			Double_t peakerrors;
 			Double_t peak, ampl, peakerror, amplerror, deverror;
 			Double_t dev = 1.0;
-			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", 0, 3000);
-			Double_t pi = 3.14;
-			hist_N -> GetXaxis() -> SetRange(start, end);
+			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", start, end);
+			Double_t pi = TMath::Pi();
+			hist_N -> GetXaxis() -> SetRange(start-10, end+10);
 			peak = hist_N-> GetMaximumBin();
 			ampl = hist_N -> GetMaximum();
 			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
@@ -113,8 +113,8 @@ void STARAnaTG::Hnetarea(TCanvas *tempcvs, TString &openFile)
 			deverror = 0;
 			dev = 1.0;
 			// showing the result
-			TF1* gaussian_fit = new TF1("gau", "gaus(0)", 0, 3000);
-			TF1* back_fit = new TF1("back_fit", "[0]*x + [1]", 0, 3000);
+			TF1* gaussian_fit = new TF1("gau", "gaus(0)", start, end);
+			TF1* back_fit = new TF1("back_fit", "[0]*x + [1]", start, end);
 
 			gaussian_fit -> SetParameters(gaussian -> GetParameter(0), gaussian -> GetParameter(1), gaussian -> GetParameter(2));
 			back_fit -> SetParameters(gaussian -> GetParameter(3), gaussian -> GetParameter(4));
@@ -146,9 +146,9 @@ void STARAnaTG::Hnetarea(TCanvas *tempcvs, TString &openFile)
 			Double_t peakerrors;
 			Double_t peak, ampl, peakerror, amplerror, deverror;
 			Double_t dev = 1.0;
-			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", 0, 3000);
-			Double_t pi = 3.14;
-			hist_N -> GetXaxis() -> SetRange(start, end);
+			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", start, end);
+			Double_t pi = TMath::Pi();
+			hist_N -> GetXaxis() -> SetRange(start-10, end+10);
 			peak = hist_N-> GetMaximumBin();
 			ampl = hist_N -> GetMaximum();
 			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
@@ -169,8 +169,8 @@ void STARAnaTG::Hnetarea(TCanvas *tempcvs, TString &openFile)
 			dev = 1.0;
 
 			// showing the result
-			TF1* gaussian_fit = new TF1("gau", "gaus(0)", 0, 3000);
-			TF1* back_fit = new TF1("back_fit", "[0]*x + [1]", 0, 3000);
+			TF1* gaussian_fit = new TF1("gau", "gaus(0)", start, end);
+			TF1* back_fit = new TF1("back_fit", "[0]*x + [1]", start, end);
 
 			gaussian_fit -> SetParameters(gaussian -> GetParameter(0), gaussian -> GetParameter(1), gaussian -> GetParameter(2));
 			back_fit -> SetParameters(gaussian -> GetParameter(3), gaussian -> GetParameter(4));
@@ -209,9 +209,9 @@ void STARAnaTG::Hnetarea(TCanvas *tempcvs, TString &openFile)
 			Double_t peakerrors;
 			Double_t peak, ampl, peakerror, amplerror, deverror;
 			Double_t dev = 1.0;
-			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", 0, 3000);
-			Double_t pi = 3.14;
-			hist_N -> GetXaxis() -> SetRange(start, end);
+			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", start, end);
+			Double_t pi = TMath::Pi();
+			hist_N -> GetXaxis() -> SetRange(start-10, end+10);
 			peak = hist_N-> GetMaximumBin();
 			ampl = hist_N -> GetMaximum();
 			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
@@ -231,8 +231,8 @@ void STARAnaTG::Hnetarea(TCanvas *tempcvs, TString &openFile)
 			deverror = 0;
 			dev = 1.0;
 			// showing the result
-			TF1* gaussian_fit = new TF1("gau", "gaus(0)", 0, 3000);
-			TF1* back_fit = new TF1("back_fit", "[0]*x + [1]", 0, 3000);
+			TF1* gaussian_fit = new TF1("gau", "gaus(0)", start, end);
+			TF1* back_fit = new TF1("back_fit", "[0]*x + [1]", start, end);
 
 			gaussian_fit -> SetParameters(gaussian -> GetParameter(0), gaussian -> GetParameter(1), gaussian -> GetParameter(2));
 			back_fit -> SetParameters(gaussian -> GetParameter(3), gaussian -> GetParameter(4));
@@ -267,9 +267,9 @@ void STARAnaTG::Hnetarea(TCanvas *tempcvs, TString &openFile)
 			Double_t peakerrors;
 			Double_t peak, ampl, peakerror, amplerror, deverror;
 			Double_t dev = 1.0;
-			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", 0, 3000);
-			Double_t pi = 3.14;
-			hist_N -> GetXaxis() -> SetRange(start, end);
+			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", start, end);
+			Double_t pi = TMath::Pi();
+			hist_N -> GetXaxis() -> SetRange(start-10, end+10);
 			peak = hist_N-> GetMaximumBin();
 			ampl = hist_N -> GetMaximum();
 			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
@@ -290,8 +290,8 @@ void STARAnaTG::Hnetarea(TCanvas *tempcvs, TString &openFile)
 			dev = 1.0;
 
 			// showing the result
-			TF1* gaussian_fit = new TF1("gau", "gaus(0)", 0, 3000);
-			TF1* back_fit = new TF1("back_fit", "[0]*x + [1]", 0, 3000);
+			TF1* gaussian_fit = new TF1("gau", "gaus(0)", start, end);
+			TF1* back_fit = new TF1("back_fit", "[0]*x + [1]", start, end);
 
 			gaussian_fit -> SetParameters(gaussian -> GetParameter(0), gaussian -> GetParameter(1), gaussian -> GetParameter(2));
 			back_fit -> SetParameters(gaussian -> GetParameter(3), gaussian -> GetParameter(4));
@@ -334,9 +334,9 @@ void STARAnaTG::Hnetarea2(TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int
 			Double_t peakerrors;
 			Double_t peak, ampl, peakerror, amplerror, deverror;
 			Double_t dev = 1.0;
-			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", 0, 3000);
-			Double_t pi = 3.14;
-			hist_N -> GetXaxis() -> SetRange(start, end);
+			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", start, end);
+			Double_t pi = TMath::Pi();
+			hist_N -> GetXaxis() -> SetRange(start-10, end+10);
 			peak = hist_N-> GetMaximumBin();
 			ampl = hist_N -> GetMaximum();
 			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
@@ -356,8 +356,8 @@ void STARAnaTG::Hnetarea2(TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int
 			deverror = 0;
 			dev = 1.0;
 			// showing the result
-			TF1* gaussian_fit = new TF1("gau", "gaus(0)", 0, 3000);
-			TF1* back_fit = new TF1("back_fit", "[0]*x + [1]", 0, 3000);
+			TF1* gaussian_fit = new TF1("gau", "gaus(0)", start, end);
+			TF1* back_fit = new TF1("back_fit", "[0]*x + [1]", start, end);
 
 			gaussian_fit -> SetParameters(gaussian -> GetParameter(0), gaussian -> GetParameter(1), gaussian -> GetParameter(2));
 			back_fit -> SetParameters(gaussian -> GetParameter(3), gaussian -> GetParameter(4));
@@ -389,9 +389,9 @@ void STARAnaTG::Hnetarea2(TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int
 			Double_t peakerrors;
 			Double_t peak, ampl, peakerror, amplerror, deverror;
 			Double_t dev = 1.0;
-			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", 0, 3000);
-			Double_t pi = 3.14;
-			hist_N -> GetXaxis() -> SetRange(start, end);
+			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", start, end);
+			Double_t pi = TMath::Pi();
+			hist_N -> GetXaxis() -> SetRange(start-10, end+10);
 			peak = hist_N-> GetMaximumBin();
 			ampl = hist_N -> GetMaximum();
 			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
@@ -412,8 +412,8 @@ void STARAnaTG::Hnetarea2(TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int
 			dev = 1.0;
 
 			// showing the result
-			TF1* gaussian_fit = new TF1("gau", "gaus(0)", 0, 3000);
-			TF1* back_fit = new TF1("back_fit", "[0]*x + [1]", 0, 3000);
+			TF1* gaussian_fit = new TF1("gau", "gaus(0)", start, end);
+			TF1* back_fit = new TF1("back_fit", "[0]*x + [1]", start, end);
 
 			gaussian_fit -> SetParameters(gaussian -> GetParameter(0), gaussian -> GetParameter(1), gaussian -> GetParameter(2));
 			back_fit -> SetParameters(gaussian -> GetParameter(3), gaussian -> GetParameter(4));
@@ -452,9 +452,9 @@ void STARAnaTG::Hnetarea2(TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int
 			Double_t peakerrors;
 			Double_t peak, ampl, peakerror, amplerror, deverror;
 			Double_t dev = 1.0;
-			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", 0, 3000);
-			Double_t pi = 3.14;
-			hist_N -> GetXaxis() -> SetRange(start, end);
+			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", start, end);
+			Double_t pi = TMath::Pi();
+			hist_N -> GetXaxis() -> SetRange(start-10, end+10);
 			peak = hist_N-> GetMaximumBin();
 			ampl = hist_N -> GetMaximum();
 			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
@@ -474,8 +474,8 @@ void STARAnaTG::Hnetarea2(TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int
 			deverror = 0;
 			dev = 1.0;
 			// showing the result
-			TF1* gaussian_fit = new TF1("gau", "gaus(0)", 0, 3000);
-			TF1* back_fit = new TF1("back_fit", "[0]*x + [1]", 0, 3000);
+			TF1* gaussian_fit = new TF1("gau", "gaus(0)", start, end);
+			TF1* back_fit = new TF1("back_fit", "[0]*x + [1]", start, end);
 
 			gaussian_fit -> SetParameters(gaussian -> GetParameter(0), gaussian -> GetParameter(1), gaussian -> GetParameter(2));
 			back_fit -> SetParameters(gaussian -> GetParameter(3), gaussian -> GetParameter(4));
@@ -510,9 +510,9 @@ void STARAnaTG::Hnetarea2(TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int
 			Double_t peakerrors;
 			Double_t peak, ampl, peakerror, amplerror, deverror;
 			Double_t dev = 1.0;
-			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", 0, 3000);
-			Double_t pi = 3.14;
-			hist_N -> GetXaxis() -> SetRange(start, end);
+			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", start, end);
+			Double_t pi = TMath::Pi();
+			hist_N -> GetXaxis() -> SetRange(start-10, end+10);
 			peak = hist_N-> GetMaximumBin();
 			ampl = hist_N -> GetMaximum();
 			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
@@ -533,8 +533,8 @@ void STARAnaTG::Hnetarea2(TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int
 			dev = 1.0;
 
 			// showing the result
-			TF1* gaussian_fit = new TF1("gau", "gaus(0)", 0, 3000);
-			TF1* back_fit = new TF1("back_fit", "[0]*x + [1]", 0, 3000);
+			TF1* gaussian_fit = new TF1("gau", "gaus(0)", start, end);
+			TF1* back_fit = new TF1("back_fit", "[0]*x + [1]", start, end);
 
 			gaussian_fit -> SetParameters(gaussian -> GetParameter(0), gaussian -> GetParameter(1), gaussian -> GetParameter(2));
 			back_fit -> SetParameters(gaussian -> GetParameter(3), gaussian -> GetParameter(4));
@@ -583,7 +583,7 @@ void STARAnaTG::Htimegrow(TString &openFile, Int_t &timeaxis1, Int_t &timeaxis2,
 			Double_t ampl, peakerror, amplerror, deverror;
 			Double_t dev = 1.0;
 			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", 0, 3000);
-			Double_t pi = 3.14;
+			Double_t pi = TMath::Pi();
 			for (Int_t i = 0; i < 10; i++)
 			{
 				ampl = hist[i] -> GetBinContent(peak+1);
@@ -658,7 +658,7 @@ void STARAnaTG::Htimegrow(TString &openFile, Int_t &timeaxis1, Int_t &timeaxis2,
 			Double_t ampl, peakerror, amplerror, deverror;
 			Double_t dev = 1.0;
 			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", 0, 3000);
-			Double_t pi = 3.14;
+			Double_t pi = TMath::Pi();
 			for (Int_t i = 0; i < 10; i++)
 			{
 				ampl = hist[i] -> GetBinContent(peak+1);
