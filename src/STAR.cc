@@ -22,28 +22,35 @@ Copyright. 2017. B. Moon
 #include "Rtypes.h"
 #include "STAR.h"
 #include "TObject.h"
+#include <sys/stat.h>
 
 using namespace std;
 
 void STAR::main(TString &directory, TString &openFile)
 {
-   
     Int_t xnch = 4096;
-    Int_t ynch = 4096; //xnch : channel number of x, ynch : channel number of y
+    Int_t ynch = 4096;
+	struct stat file_stat;
+	stat(Form("%s%s", directory.Data(), openFile.Data()), &file_stat);
+	ULong64_t filesize = (ULong64_t) file_stat.st_size;
+   
     FILE *read;
     read = fopen(Form("%s%s", directory.Data(), openFile.Data()), "rb");
     
     direc = directory;
     
     hist_Tot = new TH2D("hist", "", xnch, 0, xnch, ynch, 0, ynch);
-    Int_t temp[4096] = {0};
+	UShort_t temp1[4096] = {0};
+	Int_t temp2[4096] = {0};
     
     for (Int_t i = 0; i < xnch; i++)
     {
-        fread(temp, sizeof(int), xnch, read);
-        for (Int_t j = 0; j < 4096; j++)
+        if (filesize == 32*1024*1024)	fread(temp1, 2, 4096, read);
+		if (filesize == 64*1024*1024)	fread(temp2, 4, 4096, read);
+        for (Int_t j = 0; j < ynch; j++)
         {
-            hist_Tot -> SetBinContent(i+1, j+1, temp[j]);
+            if (filesize == 32*1024*1024)	hist_Tot -> SetBinContent(i+1, j+1, temp1[j]);
+            if (filesize == 64*1024*1024)	hist_Tot -> SetBinContent(i+1, j+1, temp2[j]);
         }
     }
     

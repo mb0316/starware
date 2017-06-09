@@ -19,12 +19,12 @@ class STARAnaDis : public STAR
 	private :
 
 	public :
-		TH1D* hist1;
-		TH1D* hist2;
-		TH1* gated_hist;
+		TH1D* hist1;		//The histogram for the first time condition
+		TH1D* hist2;		//The histogram for the second time condition
+		TH1* gated_hist;	//The histogram for a specific energy
 
-		void Htimediff(Int_t &timeaxis1, Int_t &timeaxis2, Int_t &first, Int_t &second, Int_t &third, Int_t &forth);
-		void peakfind(TString &openFile);
+		void Htimediff(Int_t &timeaxis1, Int_t &timeaxis2, Int_t &first, Int_t &second, Int_t &third, Int_t &forth);	//Show two different time gated histograms
+		void peakfind(TString &openFile);																				//Show the histogram of a specific energy
 };
 #endif
 
