@@ -85,7 +85,7 @@ class STARGui : public STAR
 
 	public :
 		STARGui();
-		void main(TString &directory, TString &openFile);
+//		void main(TString &directory, TString &openFile);
 		void clearall();
 		void openfile();
 		void openeff();

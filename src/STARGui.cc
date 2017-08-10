@@ -843,7 +843,7 @@ STARGui::STARGui()
 
 	intro();
 }
-
+/*
 void STARGui::main(TString &directory, TString &openFile)
 {
 	STAR::main(directory, openFile);
@@ -856,7 +856,7 @@ void STARGui::main(TString &directory, TString &openFile)
 	stardis.hist_Tot = hist_Tot;
 	stardis.direc = direc;
 }
-
+*/
 void STARGui::clearall()
 {
     cvs1 -> Disconnect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)");
@@ -917,7 +917,7 @@ void STARGui::openfile()
     cvs1 -> ToggleEventStatus();
     hist_X -> Draw();
     cvs1 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "STARGui", this, "GetCoorX(Int_t, Int_t, Int_t, TObject*)");
-    cvs1 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "STARGui", this, "EventInfo(Int_t, Int_t, Int_t, TObject*)");
+    //cvs1 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "STARGui", this, "EventInfo(Int_t, Int_t, Int_t, TObject*)");
     cvs1 -> Modified();
     cvs1 -> Update();
     cvs2 -> cd();
@@ -981,6 +981,7 @@ void STARGui::gatedspectrum()
 
 void STARGui::gate()
 {
+/*
 	for (Int_t i = 0; i < int(gatevalueX.size()); i++)
 	{
 		stargg.gatevalueX.push_back(gatevalueX[i]);
@@ -989,8 +990,10 @@ void STARGui::gate()
 	{
 		stargg.gatevalueY.push_back(gatevalueY[i]);
 	}
-	
-    stargg.Hgate();
+*/
+	if (gatevalueX.size() == 6 && gatevalueY.size() < 6)	stargg.Hgate(hist_Tot, 0, gatevalueX[0], gatevalueX[1], gatevalueX[2], gatevalueX[3], gatevalueX[4], gatevalueX[5]);	
+	if (gatevalueY.size() == 6 && gatevalueX.size() < 6)	stargg.Hgate(hist_Tot, 1, gatevalueY[0], gatevalueY[1], gatevalueY[2], gatevalueY[3], gatevalueY[4], gatevalueY[5]);	
+	else cout << "The gate information is not exact. Please check it again." << endl;
 	reset();
 	cvs1 -> Modified();
 	cvs1 -> Update();
@@ -999,14 +1002,14 @@ void STARGui::gate()
     
     cvs3 -> cd();
     cvs3 -> ToggleEventStatus();
-    stargg.hist_P -> Draw();
+    if (stargg.hist_P != nullptr)	stargg.hist_P -> Draw();
     cvs3 -> Modified();
     cvs3 -> Update();
 }
 
 void STARGui::timegate()
 {
-    startg.Htimegate(timeaxis1, timeaxis2, tstart, tend);
+    startg.Htimegate(hist_Tot, timeaxis1, timeaxis2, tstart, tend);
     
     cvs5 -> cd();
     cvs5 -> ToggleEventStatus();
@@ -1017,6 +1020,7 @@ void STARGui::timegate()
 
 void STARGui::decaygate()
 {
+/*
 	for (Int_t i = 0; i < int(gatevalueX.size()); i++)
 	{
 		stardc.gatevalueX.push_back(gatevalueX[i]);
@@ -1025,8 +1029,10 @@ void STARGui::decaygate()
 	{
 		stardc.gatevalueY.push_back(gatevalueY[i]);
 	}
-	
-    stardc.Hdecaygate(tbin);
+*/  
+	if (gatevalueX.size() == 6 && gatevalueY.size() < 6)    stardc.Hdecaygate(hist_Tot, 0, gatevalueX[0], gatevalueX[1], gatevalueX[2], gatevalueX[3], gatevalueX[4], gatevalueX[5], tbin);
+    if (gatevalueY.size() == 6 && gatevalueX.size() < 6)    stardc.Hdecaygate(hist_Tot, 1, gatevalueY[0], gatevalueY[1], gatevalueY[2], gatevalueY[3], gatevalueY[4], gatevalueY[5], tbin);
+    else cout << "The gate information is not exact. Please check it again." << endl;
 
 	reset();
    	cvs1 -> Modified();
@@ -1043,6 +1049,7 @@ void STARGui::decaygate()
 
 void STARGui::netarea()
 {
+/*
 	for (Int_t i = 0; i < int(gatevalueX.size()); i++)
 	{
 		startg.gatevalueX.push_back(gatevalueX[i]);
@@ -1051,14 +1058,16 @@ void STARGui::netarea()
 	{
 		startg.gatevalueY.push_back(gatevalueY[i]);
 	}
-	
-	startg.Hnetarea(cvs3, effdatafile);
+*/
+	if (gatevalueX.size() == 2 && gatevalueY.size() < 2)	startg.Hnetarea(hist_Tot, 0, gatevalueX[0], gatevalueX[1], cvs3, effdatafile);
+	if (gatevalueY.size() == 2 && gatevalueX.size() < 2)	startg.Hnetarea(hist_Tot, 1, gatevalueY[0], gatevalueY[1], cvs3, effdatafile);
+	else cout << "The gate information is not exact. Please check it again." << endl;
 	reset();
+	
 	cvs1 -> Modified();
 	cvs1 -> Update();
     cvs2 -> Modified();
 	cvs2 -> Update();
-
 
 	cvs3 -> Modified();
 	cvs3 -> Update();
@@ -1066,6 +1075,7 @@ void STARGui::netarea()
 
 void STARGui::netarea2()
 {
+/*
 	for (Int_t i = 0; i < int(gatevalueX.size()); i++)
 	{
 		startg.gatevalueX.push_back(gatevalueX[i]);
@@ -1074,10 +1084,12 @@ void STARGui::netarea2()
 	{
 		startg.gatevalueY.push_back(gatevalueY[i]);
 	}
-	
-	startg.Hnetarea2(cvs3, effdatafile, tstart, tend);
-
+*/
+	if (gatevalueX.size() == 2 && gatevalueY.size() < 2)	startg.Hnetarea2(hist_Tot, 0, gatevalueX[0], gatevalueX[1], cvs3, effdatafile, tstart, tend);
+	if (gatevalueY.size() == 2 && gatevalueX.size() < 2)	startg.Hnetarea2(hist_Tot, 1, gatevalueY[0], gatevalueY[1], cvs3, effdatafile, tstart, tend);
+	else cout << "The gate information is not exact. Please check it again." << endl;
 	reset();
+
 	cvs1 -> Modified();
 	cvs1 -> Update();
     cvs2 -> Modified();
@@ -1089,7 +1101,7 @@ void STARGui::netarea2()
 
 void STARGui::timediff()
 {
-    stardis.Htimediff(timeaxis1, timeaxis2, dstart1, dend1, dstart2, dend2);
+    stardis.Htimediff(hist_Tot, timeaxis1, timeaxis2, dstart1, dend1, dstart2, dend2);
     
     cvs6 -> cd();
     cvs6 -> ToggleEventStatus();

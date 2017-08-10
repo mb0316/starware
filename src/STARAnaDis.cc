@@ -15,7 +15,7 @@ Copyright. 2017. B. Moon
 
 using namespace std;
 
-void STARAnaDis::Htimediff(Int_t &timeaxis1, Int_t &timeaxis2, Int_t &first, Int_t &second, Int_t &third, Int_t &forth)
+void STARAnaDis::Htimediff(TH2D *hist_Tot, Int_t &timeaxis1, Int_t &timeaxis2, Int_t &first, Int_t &second, Int_t &third, Int_t &forth)
 {
 	if (hist1 != nullptr)	delete hist1;
 	if (hist2 != nullptr)	delete hist2;

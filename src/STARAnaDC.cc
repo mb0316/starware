@@ -59,31 +59,28 @@ void MLM_D(Int_t &, Double_t *, Double_t &f, Double_t *par, Int_t)
     }
 }
 
-void STARAnaDC::Hdecaygate(Int_t &tbin)
+void STARAnaDC::Hdecaygate(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, Int_t &bg_ls, Int_t &bg_le, Int_t &bg_rs, Int_t &bg_re, Int_t &nbin)
 {
-    
-    Int_t start, end, bg_rs, bg_re, bg_ls, bg_le, nbin; // background ranges
-    
 	if (hist_D != nullptr)	delete hist_D;
 
-    if (gatevalueX.size() > 0 && gatevalueY.size() == 0)
+//    if (gatevalueX.size() > 0 && gatevalueY.size() == 0)
+	if (iden == 0)
     {
+/*
         start = gatevalueX[0];
         end = gatevalueX[1];
         bg_ls = gatevalueX[2];
         bg_le = gatevalueX[3];
         bg_rs = gatevalueX[4];
         bg_re = gatevalueX[5];
-        Int_t peak = (start+end)/2; // gated peak value
+*/
+        peak = (start+end)/2; // gated peak value
         
-        nbin = tbin;
         Int_t bin = hist_Tot -> GetNbinsY();
         hist_DX = hist_Tot -> ProjectionY("Pro_Y_decay", start, end, "");
         hist_L = hist_Tot -> ProjectionY("Pro_BGl", bg_ls, bg_le, "");
         hist_R = hist_Tot -> ProjectionY("Pro_BGr", bg_rs, bg_re, "");
         hist_D = new TH1S("hist_decay", "Decay Curve; Time (ms); Counts;", bin/nbin, 0, bin); //gated time curve after removing the background
-        
-        Double_t gam, gamL, gamR, gamP;
         
         // algorithm for the time decay curve
         for (Int_t i = 0; i < bin; i++)
@@ -105,24 +102,25 @@ void STARAnaDC::Hdecaygate(Int_t &tbin)
         hist_D -> Write();
         out -> Close();
         cout << peak << "keV_decaycurve.root outfile has been created." << endl;
-        gatevalueX.clear();
+//       gatevalueX.clear();
 		delete hist_DX;
 		delete hist_L;
 		delete hist_R;
 		delete out;
     }
     
-    if (gatevalueY.size() > 0 && gatevalueX.size() == 0)
+//    if (gatevalueY.size() > 0 && gatevalueX.size() == 0)
+	if (iden == 1)
     {
+/*
         start = gatevalueY[0];
         end = gatevalueY[1];
         bg_ls = gatevalueY[2];
         bg_le = gatevalueY[3];
         bg_rs = gatevalueY[4];
         bg_re = gatevalueY[5];
-        Int_t peak = (start+end)/2; // gated peak value
-        
-        nbin = tbin;
+*/
+        peak = (start+end)/2; // gated peak value
         
         Int_t bin = hist_Tot -> GetNbinsX();
         hist_DX = hist_Tot -> ProjectionX("Pro_X_decay", start, end, "");
@@ -130,8 +128,6 @@ void STARAnaDC::Hdecaygate(Int_t &tbin)
         hist_R = hist_Tot -> ProjectionX("Pro_BGr", bg_rs, bg_re, "");
         hist_D = new TH1S("hist_decay", "Decay Curve; Time (ms); Counts;", bin/nbin, 0, bin); //gated time curve after removing the background
         
-        Double_t gam, gamL, gamR, gamP;
-        
         // algorithm for the time decay curve
         for (Int_t i = 0; i < bin; i++)
         {
@@ -152,7 +148,7 @@ void STARAnaDC::Hdecaygate(Int_t &tbin)
         hist_D -> Write();
         out -> Close();
         cout << peak << "keV_decaycurve.root outfile has been created." << endl;
-        gatevalueY.clear();
+//        gatevalueY.clear();
 		delete hist_DX;
 		delete hist_L;
 		delete hist_R;

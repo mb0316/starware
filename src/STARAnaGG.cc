@@ -24,25 +24,21 @@ Copyright. 2017. B. Moon
 #include "STAR.h"
 #include "STARAnaGG.h"
 #include "TObject.h"
-
+//#include "TObjectTable.h"
 
 using namespace std;
 
-void STARAnaGG::Hgate()
+void STARAnaGG::Hgate(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, Int_t &bgls, Int_t &bgle, Int_t &bgrs, Int_t &bgre)
 {
+//	gObjectTable->Print();
+		return;        
 	if (hist_P != nullptr)	delete hist_P;
-    if (gatevalueX.size() > 0 && gatevalueY.size() == 0)
+	if (iden == 0)
     {
-        start = gatevalueX[0];
-        end = gatevalueX[1];
-        bgls = gatevalueX[2];
-        bgle = gatevalueX[3];
-        bgrs = gatevalueX[4];
-        bgre = gatevalueX[5];
         peak = (start+end)/2; //the peak value
 
         bin = hist_Tot -> GetNbinsX();
-        hist_P = new TH1D("gated_histogram", "Gated Spectrum; Energy (keV); Counts;", bin, 0, bin); //gated spectrum after removing the background
+		hist_P = new TH1D("gated_histogram", "Gated Spectrum; Energy (keV); Counts;", bin, 0, bin); //gated spectrum after removing the background
         
         hist_PY = hist_Tot -> ProjectionX("Pro_X_gate", start, end, "");
         hist_BGL = hist_Tot -> ProjectionX("Pro_BGL", bgls, bgle, "");
@@ -69,28 +65,20 @@ void STARAnaGG::Hgate()
             }
         }
         hist_P -> Sumw2(kFALSE);
-        
         // saving the result data
         TFile* out = new TFile(Form("%s%dkeV.root", direc.Data(), peak), "RECREATE");
         out -> cd();
         hist_P -> Write();
         out -> Close();
         cout << peak << "keV.root outfile has been created." << endl;
-        gatevalueX.clear();
 		delete hist_PY;
 		delete hist_BGL;
 		delete hist_BGR;
 		delete out;
     }
     
-    if (gatevalueY.size() > 0 && gatevalueX.size() == 0)
-    {
-        start = gatevalueY[0];
-        end = gatevalueY[1];
-        bgls = gatevalueY[2];
-        bgle = gatevalueY[3];
-        bgrs = gatevalueY[4];
-        bgre = gatevalueY[5];
+	if (iden == 1) 
+	{
         peak = (start+end)/2; //the peak value
         
         bin = hist_Tot -> GetNbinsX();
@@ -128,7 +116,6 @@ void STARAnaGG::Hgate()
         hist_P -> Write();
         out -> Close();
         cout << peak << "keV.root outfile has been created." << endl;
-        gatevalueY.clear();
 		delete hist_PY;
 		delete hist_BGL;
 		delete hist_BGR;

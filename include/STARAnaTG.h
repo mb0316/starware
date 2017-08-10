@@ -25,9 +25,9 @@ class STARAnaTG : public STAR
 		TH1D* hist_TY = nullptr;
 		TGraphErrors* graph = new TGraphErrors();
 
-		void Htimegate(Int_t &timeaxis1, Int_t &timeaxis2, Int_t &start, Int_t &end);
-		void Hnetarea(TCanvas *tempcvs, TString &openFile);
-		void Hnetarea2(TCanvas *tempcvs, TString &openFile, Int_t &tstart, Int_t &tend);
+		void Htimegate(TH2D *hist_Tot, Int_t &timeaxis1, Int_t &timeaxis2, Int_t &start, Int_t &end);
+		void Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, TCanvas *tempcvs, TString &openFile);
+		void Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int_t &tend);
 //		void Htimegrow(TString &openFile, Int_t &timeaxis1, Int_t &timeaxis2, Int_t &peak);
 };
 #endif

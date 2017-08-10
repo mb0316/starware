@@ -6,7 +6,7 @@ Last refine : 12.May.2017, ver.1.0
 Copyright. 2017. B. Moon
 ***********************************************************************************/
 #include "TH1S.h"
-#include "TH2S.h"
+#include "TH2D.h"
 #include "TCanvas.h"
 #include "TStyle.h"
 #include <iostream>
@@ -40,7 +40,7 @@ void STAR::main(TString &directory, TString &openFile)
     
     direc = directory;
     
-    hist_Tot = new TH2S("hist", "", 4096, 0, 4096, 4096, 0, 4096);
+    hist_Tot = new TH2D("hist", "", 4096, 0, 4096, 4096, 0, 4096);
     
 	UShort_t *temp1;
 	temp1 = (UShort_t *) malloc(sizeof(short) *4096);
