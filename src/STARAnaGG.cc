@@ -6,8 +6,8 @@ Last refine : 12.May.2017, ver.1.0
 Copyright. 2017. B. Moon
 ***********************************************************************************/
 #include "TFile.h"
-#include "TH1D.h"
-#include "TH2D.h"
+#include "TH1S.h"
+#include "TH2S.h"
 #include "TCanvas.h"
 #include <iostream>
 #include "TPad.h"
@@ -30,9 +30,7 @@ using namespace std;
 
 void STARAnaGG::Hgate()
 {
-    Int_t start, end;
-    Int_t bgrs, bgre, bgls, bgle; //background ranges
-
+	if (hist_P != nullptr)	delete hist_P;
     if (gatevalueX.size() > 0 && gatevalueY.size() == 0)
     {
         start = gatevalueX[0];
@@ -41,11 +39,9 @@ void STARAnaGG::Hgate()
         bgle = gatevalueX[3];
         bgrs = gatevalueX[4];
         bgre = gatevalueX[5];
-        Int_t peak = (start+end)/2; //the peak value
+        peak = (start+end)/2; //the peak value
 
-		cout << start << " " << end << " " <<  bgls << " " << bgle << " " << bgrs << " " << bgre << endl;
-        
-        Int_t bin = hist_Tot -> GetNbinsX();
+        bin = hist_Tot -> GetNbinsX();
         hist_P = new TH1D("gated_histogram", "Gated Spectrum; Energy (keV); Counts;", bin, 0, bin); //gated spectrum after removing the background
         
         hist_PY = hist_Tot -> ProjectionX("Pro_X_gate", start, end, "");
@@ -53,7 +49,6 @@ void STARAnaGG::Hgate()
         hist_BGR = hist_Tot -> ProjectionX("Pro_BGR", bgrs, bgre, "");
         
         // algorithm for making the gated spectrum
-        Double_t gamma, gammaL, gammaR, gammaP;
         for (Int_t i = 0; i < bin; i++)
         {
             gamma = hist_PY -> GetBinContent(i+1);
@@ -82,6 +77,10 @@ void STARAnaGG::Hgate()
         out -> Close();
         cout << peak << "keV.root outfile has been created." << endl;
         gatevalueX.clear();
+		delete hist_PY;
+		delete hist_BGL;
+		delete hist_BGR;
+		delete out;
     }
     
     if (gatevalueY.size() > 0 && gatevalueX.size() == 0)
@@ -92,9 +91,9 @@ void STARAnaGG::Hgate()
         bgle = gatevalueY[3];
         bgrs = gatevalueY[4];
         bgre = gatevalueY[5];
-        Int_t peak = (start+end)/2; //the peak value
+        peak = (start+end)/2; //the peak value
         
-        Int_t bin = hist_Tot -> GetNbinsX();
+        bin = hist_Tot -> GetNbinsX();
         hist_P = new TH1D("gated_histogram", "Gated Spectrum; Energy (keV); Counts;", bin, 0, bin); //gated spectrum after removing the background
         
         hist_PY = hist_Tot -> ProjectionY("Pro_Y_gate", start, end, "");
@@ -102,7 +101,6 @@ void STARAnaGG::Hgate()
         hist_BGR = hist_Tot -> ProjectionY("Pro_BGR", bgrs, bgre, "");
         
         // algorithm for making the gated spectrum
-        Double_t gamma, gammaL, gammaR, gammaP;
         for (Int_t i = 0; i < bin; i++)
         {
             gamma = hist_PY -> GetBinContent(i+1);
@@ -131,6 +129,10 @@ void STARAnaGG::Hgate()
         out -> Close();
         cout << peak << "keV.root outfile has been created." << endl;
         gatevalueY.clear();
+		delete hist_PY;
+		delete hist_BGL;
+		delete hist_BGR;
+		delete out;
     }
 }
 

@@ -7,8 +7,8 @@ Copyright. 2017. B. Moon
 ***********************************************************************************/
 #include "TF1.h"
 #include "TFile.h"
-#include "TH1D.h"
-#include "TH2D.h"
+#include "TH1S.h"
+#include "TH2S.h"
 #include "TCanvas.h"
 #include "TGraph.h"
 #include "TGraphErrors.h"
@@ -27,7 +27,7 @@ Copyright. 2017. B. Moon
 
 using namespace std;
 
-TGraphErrors* singledecay;
+TGraphErrors* singledecay = nullptr;
 
 void MLM_P(Int_t &, Double_t *, Double_t &f, Double_t *par, Int_t)
 {
@@ -64,6 +64,8 @@ void STARAnaDC::Hdecaygate(Int_t &tbin)
     
     Int_t start, end, bg_rs, bg_re, bg_ls, bg_le, nbin; // background ranges
     
+	if (hist_D != nullptr)	delete hist_D;
+
     if (gatevalueX.size() > 0 && gatevalueY.size() == 0)
     {
         start = gatevalueX[0];
@@ -79,7 +81,7 @@ void STARAnaDC::Hdecaygate(Int_t &tbin)
         hist_DX = hist_Tot -> ProjectionY("Pro_Y_decay", start, end, "");
         hist_L = hist_Tot -> ProjectionY("Pro_BGl", bg_ls, bg_le, "");
         hist_R = hist_Tot -> ProjectionY("Pro_BGr", bg_rs, bg_re, "");
-        hist_D = new TH1D("hist_decay", "Decay Curve; Time (ms); Counts;", bin/nbin, 0, bin); //gated time curve after removing the background
+        hist_D = new TH1S("hist_decay", "Decay Curve; Time (ms); Counts;", bin/nbin, 0, bin); //gated time curve after removing the background
         
         Double_t gam, gamL, gamR, gamP;
         
@@ -104,6 +106,10 @@ void STARAnaDC::Hdecaygate(Int_t &tbin)
         out -> Close();
         cout << peak << "keV_decaycurve.root outfile has been created." << endl;
         gatevalueX.clear();
+		delete hist_DX;
+		delete hist_L;
+		delete hist_R;
+		delete out;
     }
     
     if (gatevalueY.size() > 0 && gatevalueX.size() == 0)
@@ -122,7 +128,7 @@ void STARAnaDC::Hdecaygate(Int_t &tbin)
         hist_DX = hist_Tot -> ProjectionX("Pro_X_decay", start, end, "");
         hist_L = hist_Tot -> ProjectionX("Pro_BGl", bg_ls, bg_le, "");
         hist_R = hist_Tot -> ProjectionX("Pro_BGr", bg_rs, bg_re, "");
-        hist_D = new TH1D("hist_decay", "Decay Curve; Time (ms); Counts;", bin/nbin, 0, bin); //gated time curve after removing the background
+        hist_D = new TH1S("hist_decay", "Decay Curve; Time (ms); Counts;", bin/nbin, 0, bin); //gated time curve after removing the background
         
         Double_t gam, gamL, gamR, gamP;
         
@@ -147,11 +153,16 @@ void STARAnaDC::Hdecaygate(Int_t &tbin)
         out -> Close();
         cout << peak << "keV_decaycurve.root outfile has been created." << endl;
         gatevalueY.clear();
+		delete hist_DX;
+		delete hist_L;
+		delete hist_R;
+		delete out;
     }
 }
 
 void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &peaksvalue, TCanvas *tempcvs)
 {
+	if (singledecay != nullptr)	delete singledecay;
     Int_t num = peaksvalue.size();
     
     TFile* file[num];
@@ -173,9 +184,10 @@ void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &pea
     for (Int_t i = 0; i < num; i++)
     {
         hist[i] = (TH1*) file[i] -> Get("hist_decay");
+		delete file[i];
     }
     nbin = hist[0] -> GetNbinsX();
-    TH1D* hist_tot = new TH1D("decaycurve", "", nbin, 0, 4000);
+    TH1S* hist_tot = new TH1S("decaycurve", "", nbin, 0, 4000);
     
     for (Int_t i = 0; i < nbin; i++)
     {
@@ -187,7 +199,7 @@ void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &pea
         hist_tot -> SetBinContent(i+1, gamma_T);
         gamma_T = 0;
     }
-    
+   	delete *hist; 
     Double_t interval = 4096/nbin;
     cout << nbin << " " << interval << endl;
     for (Int_t i = 0; i < nbin; i++)
@@ -223,7 +235,7 @@ void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &pea
 		bg -> SetParameter(0, p[2]);
 
 		tempcvs -> cd();
-		TH2D* dummy = new TH2D("dummy", "Decay Curve; Time (ms); Counts;", 4000, 0, 4000, ini+int(ini/2), 0.2, ini+int(ini/2));
+		TH2S* dummy = new TH2S("dummy", "Decay Curve; Time (ms); Counts;", 4000, 0, 4000, ini+int(ini/2), 0.2, ini+int(ini/2));
 		dummy -> Draw();
 		singledecay -> Draw("P");
 		fcn -> Draw("SAME");
@@ -233,7 +245,7 @@ void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &pea
 		bg -> SetLineStyle(5);
 		Double_t error = (fitter -> GetParError(1))/p[1];
 		cout << "Half-life : " << p[1]*log(2) << "(" << error*p[1]*log(2) << ")" << endl;
-
+		delete fitter;
 	}
 
 	if (halftype == 0) //halflife measurement for daughter nucleus
@@ -266,7 +278,7 @@ void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &pea
 		bg -> SetParameter(0, p[3]);
 
 		tempcvs -> cd();
-		TH2D* dummy = new TH2D("dummy", "Decay Curve; Time (ms); Counts;", 4000, 0, 4000, ini+int(ini/2), 0.2, ini+int(ini/2));
+		TH2S* dummy = new TH2S("dummy", "Decay Curve; Time (ms); Counts;", 4000, 0, 4000, ini+int(ini/2), 0.2, ini+int(ini/2));
 		dummy -> Draw();
 		singledecay -> Draw("P");
 		fcn -> Draw("SAME");
@@ -277,8 +289,8 @@ void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &pea
 		Double_t error = (fitter -> GetParError(2))/p[2];
 		cout << "Half-life for parent : " << log(2)/p[1] << endl; 
 		cout << "Half-life for daughter : " << log(2)/p[2] << "(" << error*(log(2)/p[2]) << ")" << endl;
-
-
+		delete fitter;
 	}
+	delete hist_tot;
 }
 

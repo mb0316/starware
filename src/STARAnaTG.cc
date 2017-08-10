@@ -8,7 +8,7 @@ Copyright. 2017. B. Moon
 #include "TF1.h"
 #include "TFile.h"
 #include "TH1D.h"
-#include "TH2D.h"
+#include "TH2S.h"
 #include "TCanvas.h"
 #include <iostream>
 #include "TPad.h"
@@ -31,6 +31,7 @@ using namespace std;
 
 void STARAnaTG::Htimegate(Int_t &timeaxis1, Int_t &timeaxis2, Int_t &start, Int_t &end)
 {
+	if (hist_TY != nullptr)	delete hist_TY;
     if (timeaxis1 == 0 && timeaxis2 == 1)
     {
         cout << "Input the start value of the gate : " << start << endl; //gate start
@@ -44,6 +45,7 @@ void STARAnaTG::Htimegate(Int_t &timeaxis1, Int_t &timeaxis2, Int_t &start, Int_
         hist_TY -> Write();
         out -> Close();
         cout << start << "to" << end << "msspectrum.root outfile has been created." << endl;
+		delete out;
     }
     if (timeaxis1 == 1 && timeaxis2 == 0)
     {
@@ -58,6 +60,7 @@ void STARAnaTG::Htimegate(Int_t &timeaxis1, Int_t &timeaxis2, Int_t &start, Int_
         hist_TY -> Write();
         out -> Close();
         cout << start << "to" << end << "msspectrum.root outfile has been created." << endl;
+		delete out;
     }
     if ((timeaxis1 == 0 && timeaxis2 == 0) || (timeaxis1 == 1 && timeaxis2 == 1))
     {
@@ -71,6 +74,7 @@ void STARAnaTG::Hnetarea(TCanvas *tempcvs, TString &openFile)
 {
     
     Int_t start, end;
+	if (hist_N != nullptr)	delete hist_N;
 
 	if (openFile.Length() == 0)
 	{
@@ -129,6 +133,9 @@ void STARAnaTG::Hnetarea(TCanvas *tempcvs, TString &openFile)
 			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
 			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
 			gatevalueX.clear();
+			delete gaussian;
+			delete gaussian_fit;
+			delete back_fit;
 		}
 
 		if (gatevalueY.size() > 0 && gatevalueX.size() == 0)
@@ -185,6 +192,9 @@ void STARAnaTG::Hnetarea(TCanvas *tempcvs, TString &openFile)
 			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
 			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
 			gatevalueY.clear();
+			delete gaussian;
+			delete gaussian_fit;
+			delete back_fit;
 		}
 	}
 
@@ -247,6 +257,9 @@ void STARAnaTG::Hnetarea(TCanvas *tempcvs, TString &openFile)
 			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
 			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
 			gatevalueX.clear();
+			delete gaussian;
+			delete gaussian_fit;
+			delete back_fit;
 		}
 
 		if (gatevalueY.size() > 0 && gatevalueX.size() == 0)
@@ -306,6 +319,9 @@ void STARAnaTG::Hnetarea(TCanvas *tempcvs, TString &openFile)
 			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
 			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
 			gatevalueY.clear();
+			delete gaussian;
+			delete gaussian_fit;
+			delete back_fit;
 		}
 	}
 }
@@ -314,6 +330,7 @@ void STARAnaTG::Hnetarea2(TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int
 {
     
     Int_t start, end;
+	if (hist_N != nullptr)	delete hist_N;
  
 	if (openFile.Length() == 0)
 	{
@@ -372,6 +389,9 @@ void STARAnaTG::Hnetarea2(TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int
 			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
 			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
 			gatevalueX.clear();
+			delete gaussian_fit;
+			delete back_fit;
+			delete gaussian;
 		}
 
 		if (gatevalueY.size() > 0 && gatevalueX.size() == 0)
@@ -428,6 +448,9 @@ void STARAnaTG::Hnetarea2(TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int
 			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
 			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
 			gatevalueY.clear();
+			delete gaussian_fit;
+			delete back_fit;
+			delete gaussian;
 		}
 	}
 
@@ -490,6 +513,9 @@ void STARAnaTG::Hnetarea2(TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int
 			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
 			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
 			gatevalueX.clear();
+			delete gaussian_fit;
+			delete back_fit;
+			delete gaussian;
 		}
 
 		if (gatevalueY.size() > 0 && gatevalueX.size() == 0)
@@ -549,10 +575,13 @@ void STARAnaTG::Hnetarea2(TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int
 			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
 			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
 			gatevalueY.clear();
+			delete gaussian_fit;
+			delete back_fit;
+			delete gaussian;
 		}
 	}
 }
-
+/*
 void STARAnaTG::Htimegrow(TString &openFile, Int_t &timeaxis1, Int_t &timeaxis2, Int_t &peak)
 {
 	if (openFile.Length() == 0)
@@ -698,4 +727,4 @@ void STARAnaTG::Htimegrow(TString &openFile, Int_t &timeaxis1, Int_t &timeaxis2,
 		}
 	}   
 }
-
+*/

@@ -18,12 +18,12 @@ Copyright. 2017. B. Moon
 class STARAnaDC : public STAR
 {
 	private :
-		TH1D* hist_DX;	//Gated histogram for the decay curve
-		TH1D* hist_L;	//Gated histogram to remove the left hand sided bg
-		TH1D* hist_R;	//Gated histogram to remove the right hand sided bg
+		TH1D* hist_DX = nullptr;	//Gated histogram for the decay curve
+		TH1D* hist_L = nullptr;	//Gated histogram to remove the left hand sided bg
+		TH1D* hist_R = nullptr;	//Gated histogram to remove the right hand sided bg
 
 	public :
-		TH1D* hist_D;	//Decay curve histogram(hist_DX - hist_L, hist_R)
+		TH1S* hist_D = nullptr;	//Decay curve histogram(hist_DX - hist_L, hist_R)
 
 		void Hdecaygate(Int_t &tbin);																		//The function to get the decay curve
 		void Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &peaksvalue, TCanvas *tempcvs);	//The fuction to get the half-life

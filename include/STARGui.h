@@ -46,7 +46,7 @@ class STARGui : public STAR
 		TCanvas* cvs4;
 		TCanvas* cvs5;
 		TCanvas* cvs6;
-		TCanvas* cvs7;
+//		TCanvas* cvs7;
 		TCanvas* cvs8;
 
 		Int_t tbin = 0;
@@ -56,7 +56,7 @@ class STARGui : public STAR
 		Int_t dend1 = 0;
 		Int_t dstart2 = 0;
 		Int_t dend2 = 0;
-		Int_t tgrow = 0;
+//		Int_t tgrow = 0;
 		Int_t halfpeak = 0;
 		Int_t half_parent = 0;
 		TString effdatafile;
@@ -96,7 +96,7 @@ class STARGui : public STAR
 		void netarea();
 		void netarea2();
 		void timediff();
-		void timegrow();
+//		void timegrow();
 		void halflife();
 		void setpeaks();
 		void SetTimeBin(const Char_t *value);
@@ -106,7 +106,7 @@ class STARGui : public STAR
 		void SetDiffEnd1(const Char_t *value);	
 		void SetDiffStart2(const Char_t *value);
 		void SetDiffEnd2(const Char_t *value);
-		void SetTimeGrow(const Char_t *value);
+//		void SetTimeGrow(const Char_t *value);
 		void SetPeakValue(const Char_t *value);
 		void SetHalfLife(const Char_t *value);
 		void checktimetox(Bool_t value);

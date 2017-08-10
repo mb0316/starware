@@ -282,7 +282,7 @@ STARGui::STARGui()
     TIMEGATE->Resize(100,35);
     fCompositeFrame1->AddFrame(TIMEGATE, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     TIMEGATE->MoveResize(1030,315,100,35);
-    
+/*    
     TGLabel *lTGROW = new TGLabel(fCompositeFrame1, "Input the peak value.");
     lTGROW -> SetTextJustify(kTextLeft);
     lTGROW-> SetMargins(0, 0, 0, 0);
@@ -294,7 +294,7 @@ STARGui::STARGui()
     fTGROW->MoveResize(1030,385,100,20);
     fCompositeFrame1->AddFrame(fTGROW, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     fTGROW -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetTimeGrow(const Char_t *)");
-    
+ 
     TGTextButton *TIMEGROW = new TGTextButton(fCompositeFrame1,"TIME GROW",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
     TIMEGROW -> Connect("Clicked()", "STARGui", this, "timegrow()");
     TIMEGROW->SetTextJustify(36);
@@ -303,7 +303,7 @@ STARGui::STARGui()
     TIMEGROW->Resize(100,35);
     fCompositeFrame1->AddFrame(TIMEGROW, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     TIMEGROW->MoveResize(1030,410,100,35);
-
+*/
     TGLabel *lCheck = new TGLabel(fCompositeFrame1, "Axis for the time.");
     lCheck -> SetTextJustify(kTextLeft);
     lCheck-> SetMargins(0, 0, 0, 0);
@@ -492,7 +492,7 @@ STARGui::STARGui()
     tdiff_spec->AdoptCanvas(cvs6);
     fCompositeFrame3->AddFrame(tdiff_spec, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     tdiff_spec->MoveResize(10,270,1000,250);
-    
+   /* 
     // container of "Tab4"
     TGCompositeFrame *fCompositeFrame4;
     fCompositeFrame4 = fTab1 -> AddTab("Time Growing");
@@ -507,7 +507,7 @@ STARGui::STARGui()
     tgrow->AdoptCanvas(cvs7);
     fCompositeFrame4->AddFrame(tgrow, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     tgrow->MoveResize(10,10,1000,500);
-    
+*/    
     // container of "Tab5"
     TGCompositeFrame *fCompositeFrame5;
     fCompositeFrame5 = fTab1 -> AddTab("Half-life Measurement");
@@ -867,7 +867,7 @@ void STARGui::clearall()
     cvs4 -> Clear();
     cvs5 -> Clear();
     cvs6 -> Clear();
-    cvs7 -> Clear();
+//    cvs7 -> Clear();
     cvs8 -> Clear();
     
     cvs1 -> Modified();
@@ -882,10 +882,15 @@ void STARGui::clearall()
     cvs5 -> Update();
     cvs6 -> Modified();
     cvs6 -> Update();
-    cvs7 -> Modified();
-    cvs7 -> Update();
+//    cvs7 -> Modified();
+//    cvs7 -> Update();
     cvs8 -> Modified();
     cvs8 -> Update();
+
+	if (stargg.hist_Tot != nullptr)	delete stargg.hist_Tot;
+	if (startg.hist_Tot != nullptr)	delete startg.hist_Tot;
+	if (stardc.hist_Tot != nullptr)	delete stardc.hist_Tot;
+	if (stardis.hist_Tot != nullptr)	delete stardis.hist_Tot;
 }
 
 void STARGui::openfile()
@@ -923,7 +928,7 @@ void STARGui::openfile()
     cvs2 -> Modified();
     cvs2 -> Update();
     
-    manual();
+//    manual();
     
     delete decomposedFileNameWithPath;
 }
@@ -1093,7 +1098,7 @@ void STARGui::timediff()
     cvs6 -> Modified();
     cvs6 -> Update();
 }
-
+/*
 void STARGui::timegrow()
 {
 	startg.Htimegrow(effdatafile, timeaxis1, timeaxis2, tgrow);
@@ -1104,7 +1109,7 @@ void STARGui::timegrow()
 	cvs7 -> Modified();
 	cvs7 -> Update();
 }
-
+*/
 void STARGui::halflife()
 {
     stardc.Hhalflife(halftype, half_parent, peaksvalue, cvs8);
@@ -1156,12 +1161,12 @@ void STARGui::SetDiffEnd2(const Char_t *value)
 {
     dend2 = atoi(value);
 } 
-
+/*
 void STARGui::SetTimeGrow(const Char_t *value)
 {
     tgrow = atoi(value);
 }
-
+*/
 void STARGui::SetPeakValue(const Char_t *value)
 {
     halfpeak = atoi(value);

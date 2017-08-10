@@ -7,7 +7,7 @@ Copyright. 2017. B. Moon
 ***********************************************************************************/
 #include "TFile.h"
 #include "TH1D.h"
-#include "TH2D.h"
+#include "TH2S.h"
 #include "STAR.h"
 #include "STARAnaDis.h"
 #include <iostream>
@@ -17,6 +17,9 @@ using namespace std;
 
 void STARAnaDis::Htimediff(Int_t &timeaxis1, Int_t &timeaxis2, Int_t &first, Int_t &second, Int_t &third, Int_t &forth)
 {
+	if (hist1 != nullptr)	delete hist1;
+	if (hist2 != nullptr)	delete hist2;
+
     if (timeaxis1 == 0 && timeaxis2 == 1)
     {
         hist1 = hist_Tot -> ProjectionY("first_time", first, second, "");
@@ -43,7 +46,9 @@ void STARAnaDis::Htimediff(Int_t &timeaxis1, Int_t &timeaxis2, Int_t &first, Int
 
 void STARAnaDis::peakfind(TString &openFile)
 {
-	TFile* open = new TFile(Form("%s", openFile.Data()), "read");
-	gated_hist = (TH1*) open -> Get("gated_histogram");
+	if (gated_hist != nullptr)	delete gated_hist;
+	if (open != nullptr)	delete open;
+	open = new TFile(Form("%s", openFile.Data()), "read");
+	gated_hist = (TH1*) open -> Get(open->GetListOfKeys()->At(0)->GetName());
 }
 

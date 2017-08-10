@@ -5,8 +5,8 @@ All functions are contained for STARWARE.
 Last refine : 12.May.2017, ver.1.0
 Copyright. 2017. B. Moon
 ***********************************************************************************/
-#include "TH1D.h"
-#include "TH2D.h"
+#include "TH1S.h"
+#include "TH2S.h"
 #include "TCanvas.h"
 #include "TStyle.h"
 #include <iostream>
@@ -28,8 +28,9 @@ using namespace std;
 
 void STAR::main(TString &directory, TString &openFile)
 {
-    Int_t xnch = 4096;
-    Int_t ynch = 4096;
+	if (hist_Tot != nullptr)	delete hist_Tot;
+	if (hist_X != nullptr)	delete hist_X;
+	if (hist_Y != nullptr)	delete hist_Y;
 	struct stat file_stat;
 	stat(Form("%s%s", directory.Data(), openFile.Data()), &file_stat);
 	ULong64_t filesize = (ULong64_t) file_stat.st_size;
@@ -39,15 +40,19 @@ void STAR::main(TString &directory, TString &openFile)
     
     direc = directory;
     
-    hist_Tot = new TH2D("hist", "", xnch, 0, xnch, ynch, 0, ynch);
-	UShort_t temp1[4096] = {0};
-	Int_t temp2[4096] = {0};
+    hist_Tot = new TH2S("hist", "", 4096, 0, 4096, 4096, 0, 4096);
     
-    for (Int_t i = 0; i < xnch; i++)
+	UShort_t *temp1;
+	temp1 = (UShort_t *) malloc(sizeof(short) *4096);
+
+	UInt_t *temp2;
+	temp2 = (UInt_t *) malloc(sizeof(int) *4096);
+
+    for (Int_t i = 0; i < 4096; i++)
     {
         if (filesize == 32*1024*1024)	fread(temp1, 2, 4096, read);
 		if (filesize == 64*1024*1024)	fread(temp2, 4, 4096, read);
-        for (Int_t j = 0; j < ynch; j++)
+        for (Int_t j = 0; j < 4096; j++)
         {
             if (filesize == 32*1024*1024)	hist_Tot -> SetBinContent(i+1, j+1, temp1[j]);
             if (filesize == 64*1024*1024)	hist_Tot -> SetBinContent(i+1, j+1, temp2[j]);
@@ -56,6 +61,8 @@ void STAR::main(TString &directory, TString &openFile)
     
     hist_X = hist_Tot -> ProjectionX("pro_X");
     hist_Y = hist_Tot -> ProjectionY("pro_Y");
+	free(temp1);
+	free(temp2);
 }
 
 void STAR::reset()
@@ -63,36 +70,12 @@ void STAR::reset()
     gatevalueX.clear();
     gatevalueY.clear();
     cout << "gate information has been deleted." << endl;
-	if (gate1 != nullptr)
-	{
-		gate1 -> Delete();
-		gate1 = nullptr;
-	}
-	if (gate2 != nullptr)
-	{
-		gate2 -> Delete();
-		gate2 = nullptr;
-	}
-	if (bgl1 != nullptr)
-	{
-		bgl1 -> Delete();
-		bgl1 = nullptr;
-	}
-	if (bgl2 != nullptr)
-	{
-		bgl2 -> Delete();
-		bgl2 = nullptr;
-	}
-	if (bgr1 != nullptr)
-	{
-		bgr1 -> Delete();
-		bgr1 = nullptr;
-	}
-	if (bgr2 != nullptr)
-	{
-		bgr2 -> Delete();
-		bgr2 = nullptr;
-	}
+	if (gate1 != nullptr)	delete gate1;
+	if (gate2 != nullptr)	delete gate2;
+	if (bgl1 != nullptr)	delete bgl1;
+	if (bgl2 != nullptr)	delete bgl2;
+	if (bgr1 != nullptr)	delete bgr1;
+	if (bgr2 != nullptr)	delete bgr2;
 }
 
 void STAR::GetCoorX(Int_t event, Int_t px, Int_t, TObject *)
@@ -144,12 +127,12 @@ void STAR::GetCoorX(Int_t event, Int_t px, Int_t, TObject *)
         {
             cout << "Error : overflow. gate information has been deleted." << endl;
             gatevalueX.clear();
-			gate1 -> Delete();
-			gate2 -> Delete();
-			bgl1 -> Delete();
-			bgl2 -> Delete();
-			bgr1 -> Delete();
-			bgr2 -> Delete();
+			delete gate1;
+			delete gate2;
+			delete bgl1;
+			delete bgl2;
+			delete bgr1;
+			delete bgr2;
 			cvs1 -> Modified();
 			cvs1 -> Update();
 			cvs2 -> Modified();
@@ -208,12 +191,12 @@ void STAR::GetCoorY(Int_t event, Int_t px, Int_t, TObject *)
         {
             cout << "Error : overflow. gate information has been deleted." << endl;
 			gatevalueY.clear();
-			gate1 -> Delete();
-			gate2 -> Delete();
-			bgl1 -> Delete();
-			bgl2 -> Delete();
-			bgr1 -> Delete();
-			bgr2 -> Delete();
+			delete gate1;
+			delete gate2;
+			delete bgl1;
+			delete bgl2;
+			delete bgr1;
+			delete bgr2;
 			cvs1 -> Modified();
 			cvs1 -> Update();
 			cvs2 -> Modified();
@@ -348,16 +331,4 @@ void STAR::intro()
     cout << "Since Jan. 2016." << endl;
     cout << "Latest Update : May. 2017." << endl;
 } 
-
-void STAR::manual()
-{
-    cout << "-------------------------------------------------------------Simple Manual---------------------------------------------------------------------" << endl;
-    cout << "If you want to use 'GAMMA GATE' function, please double-click the bin point for the gate condition and background levels then click 'GATE' button." <<endl;
-    cout << "If you want to use 'TIME GAMMA GATE' function, please input start and end time then click 'TIME GATE' button." << endl;
-    cout << "If you want to use 'TIME DECAY GATE' function, please double-click the bin point for the gate condition and background levels then click 'DECAY GATE' button." << endl;
-    cout << "If you want to use 'NETAREA CALCULATION' function, please double-click the bin point for the gate condition then click 'NETAREA' button." << endl;
-    cout << "If you want to use 'TIME DIFFERENCE SPECTUM' function, please input start and end time for each spectrum then click 'TIME DIFF' button." << endl;
-    cout << "If you want to use 'TIME GROWING' function, please input the peak value then click 'TIME GROW' button." << endl;
-    cout << "If you want to use 'HALFLIFE MEASUREMENT' function, please input the peak value and click 'SET PEAK' button then click 'HALFLIFE' button." << "	**The gated decaycurve files must exist.**" << endl;
-}
 
