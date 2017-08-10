@@ -2,14 +2,14 @@
 ***************************STARWARE CLASS HEADER FILE*******************************
 Made by Byul Moon from Korea University
 All functions are contained for STARWARE.
-Last refine : 12.May.2017, ver.1.0
+Last refine : 10.Aug.2017, ver.1.1
 Copyright. 2017. B. Moon
 ***********************************************************************************/
 
 #ifndef STAR_H
 #define STAR_H
 
-#include "TH2D.h"
+#include "TH2S.h"
 #include "TH1D.h"
 #include "TCanvas.h"
 #include "TLatex.h"
@@ -25,9 +25,9 @@ using namespace std;
 
 class STAR
 {
-	RQ_OBJECT("STARAna")
+//	RQ_OBJECT("STARAna")
 	public :
-		TH2D* hist_Tot = nullptr;				//2D histogram built by MAT data
+		TH2S* hist_Tot = nullptr;				//2D histogram built by MAT data
 		TString direc;				//Directory of the current work in the string form
 		vector<int> gatevalueX;		//Gate value for x axis; 0 : gate_start, 1 : gate_end, 2 : left_bg_start, 3 : left_bg_end, 4 : right_bg_start, 5 : right_bg_end;
 		vector<int> gatevalueY;		//Gate value for x axis; 0 : gate_start, 1 : gate_end, 2 : left_bg_start, 3 : left_bg_end, 4 : right_bg_start, 5 : right_bg_end;
@@ -38,7 +38,6 @@ class STAR
 		void DrawInfo();											//Represent gate information on the canvas
 		void intro(); 												//Print out the intro information
 		void main(TString &directory, TString &openFile);			//Main function for the program
-//		void manual();												//Print out the simple manual
 
 	protected :
 		TH1D* hist_X = nullptr;		//x projected histogram

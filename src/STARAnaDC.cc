@@ -2,7 +2,7 @@
 ***************************STARWARE CLASS SOURCE FILE*******************************
 Made by Byul Moon from Korea University
 All functions are contained for STARWARE.
-Last refine : 12.May.2017, ver.1.0
+Last refine : 10.Aug.2017, ver.1.1
 Copyright. 2017. B. Moon
 ***********************************************************************************/
 #include "TF1.h"
@@ -59,21 +59,12 @@ void MLM_D(Int_t &, Double_t *, Double_t &f, Double_t *par, Int_t)
     }
 }
 
-void STARAnaDC::Hdecaygate(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, Int_t &bg_ls, Int_t &bg_le, Int_t &bg_rs, Int_t &bg_re, Int_t &nbin)
+void STARAnaDC::Hdecaygate(TH2S *hist_Tot, Int_t iden, Int_t &start, Int_t &end, Int_t &bg_ls, Int_t &bg_le, Int_t &bg_rs, Int_t &bg_re, Int_t &nbin)
 {
 	if (hist_D != nullptr)	delete hist_D;
 
-//    if (gatevalueX.size() > 0 && gatevalueY.size() == 0)
 	if (iden == 0)
     {
-/*
-        start = gatevalueX[0];
-        end = gatevalueX[1];
-        bg_ls = gatevalueX[2];
-        bg_le = gatevalueX[3];
-        bg_rs = gatevalueX[4];
-        bg_re = gatevalueX[5];
-*/
         peak = (start+end)/2; // gated peak value
         
         Int_t bin = hist_Tot -> GetNbinsY();
@@ -102,24 +93,14 @@ void STARAnaDC::Hdecaygate(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end,
         hist_D -> Write();
         out -> Close();
         cout << peak << "keV_decaycurve.root outfile has been created." << endl;
-//       gatevalueX.clear();
 		delete hist_DX;
 		delete hist_L;
 		delete hist_R;
 		delete out;
     }
     
-//    if (gatevalueY.size() > 0 && gatevalueX.size() == 0)
 	if (iden == 1)
     {
-/*
-        start = gatevalueY[0];
-        end = gatevalueY[1];
-        bg_ls = gatevalueY[2];
-        bg_le = gatevalueY[3];
-        bg_rs = gatevalueY[4];
-        bg_re = gatevalueY[5];
-*/
         peak = (start+end)/2; // gated peak value
         
         Int_t bin = hist_Tot -> GetNbinsX();
@@ -148,7 +129,6 @@ void STARAnaDC::Hdecaygate(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end,
         hist_D -> Write();
         out -> Close();
         cout << peak << "keV_decaycurve.root outfile has been created." << endl;
-//        gatevalueY.clear();
 		delete hist_DX;
 		delete hist_L;
 		delete hist_R;
@@ -176,11 +156,9 @@ void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &pea
     Int_t nbin;
     Double_t gamma[num];
     Double_t gamma_T = 0;
-    
     for (Int_t i = 0; i < num; i++)
     {
         hist[i] = (TH1*) file[i] -> Get("hist_decay");
-		delete file[i];
     }
     nbin = hist[0] -> GetNbinsX();
     TH1S* hist_tot = new TH1S("decaycurve", "", nbin, 0, 4000);
@@ -195,9 +173,7 @@ void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &pea
         hist_tot -> SetBinContent(i+1, gamma_T);
         gamma_T = 0;
     }
-   	delete *hist; 
     Double_t interval = 4096/nbin;
-    cout << nbin << " " << interval << endl;
     for (Int_t i = 0; i < nbin; i++)
     {
         singledecay -> SetPoint(i, (2*i*interval+interval)/2, hist_tot -> GetBinContent(i+1));
@@ -276,17 +252,18 @@ void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &pea
 		tempcvs -> cd();
 		TH2S* dummy = new TH2S("dummy", "Decay Curve; Time (ms); Counts;", 4000, 0, 4000, ini+int(ini/2), 0.2, ini+int(ini/2));
 		dummy -> Draw();
+
 		singledecay -> Draw("P");
 		fcn -> Draw("SAME");
 		curve -> Draw("SAME");
 		bg -> Draw("SAME");
 		curve -> SetLineStyle(3);
 		bg -> SetLineStyle(5);
+
 		Double_t error = (fitter -> GetParError(2))/p[2];
 		cout << "Half-life for parent : " << log(2)/p[1] << endl; 
 		cout << "Half-life for daughter : " << log(2)/p[2] << "(" << error*(log(2)/p[2]) << ")" << endl;
 		delete fitter;
 	}
-	delete hist_tot;
 }
 

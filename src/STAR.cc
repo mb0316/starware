@@ -2,11 +2,11 @@
 ***************************STARWARE CLASS SOURCE FILE*******************************
 Made by Byul Moon from Korea University
 All functions are contained for STARWARE.
-Last refine : 12.May.2017, ver.1.0
+Last refine : 10.Aug.2017, ver.1.1
 Copyright. 2017. B. Moon
 ***********************************************************************************/
 #include "TH1S.h"
-#include "TH2D.h"
+#include "TH2S.h"
 #include "TCanvas.h"
 #include "TStyle.h"
 #include <iostream>
@@ -40,7 +40,7 @@ void STAR::main(TString &directory, TString &openFile)
     
     direc = directory;
     
-    hist_Tot = new TH2D("hist", "", 4096, 0, 4096, 4096, 0, 4096);
+    hist_Tot = new TH2S("hist", "", 4096, 0, 4096, 4096, 0, 4096);
     
 	UShort_t *temp1;
 	temp1 = (UShort_t *) malloc(sizeof(short) *4096);
@@ -325,10 +325,10 @@ void STAR::intro()
 {
     cout << "-----------------------------STARWARE(SpecTroscopy Analysis for gamma-Ray softWARE)---------------------------------" << endl;
     cout << "------------------------------------------Byul means 'star' in Korean.----------------------------------------------" << endl;
-    cout << "----------------------------------Gamma-ray Spectroscopy Analysis Tool Ver.1.0--------------------------------------" << endl;
+    cout << "----------------------------------Gamma-ray Spectroscopy Analysis Tool Ver.1.1--------------------------------------" << endl;
     cout << "The Data analysis from coincidence event matrices." << endl;
     cout << "Made by Byul Moon(B.Moon) from Korea University" << endl;
     cout << "Since Jan. 2016." << endl;
-    cout << "Latest Update : May. 2017." << endl;
+    cout << "Latest Update : Aug. 2017." << endl;
 } 
 

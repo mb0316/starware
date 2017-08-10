@@ -2,7 +2,7 @@
 ***************************STARWARE CLASS HEADER FILE*******************************
 Made by Byul Moon from Korea University
 All functions are contained for STARWARE.
-Last refine : 12.May.2017, ver.1.0
+Last refine : 10.Aug.2017, ver.1.1
 Copyright. 2017. B. Moon
 ***********************************************************************************/
 
@@ -31,7 +31,7 @@ class STARAnaDC : public STAR
 	public :
 		TH1S* hist_D = nullptr;	//Decay curve histogram(hist_DX - hist_L, hist_R)
 
-		void Hdecaygate(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, Int_t &bg_ls, Int_t &bg_le, Int_t &bg_rs, Int_t &bg_re, Int_t &nbin);	//The function to get the decay curve
+		void Hdecaygate(TH2S *hist_Tot, Int_t iden, Int_t &start, Int_t &end, Int_t &bg_ls, Int_t &bg_le, Int_t &bg_rs, Int_t &bg_re, Int_t &nbin);	//The function to get the decay curve
 		void Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &peaksvalue, TCanvas *tempcvs);	//The fuction to get the half-life
 };
 #endif

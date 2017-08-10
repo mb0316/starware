@@ -2,7 +2,7 @@
 *************************STARWARE GUI CONSTRUCTOR FILE******************************
 Made by Byul Moon from Korea University
 GUI constructor for STARWARE program.
-Last refine : 07.May.2017, ver.1.2
+Last refine : 10.Aug.2017, ver.1.1
 Copyright 2017. B. Moon
 ***********************************************************************************/
 #include "TGDockableFrame.h"
@@ -105,6 +105,7 @@ beta ver.1.1 Update News 1 (22.Feb.2017) : The analysis for the half-life of the
 beta ver.1.2 Update News 1 (08.Mar.2017) : The logft calculation has been added.\n\
 beta ver.1.2 Update News 2 (13.Mar.2017) : The reduced matrix element calculation has been added.\n\
 ver.1.0 Update News 1 (12.May.2017) : Fixed bugs.\n\
+ver.1.1 Update News 1 (10.Aug.2017) : Optimized memory consumption.\n\
 ";
 
 const char gCOPYRIGHT[] = "\
@@ -368,6 +369,8 @@ STARGui::STARGui()
     gated_spec->AdoptCanvas(cvs3);
     fCompositeFrame2->AddFrame(gated_spec, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     gated_spec->MoveResize(10,10,1000,250);
+	cvs3 -> MoveOpaque(0);
+	cvs3 -> ResizeOpaque(0);
 
     TRootEmbeddedCanvas *gated_decay = new TRootEmbeddedCanvas(0,fCompositeFrame2,1000,250,kSunkenFrame);
     gated_decay->SetName("Gated Decay Curve");
@@ -377,6 +380,8 @@ STARGui::STARGui()
     gated_decay->AdoptCanvas(cvs4);
     fCompositeFrame2->AddFrame(gated_decay, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     gated_decay->MoveResize(10,270,1000,250);
+	cvs4 -> MoveOpaque(0);
+	cvs4 -> ResizeOpaque(0);
    
     // container of "Tab3"
     TGCompositeFrame *fCompositeFrame3;
@@ -483,6 +488,8 @@ STARGui::STARGui()
     cvs5 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "STARGui", this, "EventInfo(Int_t, Int_t, Int_t, TObject*)");
     fCompositeFrame3->AddFrame(tgated_spec, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     tgated_spec->MoveResize(10,10,1000,250);
+	cvs5 -> MoveOpaque(0);
+	cvs5 -> ResizeOpaque(0);
 
     TRootEmbeddedCanvas *tdiff_spec = new TRootEmbeddedCanvas(0,fCompositeFrame3,1000,250,kSunkenFrame);
     tdiff_spec->SetName("Time Difference");
@@ -492,6 +499,8 @@ STARGui::STARGui()
     tdiff_spec->AdoptCanvas(cvs6);
     fCompositeFrame3->AddFrame(tdiff_spec, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     tdiff_spec->MoveResize(10,270,1000,250);
+	cvs6 -> MoveOpaque(0);
+	cvs6 -> ResizeOpaque(0);
    /* 
     // container of "Tab4"
     TGCompositeFrame *fCompositeFrame4;
@@ -581,6 +590,8 @@ STARGui::STARGui()
     thalf->AdoptCanvas(cvs8);
     fCompositeFrame5->AddFrame(thalf, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     thalf->MoveResize(10,10,1000,500);
+	cvs8 -> MoveOpaque(0);
+	cvs8 -> ResizeOpaque(0);
 
 
 	// container of "Tab6"
@@ -843,20 +854,7 @@ STARGui::STARGui()
 
 	intro();
 }
-/*
-void STARGui::main(TString &directory, TString &openFile)
-{
-	STAR::main(directory, openFile);
-	stargg.hist_Tot = hist_Tot;
-	stargg.direc = direc;
-	startg.hist_Tot = hist_Tot;
-	startg.direc = direc;
-	stardc.hist_Tot = hist_Tot;
-	stardc.direc = direc;
-	stardis.hist_Tot = hist_Tot;
-	stardis.direc = direc;
-}
-*/
+
 void STARGui::clearall()
 {
     cvs1 -> Disconnect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)");
@@ -886,11 +884,6 @@ void STARGui::clearall()
 //    cvs7 -> Update();
     cvs8 -> Modified();
     cvs8 -> Update();
-
-	if (stargg.hist_Tot != nullptr)	delete stargg.hist_Tot;
-	if (startg.hist_Tot != nullptr)	delete startg.hist_Tot;
-	if (stardc.hist_Tot != nullptr)	delete stardc.hist_Tot;
-	if (stardis.hist_Tot != nullptr)	delete stardis.hist_Tot;
 }
 
 void STARGui::openfile()
@@ -917,7 +910,7 @@ void STARGui::openfile()
     cvs1 -> ToggleEventStatus();
     hist_X -> Draw();
     cvs1 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "STARGui", this, "GetCoorX(Int_t, Int_t, Int_t, TObject*)");
-    //cvs1 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "STARGui", this, "EventInfo(Int_t, Int_t, Int_t, TObject*)");
+    cvs1 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "STARGui", this, "EventInfo(Int_t, Int_t, Int_t, TObject*)");
     cvs1 -> Modified();
     cvs1 -> Update();
     cvs2 -> cd();
@@ -927,9 +920,12 @@ void STARGui::openfile()
     cvs2 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "STARGui", this, "EventInfo(Int_t, Int_t, Int_t, TObject*)");
     cvs2 -> Modified();
     cvs2 -> Update();
-    
-//    manual();
-    
+   
+	cvs1 -> MoveOpaque(0);
+	cvs1 -> ResizeOpaque(0);
+	cvs2 -> MoveOpaque(0);
+	cvs2 -> ResizeOpaque(0);	
+ 
     delete decomposedFileNameWithPath;
 }
 
@@ -981,16 +977,6 @@ void STARGui::gatedspectrum()
 
 void STARGui::gate()
 {
-/*
-	for (Int_t i = 0; i < int(gatevalueX.size()); i++)
-	{
-		stargg.gatevalueX.push_back(gatevalueX[i]);
-	}
-	for (Int_t i = 0; i < int(gatevalueY.size()); i++)
-	{
-		stargg.gatevalueY.push_back(gatevalueY[i]);
-	}
-*/
 	if (gatevalueX.size() == 6 && gatevalueY.size() < 6)	stargg.Hgate(hist_Tot, 0, gatevalueX[0], gatevalueX[1], gatevalueX[2], gatevalueX[3], gatevalueX[4], gatevalueX[5]);	
 	if (gatevalueY.size() == 6 && gatevalueX.size() < 6)	stargg.Hgate(hist_Tot, 1, gatevalueY[0], gatevalueY[1], gatevalueY[2], gatevalueY[3], gatevalueY[4], gatevalueY[5]);	
 	else cout << "The gate information is not exact. Please check it again." << endl;
@@ -1020,16 +1006,6 @@ void STARGui::timegate()
 
 void STARGui::decaygate()
 {
-/*
-	for (Int_t i = 0; i < int(gatevalueX.size()); i++)
-	{
-		stardc.gatevalueX.push_back(gatevalueX[i]);
-	}
-	for (Int_t i = 0; i < int(gatevalueY.size()); i++)
-	{
-		stardc.gatevalueY.push_back(gatevalueY[i]);
-	}
-*/  
 	if (gatevalueX.size() == 6 && gatevalueY.size() < 6)    stardc.Hdecaygate(hist_Tot, 0, gatevalueX[0], gatevalueX[1], gatevalueX[2], gatevalueX[3], gatevalueX[4], gatevalueX[5], tbin);
     if (gatevalueY.size() == 6 && gatevalueX.size() < 6)    stardc.Hdecaygate(hist_Tot, 1, gatevalueY[0], gatevalueY[1], gatevalueY[2], gatevalueY[3], gatevalueY[4], gatevalueY[5], tbin);
     else cout << "The gate information is not exact. Please check it again." << endl;
@@ -1049,16 +1025,6 @@ void STARGui::decaygate()
 
 void STARGui::netarea()
 {
-/*
-	for (Int_t i = 0; i < int(gatevalueX.size()); i++)
-	{
-		startg.gatevalueX.push_back(gatevalueX[i]);
-	}
-	for (Int_t i = 0; i < int(gatevalueY.size()); i++)
-	{
-		startg.gatevalueY.push_back(gatevalueY[i]);
-	}
-*/
 	if (gatevalueX.size() == 2 && gatevalueY.size() < 2)	startg.Hnetarea(hist_Tot, 0, gatevalueX[0], gatevalueX[1], cvs3, effdatafile);
 	if (gatevalueY.size() == 2 && gatevalueX.size() < 2)	startg.Hnetarea(hist_Tot, 1, gatevalueY[0], gatevalueY[1], cvs3, effdatafile);
 	else cout << "The gate information is not exact. Please check it again." << endl;
@@ -1075,16 +1041,6 @@ void STARGui::netarea()
 
 void STARGui::netarea2()
 {
-/*
-	for (Int_t i = 0; i < int(gatevalueX.size()); i++)
-	{
-		startg.gatevalueX.push_back(gatevalueX[i]);
-	}
-	for (Int_t i = 0; i < int(gatevalueY.size()); i++)
-	{
-		startg.gatevalueY.push_back(gatevalueY[i]);
-	}
-*/
 	if (gatevalueX.size() == 2 && gatevalueY.size() < 2)	startg.Hnetarea2(hist_Tot, 0, gatevalueX[0], gatevalueX[1], cvs3, effdatafile, tstart, tend);
 	if (gatevalueY.size() == 2 && gatevalueX.size() < 2)	startg.Hnetarea2(hist_Tot, 1, gatevalueY[0], gatevalueY[1], cvs3, effdatafile, tstart, tend);
 	else cout << "The gate information is not exact. Please check it again." << endl;

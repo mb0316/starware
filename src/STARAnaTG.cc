@@ -2,7 +2,7 @@
 ***************************STARWARE CLASS SOURCE FILE*******************************
 Made by Byul Moon from Korea University
 All functions are contained for STARWARE.
-Last refine : 12.May.2017, ver.1.0
+Last refine : 10.Aug.2017, ver.1.1
 Copyright. 2017. B. Moon
 ***********************************************************************************/
 #include "TF1.h"
@@ -29,7 +29,7 @@ Copyright. 2017. B. Moon
 
 using namespace std;
 
-void STARAnaTG::Htimegate(TH2D *hist_Tot, Int_t &timeaxis1, Int_t &timeaxis2, Int_t &start, Int_t &end)
+void STARAnaTG::Htimegate(TH2S *hist_Tot, Int_t &timeaxis1, Int_t &timeaxis2, Int_t &start, Int_t &end)
 {
 	if (hist_TY != nullptr)	delete hist_TY;
     if (timeaxis1 == 0 && timeaxis2 == 1)
@@ -70,7 +70,7 @@ void STARAnaTG::Htimegate(TH2D *hist_Tot, Int_t &timeaxis1, Int_t &timeaxis2, In
     
 }
 
-void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, TCanvas *tempcvs, TString &openFile)
+void STARAnaTG::Hnetarea(TH2S *hist_Tot, Int_t iden, Int_t &start, Int_t &end, TCanvas *tempcvs, TString &openFile)
 {
     
 	if (hist_N != nullptr)	delete hist_N;
@@ -79,13 +79,8 @@ void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, T
 	{
 		cout << "The efficiency data has not been loaded. The netarea will be calculated without an efficiency calibration." << endl;    
 
-//		if (gatevalueX.size() > 0 && gatevalueY.size() == 0)
 		if (iden == 0)
 		{
-//			start = gatevalueX[0];
-//			end = gatevalueX[1];
-
-
 			hist_N = hist_Tot -> ProjectionX("Pro_X_net1");
 
 			//algorithm for the calculation of the netarea
@@ -130,21 +125,11 @@ void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, T
 			back_fit -> Draw("same");
 
 			// represent total results for the request
-			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
 			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
-//			gatevalueX.clear();
-			delete gaussian;
-			delete gaussian_fit;
-			delete back_fit;
 		}
 
-//		if (gatevalueY.size() > 0 && gatevalueX.size() == 0)
 		if (iden == 1)
 		{
-//			start = gatevalueY[0];
-//			end = gatevalueY[1];
-
-
 			hist_N = hist_Tot -> ProjectionY("Pro_Y_net1");
 
 			//algorithm for the calculation of the netarea
@@ -190,24 +175,14 @@ void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, T
 			back_fit -> Draw("same");
 
 			// represent total results for the request
-			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
 			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
-//			gatevalueY.clear();
-			delete gaussian;
-			delete gaussian_fit;
-			delete back_fit;
 		}
 	}
 
 	if (openFile.Length() >= 1)
 	{
-
-//		if (gatevalueX.size() > 0 && gatevalueY.size() == 0)
 		if (iden == 0)
 		{
-//			start = gatevalueX[0];
-//			end = gatevalueX[1];
-
 			//loading the efficiency data
 			TFile* eff_read = new TFile(Form("%s", openFile.Data()), "READ"); //eff_data_gc.root : for gecluster, eff_data_add.root : for addback
 			TF1* fcn = (TF1*) eff_read -> Get(eff_read->GetListOfKeys()->At(0)->GetName());
@@ -256,20 +231,11 @@ void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, T
 			back_fit -> Draw("same");
 
 			// represent total results for the request
-			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
 			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
-//			gatevalueX.clear();
-			delete gaussian;
-			delete gaussian_fit;
-			delete back_fit;
 		}
 
-//		if (gatevalueY.size() > 0 && gatevalueX.size() == 0)
 		if (iden == 1)
 		{
-//			start = gatevalueY[0];
-//			end = gatevalueY[1];
-
 			//loading the efficiency data
 			TFile* eff_read = new TFile(Form("%s", openFile.Data()), "READ"); //eff_data_gc.root : for gecluster, eff_data_add.root : for addback
 			TF1* fcn = (TF1*) eff_read -> Get(eff_read->GetListOfKeys()->At(0)->GetName());
@@ -319,17 +285,12 @@ void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, T
 			back_fit -> Draw("same");
 
 			// represent total results for the request
-			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
 			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
-//			gatevalueY.clear();
-			delete gaussian;
-			delete gaussian_fit;
-			delete back_fit;
 		}
 	}
 }
 
-void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int_t &tend)
+void STARAnaTG::Hnetarea2(TH2S *hist_Tot, Int_t iden, Int_t &start, Int_t &end, TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int_t &tend)
 {
 	if (hist_N != nullptr)	delete hist_N;
  
@@ -337,13 +298,8 @@ void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, 
 	{
 		cout << "The efficiency data has not been loaded. The netarea will be calculated without an efficiency calibration." << endl;    
 
-//		if (gatevalueX.size() > 0 && gatevalueY.size() == 0)
 		if (iden == 0)
 		{
-//			start = gatevalueX[0];
-//			end = gatevalueX[1];
-
-
 			hist_N = hist_Tot -> ProjectionX("Pro_X_net2", tstart, tend, "");
 
 			//algorithm for the calculation of the netarea
@@ -388,21 +344,11 @@ void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, 
 			back_fit -> Draw("same");
 
 			// represent total results for the request
-			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
 			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
-//			gatevalueX.clear();
-			delete gaussian_fit;
-			delete back_fit;
-			delete gaussian;
 		}
 
-//		if (gatevalueY.size() > 0 && gatevalueX.size() == 0)
 		if (iden == 1)
 		{
-//			start = gatevalueY[0];
-//			end = gatevalueY[1];
-
-
 			hist_N = hist_Tot -> ProjectionY("Pro_Y_net2", tstart, tend, "");
 
 			//algorithm for the calculation of the netarea
@@ -448,24 +394,14 @@ void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, 
 			back_fit -> Draw("same");
 
 			// represent total results for the request
-			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
 			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
-//			gatevalueY.clear();
-			delete gaussian_fit;
-			delete back_fit;
-			delete gaussian;
 		}
 	}
 
 	if (openFile.Length() >= 1)
 	{
-
-//		if (gatevalueX.size() > 0 && gatevalueY.size() == 0)
 		if (iden == 0)
 		{
-//			start = gatevalueX[0];
-//			end = gatevalueX[1];
-
 			//loading the efficiency data
 			TFile* eff_read = new TFile(Form("%s", openFile.Data()), "READ"); //eff_data_gc.root : for gecluster, eff_data_add.root : for addback
 			TF1* fcn = (TF1*) eff_read -> Get(eff_read->GetListOfKeys()->At(0)->GetName());
@@ -514,20 +450,11 @@ void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, 
 			back_fit -> Draw("same");
 
 			// represent total results for the request
-			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
 			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
-//			gatevalueX.clear();
-			delete gaussian_fit;
-			delete back_fit;
-			delete gaussian;
 		}
 
-//		if (gatevalueY.size() > 0 && gatevalueX.size() == 0)
 		if (iden == 1)
 		{
-//			start = gatevalueY[0];
-//			end = gatevalueY[1];
-
 			//loading the efficiency data
 			TFile* eff_read = new TFile(Form("%s", openFile.Data()), "READ"); //eff_data_gc.root : for gecluster, eff_data_add.root : for addback
 			TF1* fcn = (TF1*) eff_read -> Get(eff_read->GetListOfKeys()->At(0)->GetName());
@@ -577,12 +504,7 @@ void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, 
 			back_fit -> Draw("same");
 
 			// represent total results for the request
-			//cout << peaks << " +- " << peakerror << " keV : "  << netcount << " +- " << neterror << endl;
 			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
-//			gatevalueY.clear();
-			delete gaussian_fit;
-			delete back_fit;
-			delete gaussian;
 		}
 	}
 }

@@ -2,7 +2,7 @@
 *************************STARWARE GUI CONSTRUCTOR FILE******************************
 Made by Byul Moon from Korea University
 GUI constructor for STARWARE program.
-Last refine : 12.May.2017, ver.1.0
+Last refine : 10.Aug.2017, ver.1.1
 Copyright. 2017. B. Moon
 ***********************************************************************************/
 
@@ -85,7 +85,6 @@ class STARGui : public STAR
 
 	public :
 		STARGui();
-//		void main(TString &directory, TString &openFile);
 		void clearall();
 		void openfile();
 		void openeff();

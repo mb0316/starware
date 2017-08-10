@@ -2,7 +2,7 @@
 ***************************STARWARE CLASS SOURCE FILE*******************************
 Made by Byul Moon from Korea University
 All functions are contained for STARWARE.
-Last refine : 12.May.2017, ver.1.0
+Last refine : 12.Aug.2017, ver.1.1
 Copyright. 2017. B. Moon
 ***********************************************************************************/
 #include "TFile.h"
@@ -15,7 +15,7 @@ Copyright. 2017. B. Moon
 
 using namespace std;
 
-void STARAnaDis::Htimediff(TH2D *hist_Tot, Int_t &timeaxis1, Int_t &timeaxis2, Int_t &first, Int_t &second, Int_t &third, Int_t &forth)
+void STARAnaDis::Htimediff(TH2S *hist_Tot, Int_t &timeaxis1, Int_t &timeaxis2, Int_t &first, Int_t &second, Int_t &third, Int_t &forth)
 {
 	if (hist1 != nullptr)	delete hist1;
 	if (hist2 != nullptr)	delete hist2;

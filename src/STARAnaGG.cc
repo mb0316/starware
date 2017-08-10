@@ -2,7 +2,7 @@
 ***************************STARWARE CLASS SOURCE FILE*******************************
 Made by Byul Moon from Korea University
 All functions are contained for STARWARE.
-Last refine : 12.May.2017, ver.1.0
+Last refine : 10.Aug.2017, ver.1.1
 Copyright. 2017. B. Moon
 ***********************************************************************************/
 #include "TFile.h"
@@ -28,10 +28,9 @@ Copyright. 2017. B. Moon
 
 using namespace std;
 
-void STARAnaGG::Hgate(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, Int_t &bgls, Int_t &bgle, Int_t &bgrs, Int_t &bgre)
+void STARAnaGG::Hgate(TH2S *hist_Tot, Int_t iden, Int_t &start, Int_t &end, Int_t &bgls, Int_t &bgle, Int_t &bgrs, Int_t &bgre)
 {
 //	gObjectTable->Print();
-		return;        
 	if (hist_P != nullptr)	delete hist_P;
 	if (iden == 0)
     {
