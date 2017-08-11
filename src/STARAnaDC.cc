@@ -71,7 +71,7 @@ void STARAnaDC::Hdecaygate(TH2S *hist_Tot, Int_t iden, Int_t &start, Int_t &end,
         hist_DX = hist_Tot -> ProjectionY("Pro_Y_decay", start, end, "");
         hist_L = hist_Tot -> ProjectionY("Pro_BGl", bg_ls, bg_le, "");
         hist_R = hist_Tot -> ProjectionY("Pro_BGr", bg_rs, bg_re, "");
-        hist_D = new TH1S("hist_decay", "Decay Curve; Time (ms); Counts;", bin/nbin, 0, bin); //gated time curve after removing the background
+        hist_D = new TH1S("hist_decay", "", bin/nbin, 0, bin); //gated time curve after removing the background
         
         // algorithm for the time decay curve
         for (Int_t i = 0; i < bin; i++)
@@ -107,7 +107,7 @@ void STARAnaDC::Hdecaygate(TH2S *hist_Tot, Int_t iden, Int_t &start, Int_t &end,
         hist_DX = hist_Tot -> ProjectionX("Pro_X_decay", start, end, "");
         hist_L = hist_Tot -> ProjectionX("Pro_BGl", bg_ls, bg_le, "");
         hist_R = hist_Tot -> ProjectionX("Pro_BGr", bg_rs, bg_re, "");
-        hist_D = new TH1S("hist_decay", "Decay Curve; Time (ms); Counts;", bin/nbin, 0, bin); //gated time curve after removing the background
+        hist_D = new TH1S("hist_decay", "", bin/nbin, 0, bin); //gated time curve after removing the background
         
         // algorithm for the time decay curve
         for (Int_t i = 0; i < bin; i++)
@@ -207,7 +207,7 @@ void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &pea
 		bg -> SetParameter(0, p[2]);
 
 		tempcvs -> cd();
-		TH2S* dummy = new TH2S("dummy", "Decay Curve; Time (ms); Counts;", 4000, 0, 4000, ini+int(ini/2), 0.2, ini+int(ini/2));
+		TH2S* dummy = new TH2S("dummy", "", 4000, 0, 4000, ini+int(ini/2), 0.2, ini+int(ini/2));
 		dummy -> Draw();
 		singledecay -> Draw("P");
 		fcn -> Draw("SAME");
@@ -250,7 +250,7 @@ void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &pea
 		bg -> SetParameter(0, p[3]);
 
 		tempcvs -> cd();
-		TH2S* dummy = new TH2S("dummy", "Decay Curve; Time (ms); Counts;", 4000, 0, 4000, ini+int(ini/2), 0.2, ini+int(ini/2));
+		TH2S* dummy = new TH2S("dummy", "", 4000, 0, 4000, ini+int(ini/2), 0.2, ini+int(ini/2));
 		dummy -> Draw();
 
 		singledecay -> Draw("P");

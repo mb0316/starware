@@ -86,8 +86,8 @@ This program operates with a GUI system.\n\
 STARWARE only accepts the data format with ~.mat.\n\
 \n\
 Since Jan. 2016.\n\
-Current Version : ver.1.0\n\
-Last Update : 12.May.2017.\n\
+Current Version : ver.1.1\n\
+Last Update : 10.Aug.2017.\n\
 By Byul Moon from Korea University\n\
 alpha ver.1.2 Update News 1 : The decaygate function now contains the elimination of the background.\n\
 alpha ver.1.2 Update News 2 : The decaygate function now asks the degree of the data compression(the bin size).\n\
@@ -117,7 +117,7 @@ Copyright 2017. B. Moon\n\
 
 const char gMANUAL[] ="\
 			STARWARE MANUAL\n\
-To be announced.\n\
+The online manual is available at https://opentutorials.org/module/2987 .\n\
 ";
 
 const char gCONTACT[] ="\
@@ -310,7 +310,7 @@ STARGui::STARGui()
     lCheck-> SetMargins(0, 0, 0, 0);
     lCheck-> SetWrapLength(-1);
     fCompositeFrame1 -> AddFrame(lCheck, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
-    lCheck-> MoveResize(1030, 455, 200, 20);
+    lCheck-> MoveResize(1030, 360, 200, 20);
     
     TGCheckButton *fCheckTX = new TGCheckButton(fCompositeFrame1,"x");
     fCheckTX->Connect("Toggled(Bool_t)", "STARGui", this, "checktimetox(Bool_t)");
@@ -318,7 +318,7 @@ STARGui::STARGui()
     fCheckTX->SetMargins(0,0,0,0);
     fCheckTX->SetWrapLength(-1);
     fCompositeFrame1->AddFrame(fCheckTX, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    fCheckTX->Move(1030,485);
+    fCheckTX->Move(1030,390);
     
     TGCheckButton *fCheckTY = new TGCheckButton(fCompositeFrame1,"y");
     fCheckTY->Connect("Toggled(Bool_t)", "STARGui", this, "checktimetoy(Bool_t)");
@@ -326,7 +326,7 @@ STARGui::STARGui()
     fCheckTY->SetMargins(0,0,0,0);
     fCheckTY->SetWrapLength(-1);
     fCompositeFrame1->AddFrame(fCheckTY, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    fCheckTY->MoveResize(1080,485);
+    fCheckTY->MoveResize(1080,390);
     
     // embedded canvas
     TRootEmbeddedCanvas *ProjectedSpectrum_X = new TRootEmbeddedCanvas(0,fCompositeFrame1,1000,250,kSunkenFrame);
@@ -848,7 +848,7 @@ STARGui::STARGui()
     fMainFrame1073->MapWindow();
     fMainFrame1073->Resize(1200,620);
 
-	fMainFrame1073->SetWindowName("STARWARE Ver.1.0");
+	fMainFrame1073->SetWindowName("STARWARE Ver.1.1");
 	fMainFrame1073->MapSubwindows();
 	fMainFrame1073->Connect("CloseWindow()", "STARGui", this, "TerminatePro()");
 

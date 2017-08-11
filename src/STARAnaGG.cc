@@ -6,7 +6,7 @@ Last refine : 10.Aug.2017, ver.1.1
 Copyright. 2017. B. Moon
 ***********************************************************************************/
 #include "TFile.h"
-#include "TH1S.h"
+#include "TH1D.h"
 #include "TH2S.h"
 #include "TCanvas.h"
 #include <iostream>
@@ -37,7 +37,7 @@ void STARAnaGG::Hgate(TH2S *hist_Tot, Int_t iden, Int_t &start, Int_t &end, Int_
         peak = (start+end)/2; //the peak value
 
         bin = hist_Tot -> GetNbinsX();
-		hist_P = new TH1D("gated_histogram", "Gated Spectrum; Energy (keV); Counts;", bin, 0, bin); //gated spectrum after removing the background
+		hist_P = new TH1D("gated_histogram", "", bin, 0, bin); //gated spectrum after removing the background
         
         hist_PY = hist_Tot -> ProjectionX("Pro_X_gate", start, end, "");
         hist_BGL = hist_Tot -> ProjectionX("Pro_BGL", bgls, bgle, "");
@@ -81,7 +81,7 @@ void STARAnaGG::Hgate(TH2S *hist_Tot, Int_t iden, Int_t &start, Int_t &end, Int_
         peak = (start+end)/2; //the peak value
         
         bin = hist_Tot -> GetNbinsX();
-        hist_P = new TH1D("gated_histogram", "Gated Spectrum; Energy (keV); Counts;", bin, 0, bin); //gated spectrum after removing the background
+        hist_P = new TH1D("gated_histogram", "", bin, 0, bin); //gated spectrum after removing the background
         
         hist_PY = hist_Tot -> ProjectionY("Pro_Y_gate", start, end, "");
         hist_BGL = hist_Tot -> ProjectionY("Pro_BGL", bgls, bgle, "");
