@@ -148,9 +148,15 @@ void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &pea
     
     for (Int_t i = 0; i < num; i++)
     {
-        cout << "The peak value : " << peaksvalue[i] << " done."<< endl;
         peakfile = peaksvalue[i];
         file[i] = new TFile(Form("%s%dkeV_decaycurve.root", direc.Data(), peakfile), "READ");
+		if (file[i]->IsOpen() ==  true)	cout << "The peak value : " << peaksvalue[i] << " keV has been successfully read." << endl;
+		if (file[i]->IsOpen() == false)
+		{
+			cout << "Error : The peak value " << peaksvalue[i] << " keV is not exist." << endl;
+			cout << "Please check the peak value and try again." << endl;
+			return;
+		}
     }
     
     Int_t nbin;
