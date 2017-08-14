@@ -977,9 +977,9 @@ void STARGui::gatedspectrum()
 
 void STARGui::gate()
 {
+	if (!((gatevalueX.size() == 6 && gatevalueY.size() < 6) || (gatevalueY.size() == 6 && gatevalueX.size() < 6))) cout << "The gate information is not exact. Please check it again." << endl;
 	if (gatevalueX.size() == 6 && gatevalueY.size() < 6)	stargg.Hgate(hist_Tot, 0, gatevalueX[0], gatevalueX[1], gatevalueX[2], gatevalueX[3], gatevalueX[4], gatevalueX[5]);	
 	if (gatevalueY.size() == 6 && gatevalueX.size() < 6)	stargg.Hgate(hist_Tot, 1, gatevalueY[0], gatevalueY[1], gatevalueY[2], gatevalueY[3], gatevalueY[4], gatevalueY[5]);	
-	else cout << "The gate information is not exact. Please check it again." << endl;
 	reset();
 	cvs1 -> Modified();
 	cvs1 -> Update();
@@ -1006,9 +1006,9 @@ void STARGui::timegate()
 
 void STARGui::decaygate()
 {
+	if (!((gatevalueX.size() == 6 && gatevalueY.size() < 6) || (gatevalueY.size() == 6 && gatevalueX.size() < 6))) cout << "The gate information is not exact. Please check it again." << endl;
 	if (gatevalueX.size() == 6 && gatevalueY.size() < 6)    stardc.Hdecaygate(hist_Tot, 0, gatevalueX[0], gatevalueX[1], gatevalueX[2], gatevalueX[3], gatevalueX[4], gatevalueX[5], tbin);
     if (gatevalueY.size() == 6 && gatevalueX.size() < 6)    stardc.Hdecaygate(hist_Tot, 1, gatevalueY[0], gatevalueY[1], gatevalueY[2], gatevalueY[3], gatevalueY[4], gatevalueY[5], tbin);
-    else cout << "The gate information is not exact. Please check it again." << endl;
 
 	reset();
    	cvs1 -> Modified();
@@ -1025,8 +1025,8 @@ void STARGui::decaygate()
 
 void STARGui::netarea()
 {
-	if (gatevalueX.size() == 2 && gatevalueY.size() < 2)	startg.Hnetarea(hist_Tot, 0, gatevalueX[0], gatevalueX[1], cvs3, effdatafile);
-	if (gatevalueY.size() == 2 && gatevalueX.size() < 2)	startg.Hnetarea(hist_Tot, 1, gatevalueY[0], gatevalueY[1], cvs3, effdatafile);
+	if (gatevalueX.size() == 2 && gatevalueY.size() == 0)	startg.Hnetarea(hist_Tot, 0, gatevalueX[0], gatevalueX[1], cvs3, effdatafile);
+	if (gatevalueY.size() == 2 && gatevalueX.size() == 0)	startg.Hnetarea(hist_Tot, 1, gatevalueY[0], gatevalueY[1], cvs3, effdatafile);
 	else cout << "The gate information is not exact. Please check it again." << endl;
 	reset();
 	
@@ -1041,8 +1041,8 @@ void STARGui::netarea()
 
 void STARGui::netarea2()
 {
-	if (gatevalueX.size() == 2 && gatevalueY.size() < 2)	startg.Hnetarea2(hist_Tot, 0, gatevalueX[0], gatevalueX[1], cvs3, effdatafile, tstart, tend);
-	if (gatevalueY.size() == 2 && gatevalueX.size() < 2)	startg.Hnetarea2(hist_Tot, 1, gatevalueY[0], gatevalueY[1], cvs3, effdatafile, tstart, tend);
+	if (gatevalueX.size() == 2 && gatevalueY.size() == 0)	startg.Hnetarea2(hist_Tot, 0, gatevalueX[0], gatevalueX[1], cvs3, effdatafile, tstart, tend);
+	if (gatevalueY.size() == 2 && gatevalueX.size() == 0)	startg.Hnetarea2(hist_Tot, 1, gatevalueY[0], gatevalueY[1], cvs3, effdatafile, tstart, tend);
 	else cout << "The gate information is not exact. Please check it again." << endl;
 	reset();
 
