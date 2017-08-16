@@ -2,7 +2,7 @@
 ***************************STARWARE CLASS SOURCE FILE*******************************
 Made by Byul Moon from Korea University
 All functions are contained for STARWARE.
-Last refine : 10.Aug.2017, ver.1.1
+Last refine : 16.Aug.2017, ver.1.2
 Copyright. 2017. B. Moon
 ***********************************************************************************/
 #include "TH1S.h"
@@ -90,42 +90,42 @@ void STAR::GetCoorX(Int_t event, Int_t px, Int_t, TObject *)
         gatevalueX.push_back(x);
         if (gatevalueX.size() == 1)
         {
-            cout << "Starting point of gate : " << x << endl;
+//            cout << "Starting point of gate : " << x << endl;
             DrawInfo();
         }
         if (gatevalueX.size() == 2)
         {
-            cout << "End point of gate : " << x << endl;
-            cout << "If you want to use 'NETAREA', please click 'NETAREA' button." << endl;
-            cout << "If you want to use 'GATE' or 'DECAYGATE', please keep setting the background condition." << endl;
+//            cout << "End point of gate : " << x << endl;
+//            cout << "If you want to use 'NETAREA', please click 'NETAREA' button." << endl;
+//            cout << "If you want to use 'GATE' or 'DECAYGATE', please keep setting the background condition." << endl;
             DrawInfo();
         }
         if (gatevalueX.size() == 3)
         {
-            cout << "Starting point of left sided bg : " << x << endl;
+//            cout << "Starting point of left sided bg : " << x << endl;
             DrawInfo();
         }
         if (gatevalueX.size() == 4)
         {
-            cout << "End point of left sided bg : " << x << endl;
+//            cout << "End point of left sided bg : " << x << endl;
             DrawInfo();
         }
         if (gatevalueX.size() == 5)
         {
-            cout << "Starting point of right sided bg : " << x << endl;
+//            cout << "Starting point of right sided bg : " << x << endl;
             DrawInfo();
         }
         if (gatevalueX.size() == 6)
         {
-            cout << "End point of right sided bg : " << x << endl;
-            cout << "If you want to set the gate with above information, please click 'GATE' for gg coincidence, 'DECAY GATE' for decay curve." << endl;
-            cout << "If you want to set the gate condition again, just double click on the canvas." << endl;
+//            cout << "End point of right sided bg : " << x << endl;
+//            cout << "If you want to set the gate with above information, please click 'GATE' for gg coincidence, 'DECAY GATE' for decay curve." << endl;
+//            cout << "If you want to set the gate condition again, just double click on the canvas." << endl;
             DrawInfo();
         }
         
         if (gatevalueX.size() > 6)
         {
-            cout << "Error : overflow. gate information has been deleted." << endl;
+//            cout << "Error : overflow. gate information has been deleted." << endl;
             gatevalueX.clear();
 			delete gate1;
 			delete gate2;
@@ -154,42 +154,42 @@ void STAR::GetCoorY(Int_t event, Int_t px, Int_t, TObject *)
         gatevalueY.push_back(x);
         if (gatevalueY.size() == 1)
         {
-            cout << "Starting point of gate : " << x << endl;
+//            cout << "Starting point of gate : " << x << endl;
             DrawInfo();
         }
         if (gatevalueY.size() == 2)
         {
-            cout << "End point of gate : " << x << endl;
-            cout << "If you want to use 'NETAREA', please click 'NETAREA' button." << endl;
-            cout << "If you want to use 'GATE' or 'DECAYGATE', please keep setting the background condition." << endl;
+//            cout << "End point of gate : " << x << endl;
+//            cout << "If you want to use 'NETAREA', please click 'NETAREA' button." << endl;
+//            cout << "If you want to use 'GATE' or 'DECAYGATE', please keep setting the background condition." << endl;
             DrawInfo();
         }
         if (gatevalueY.size() == 3)
         {
-            cout << "Starting point of left sided bg : " << x << endl;
+//            cout << "Starting point of left sided bg : " << x << endl;
             DrawInfo();
         }
         if (gatevalueY.size() == 4)
         {
-            cout << "End point of left sided bg : " << x << endl;
+//            cout << "End point of left sided bg : " << x << endl;
             DrawInfo();
         }
         if (gatevalueY.size() == 5)
         {
-            cout << "Starting point of right sided bg : " << x << endl;
+//            cout << "Starting point of right sided bg : " << x << endl;
             DrawInfo();
         }
         if (gatevalueY.size() == 6)
         {
-            cout << "End point of right sided bg : " << x << endl;
-            cout << "If you want to set the gate with above information, please click 'GATE' for gg coincidence, 'DECAY GATE' for decay curve." << endl;
-            cout << "If you want to set the gate condition again, just double click on the canvas." << endl;
+//            cout << "End point of right sided bg : " << x << endl;
+//            cout << "If you want to set the gate with above information, please click 'GATE' for gg coincidence, 'DECAY GATE' for decay curve." << endl;
+//            cout << "If you want to set the gate condition again, just double click on the canvas." << endl;
             DrawInfo();
         }
         
         if (gatevalueY.size() > 6)
         {
-            cout << "Error : overflow. gate information has been deleted." << endl;
+//            cout << "Error : overflow. gate information has been deleted." << endl;
 			gatevalueY.clear();
 			delete gate1;
 			delete gate2;
@@ -325,7 +325,7 @@ void STAR::intro()
 {
     cout << "-----------------------------STARWARE(SpecTroscopy Analysis for gamma-Ray softWARE)---------------------------------" << endl;
     cout << "------------------------------------------Byul means 'star' in Korean.----------------------------------------------" << endl;
-    cout << "----------------------------------Gamma-ray Spectroscopy Analysis Tool Ver.1.1--------------------------------------" << endl;
+    cout << "----------------------------------Gamma-ray Spectroscopy Analysis Tool Ver.1.2--------------------------------------" << endl;
     cout << "The Data analysis from coincidence event matrices." << endl;
     cout << "Made by Byul Moon(B.Moon) from Korea University" << endl;
     cout << "Since Jan. 2016." << endl;

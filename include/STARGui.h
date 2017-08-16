@@ -2,7 +2,7 @@
 *************************STARWARE GUI CONSTRUCTOR FILE******************************
 Made by Byul Moon from Korea University
 GUI constructor for STARWARE program.
-Last refine : 10.Aug.2017, ver.1.1
+Last refine : 16.Aug.2017, ver.1.2
 Copyright. 2017. B. Moon
 ***********************************************************************************/
 
@@ -24,6 +24,11 @@ Copyright. 2017. B. Moon
 #include <cmath>
 #include <cstdlib>
 #include <fstream>
+#include "TSystem.h"
+#include "TRint.h"
+#include "TGTextView.h"
+#include <Getline.h>
+#include "TString.h"
 
 #include "TApplication.h"
 #include "TSystem.h"
@@ -80,8 +85,7 @@ class STARGui : public STAR
 		Double_t bunit = 0;
 
 		TGStatusBar* fStatusBar;
-
-
+		TGTextView* fTextView;
 
 	public :
 		STARGui();

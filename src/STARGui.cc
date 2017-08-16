@@ -2,9 +2,10 @@
 *************************STARWARE GUI CONSTRUCTOR FILE******************************
 Made by Byul Moon from Korea University
 GUI constructor for STARWARE program.
-Last refine : 10.Aug.2017, ver.1.1
+Last refine : 16.Aug.2017, ver.1.2
 Copyright 2017. B. Moon
 ***********************************************************************************/
+#include "TROOT.h"
 #include "TGDockableFrame.h"
 #include "TGMenu.h"
 #include "TGMdiDecorFrame.h"
@@ -76,7 +77,8 @@ Copyright 2017. B. Moon
 #include "STARCal.h"
 #include "Rtypes.h"
 #include "TString.h"
-
+#include "TSystem.h"
+#include "TRint.h"
 
 const char gAboutSTARWARE[] = "\
 			STARWARE\n\
@@ -106,6 +108,7 @@ beta ver.1.2 Update News 1 (08.Mar.2017) : The logft calculation has been added.
 beta ver.1.2 Update News 2 (13.Mar.2017) : The reduced matrix element calculation has been added.\n\
 ver.1.0 Update News 1 (12.May.2017) : Fixed bugs.\n\
 ver.1.1 Update News 1 (10.Aug.2017) : Optimized memory consumption.\n\
+ver.1.2 Update News 1 (16.Aug.2017) : Added CINT window.\n\
 ";
 
 const char gCOPYRIGHT[] = "\
@@ -140,10 +143,10 @@ enum EMyMessageTypes
 using namespace std;
 STARGui::STARGui()
 {
-	gStyle -> SetPadLeftMargin(0.13);
-	gStyle -> SetPadRightMargin(0.06);
-	gStyle -> SetPadTopMargin(0.15);
-	gStyle -> SetPadBottomMargin(0.15);
+	gStyle -> SetPadLeftMargin(0.06);
+	gStyle -> SetPadRightMargin(0.02);
+	gStyle -> SetPadTopMargin(0.05);
+	gStyle -> SetPadBottomMargin(0.1);
 	gStyle -> SetTitleOffset(1.0, "x");
 	gStyle -> SetTitleOffset(0.8, "y");
 	gStyle -> SetTitleOffset(0.5, "z");
@@ -166,7 +169,7 @@ STARGui::STARGui()
 	gStyle -> SetOptStat(0);
 
     // main frame
-    TGMainFrame *fMainFrame1073 = new TGMainFrame(gClient->GetRoot(),1200,650,kMainFrame | kVerticalFrame);
+    TGMainFrame *fMainFrame1073 = new TGMainFrame(gClient->GetRoot(),1200,1000,kMainFrame | kVerticalFrame);
     fMainFrame1073->SetName("STARWARE");
     fMainFrame1073->SetLayoutBroken(kTRUE);
 
@@ -189,19 +192,27 @@ STARGui::STARGui()
 	fMainFrame1073 -> AddFrame(fMenuBar, new TGLayoutHints(kLHintsTop | kLHintsExpandX, 2, 2, 2, 5));
 	fMenuBar->MoveResize(0,0,1200,25);
 
+    fTextView = new TGTextView(fMainFrame1073, 1180, 150, 10, kFixedWidth | kFixedHeight); 
+//	Pixel_t backpxl;
+//	gClient->GetColorByName("#c0c0c0", backpxl);
+//	fTextView -> SetBackground(backpxl);
+	fMainFrame1073->AddFrame(fTextView, new TGLayoutHints(kLHintsExpandX)); 
+	fTextView->MoveResize(10, 590, 1180, 150);
+	fTextView->Clear();
+
 	Int_t parts[] = {45, 15, 10, 30};
 	fStatusBar = new TGStatusBar(fMainFrame1073, 50, 10, kVerticalFrame);
 	fStatusBar->SetParts(parts, 4);
 	fStatusBar->Draw3DCorner(kFALSE);
 	fMainFrame1073->AddFrame(fStatusBar, new TGLayoutHints(kLHintsExpandX, 0, 0, 10, 0));
-	fStatusBar->MoveResize(20,590,1000,20);
+	fStatusBar->MoveResize(20,750,1000,20);
 
     TGLabel *lCOPY = new TGLabel(fMainFrame1073, "Copyright 2017. B. Moon");
     lCOPY-> SetTextJustify(kTextLeft);
     lCOPY-> SetMargins(0, 0, 0, 0);
     lCOPY-> SetWrapLength(-1);
     fMainFrame1073 -> AddFrame(lCOPY, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
-    lCOPY-> MoveResize(1050, 590, 200, 20);
+    lCOPY-> MoveResize(1050, 750, 200, 20);
 
     // tab widget
     TGTab *fTab1 = new TGTab(fMainFrame1073, 1180, 550);
@@ -830,10 +841,7 @@ STARGui::STARGui()
     BMUL->Resize(100,35);
     fCompositeFrame6->AddFrame(BMUL, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     BMUL->MoveResize(900,260,100,35);
-     
- 
-
-     
+    
 
  
     fTab1 -> SetTab(0);
@@ -846,13 +854,21 @@ STARGui::STARGui()
     
     fMainFrame1073->Resize(fMainFrame1073->GetDefaultSize());
     fMainFrame1073->MapWindow();
-    fMainFrame1073->Resize(1200,620);
+    fMainFrame1073->Resize(1200,1000);
 
-	fMainFrame1073->SetWindowName("STARWARE Ver.1.1");
+	fMainFrame1073->SetWindowName("STARWARE Ver.1.2");
 	fMainFrame1073->MapSubwindows();
 	fMainFrame1073->Connect("CloseWindow()", "STARGui", this, "TerminatePro()");
 
+	tempfile = Form("%s/out.log", gSystem->WorkingDirectory());
+
+	FILE *cintout = fopen(tempfile.Data(), "a+t");
+
+	gSystem->RedirectOutput(tempfile.Data(),"a");	
 	intro();
+	gSystem->RedirectOutput(0);
+	fTextView->LoadFile(tempfile.Data());
+	fTextView->ShowBottom();
 }
 
 void STARGui::clearall()
@@ -888,6 +904,7 @@ void STARGui::clearall()
 
 void STARGui::openfile()
 {
+	gSystem->RedirectOutput(tempfile.Data(),"a");
     clearall();
     
     TGFileInfo fileInfo;
@@ -926,11 +943,17 @@ void STARGui::openfile()
 	cvs2 -> MoveOpaque(0);
 	cvs2 -> ResizeOpaque(0);	
  
+	cout << filenameWithPath << openingFile << endl;
     delete decomposedFileNameWithPath;
+
+	gSystem->RedirectOutput(0);
+	fTextView->LoadFile(tempfile.Data());
+	fTextView->ShowBottom();
 }
 
 void STARGui::openeff()
 {
+	gSystem->RedirectOutput(tempfile.Data(),"a");
     TGFileInfo effInfo;
     const Char_t *effType[4] = {"ROOT File", "*.root", 0, 0};
     effInfo.fFileTypes = effType;
@@ -948,11 +971,14 @@ void STARGui::openeff()
     	effdatafile = effInfo.fFilename;
 		cout << "The efficiency data file has been successfully read." << endl;
 	}
-
+	gSystem->RedirectOutput(0);
+	fTextView->LoadFile(tempfile.Data());
+	fTextView->ShowBottom();
 }
 
 void STARGui::gatedspectrum()
 {
+	gSystem->RedirectOutput(tempfile.Data(),"a");
 	TGFileInfo gateInfo;
 	const Char_t *gateType[4] = {"ROOT File", "*.root", 0, 0};
 	gateInfo.fFileTypes = gateType;
@@ -973,10 +999,14 @@ void STARGui::gatedspectrum()
 		cvs4 -> Update();
 		cvs4 -> Modified();
 	}
+	gSystem->RedirectOutput(0);
+	fTextView->LoadFile(tempfile.Data());
+	fTextView->ShowBottom();
 }
 
 void STARGui::gate()
 {
+	gSystem->RedirectOutput(tempfile.Data(),"a");
 	if (!((gatevalueX.size() == 6 && gatevalueY.size() < 6) || (gatevalueY.size() == 6 && gatevalueX.size() < 6))) cout << "The gate information is not exact. Please check it again." << endl;
 	if (gatevalueX.size() == 6 && gatevalueY.size() < 6)	stargg.Hgate(hist_Tot, 0, gatevalueX[0], gatevalueX[1], gatevalueX[2], gatevalueX[3], gatevalueX[4], gatevalueX[5]);	
 	if (gatevalueY.size() == 6 && gatevalueX.size() < 6)	stargg.Hgate(hist_Tot, 1, gatevalueY[0], gatevalueY[1], gatevalueY[2], gatevalueY[3], gatevalueY[4], gatevalueY[5]);	
@@ -991,10 +1021,14 @@ void STARGui::gate()
     if (stargg.hist_P != nullptr)	stargg.hist_P -> Draw();
     cvs3 -> Modified();
     cvs3 -> Update();
+	gSystem->RedirectOutput(0);
+	fTextView->LoadFile(tempfile.Data());
+	fTextView->ShowBottom();
 }
 
 void STARGui::timegate()
 {
+	gSystem->RedirectOutput(tempfile.Data(),"a");
     startg.Htimegate(hist_Tot, timeaxis1, timeaxis2, tstart, tend);
     
     cvs5 -> cd();
@@ -1002,10 +1036,15 @@ void STARGui::timegate()
     startg.hist_TY -> Draw();
     cvs5 -> Modified();
     cvs5 -> Update();
+
+    gSystem->RedirectOutput(0);
+    fTextView->LoadFile(tempfile.Data());
+    fTextView->ShowBottom();
 }
 
 void STARGui::decaygate()
 {
+	gSystem->RedirectOutput(tempfile.Data(),"a");
 	if (!((gatevalueX.size() == 6 && gatevalueY.size() < 6) || (gatevalueY.size() == 6 && gatevalueX.size() < 6))) cout << "The gate information is not exact. Please check it again." << endl;
 	if (gatevalueX.size() == 6 && gatevalueY.size() < 6)    stardc.Hdecaygate(hist_Tot, 0, gatevalueX[0], gatevalueX[1], gatevalueX[2], gatevalueX[3], gatevalueX[4], gatevalueX[5], tbin);
     if (gatevalueY.size() == 6 && gatevalueX.size() < 6)    stardc.Hdecaygate(hist_Tot, 1, gatevalueY[0], gatevalueY[1], gatevalueY[2], gatevalueY[3], gatevalueY[4], gatevalueY[5], tbin);
@@ -1021,10 +1060,15 @@ void STARGui::decaygate()
     stardc.hist_D -> Draw();
     cvs4 -> Modified();
     cvs4 -> Update();
+
+	gSystem->RedirectOutput(0);
+    fTextView->LoadFile(tempfile.Data());
+    fTextView->ShowBottom();
 }
 
 void STARGui::netarea()
 {
+	gSystem->RedirectOutput(tempfile.Data(),"a");
 	if (gatevalueX.size() == 2 && gatevalueY.size() == 0)	startg.Hnetarea(hist_Tot, 0, gatevalueX[0], gatevalueX[1], cvs3, effdatafile);
 	if (gatevalueY.size() == 2 && gatevalueX.size() == 0)	startg.Hnetarea(hist_Tot, 1, gatevalueY[0], gatevalueY[1], cvs3, effdatafile);
 	else cout << "The gate information is not exact. Please check it again." << endl;
@@ -1037,10 +1081,15 @@ void STARGui::netarea()
 
 	cvs3 -> Modified();
 	cvs3 -> Update();
+
+    gSystem->RedirectOutput(0);
+    fTextView->LoadFile(tempfile.Data());
+    fTextView->ShowBottom();
 }
 
 void STARGui::netarea2()
 {
+	gSystem->RedirectOutput(tempfile.Data(),"a");
 	if (gatevalueX.size() == 2 && gatevalueY.size() == 0)	startg.Hnetarea2(hist_Tot, 0, gatevalueX[0], gatevalueX[1], cvs3, effdatafile, tstart, tend);
 	if (gatevalueY.size() == 2 && gatevalueX.size() == 0)	startg.Hnetarea2(hist_Tot, 1, gatevalueY[0], gatevalueY[1], cvs3, effdatafile, tstart, tend);
 	else cout << "The gate information is not exact. Please check it again." << endl;
@@ -1053,10 +1102,15 @@ void STARGui::netarea2()
 
 	cvs3 -> Modified();
 	cvs3 -> Update();
+
+    gSystem->RedirectOutput(0);
+    fTextView->LoadFile(tempfile.Data());
+    fTextView->ShowBottom();
 }
 
 void STARGui::timediff()
 {
+	gSystem->RedirectOutput(tempfile.Data(),"a");
     stardis.Htimediff(hist_Tot, timeaxis1, timeaxis2, dstart1, dend1, dstart2, dend2);
     
     cvs6 -> cd();
@@ -1065,6 +1119,10 @@ void STARGui::timediff()
     stardis.hist2 -> Draw("same");
     cvs6 -> Modified();
     cvs6 -> Update();
+
+    gSystem->RedirectOutput(0);
+    fTextView->LoadFile(tempfile.Data());
+    fTextView->ShowBottom();
 }
 /*
 void STARGui::timegrow()
@@ -1080,19 +1138,29 @@ void STARGui::timegrow()
 */
 void STARGui::halflife()
 {
+	gSystem->RedirectOutput(tempfile.Data(),"a");
     stardc.Hhalflife(halftype, half_parent, peaksvalue, cvs8);
     
     cvs8 -> Modified();
     cvs8 -> Update();
     
     peaksvalue.clear();
+
+    gSystem->RedirectOutput(0);
+    fTextView->LoadFile(tempfile.Data());
+    fTextView->ShowBottom();
 }
 
 void STARGui::setpeaks()
 {
+	gSystem->RedirectOutput(tempfile.Data(),"a");
     peaksvalue.push_back(halfpeak);
     
     cout << halfpeak << " keV has ben saved." << endl;
+
+    gSystem->RedirectOutput(0);
+    fTextView->LoadFile(tempfile.Data());
+    fTextView->ShowBottom();
 }
 
 void STARGui::SetTimeBin(const Char_t *value)
@@ -1242,6 +1310,8 @@ void STARGui::HandleMenu(Int_t menu_id)
 
 void STARGui::TerminatePro()
 {
+	fTextView->Clear();
+	gSystem->Unlink(tempfile.Data());
 	gApplication->Terminate(0);
 }
 
@@ -1322,12 +1392,20 @@ void STARGui::SetDecayType(Int_t value)
 
 void STARGui::logft()
 {
+	gSystem->RedirectOutput(tempfile.Data(),"a");
 	starcal.Hlogft(DecayType, ZParent, HalfParent, QParent, EParent, EDaut, PDaut, unit);
+    gSystem->RedirectOutput(0);
+    fTextView->LoadFile(tempfile.Data());
+    fTextView->ShowBottom();
 }
 	
 void STARGui::bgt()
 {
+	gSystem->RedirectOutput(tempfile.Data(),"a");
 	starcal.BGT(DecayType, ZParent, HalfParent, QParent, EParent, EDaut, PDaut, unit);
+    gSystem->RedirectOutput(0);
+    fTextView->LoadFile(tempfile.Data());
+    fTextView->ShowBottom();
 }
 
 void STARGui::SetMulti(Int_t value)
@@ -1371,6 +1449,10 @@ void STARGui::SetHalfUnit(Int_t value)
 
 void STARGui::bmulti()
 {
+	gSystem->RedirectOutput(tempfile.Data(),"a");
 	starcal.HBMUL(multitype, benergy, bhalf, bunit);
+    gSystem->RedirectOutput(0);
+    fTextView->LoadFile(tempfile.Data());
+    fTextView->ShowBottom();
 }
 
