@@ -51,3 +51,5 @@ beta ver.1.2 Update News 2 (13.Mar.2017) : The reduced matrix element calculatio
 ver.1.0 Update News 1 (12.May.2017) : Fixed bugs.
 
 ver.1.1 Update News 1 (10.Aug.2017) : Optimized memory consumption.
+
+ver.1.2 Update News 1 (16.Aug.2017) : Added CINT window.
