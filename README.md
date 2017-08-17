@@ -14,7 +14,7 @@ Since Jan. 2016.
 
 Current Version : ver.1.1
 
-Last Update : 10.Aug.2017.
+Last Update : 16.Aug.2017.
 
 By Byul Moon from Korea University
 
