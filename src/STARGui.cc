@@ -183,9 +183,9 @@ STARGui::STARGui()
 
 	TGPopupMenu* fMenuHelp = new TGPopupMenu(gClient->GetRoot());
 	fMenuHelp->AddEntry(" &About STARWARE", M_HELP_ABOUT, 0, gClient->GetPicture("about.xpm"));
-	fMenuHelp->AddEntry(" &STARWARE Copyright", M_HELP_COPYRIGHT);
-	fMenuHelp->AddEntry(" &STARWARE Manual", M_HELP_MANUAL);
-	fMenuHelp->AddEntry(" &STARWARE Contact Info.", M_HELP_CONTACT);
+	fMenuHelp->AddEntry(" STARWARE &Copyright", M_HELP_COPYRIGHT);
+	fMenuHelp->AddEntry(" STARWARE &Manual", M_HELP_MANUAL);
+	fMenuHelp->AddEntry(" STARWARE Contact &Info.", M_HELP_CONTACT);
 	fMenuHelp->Connect("Activated(Int_t)", "STARGui", this, "HandleMenu(Int_t)");
 	fMenuBar->AddPopup("&Help", fMenuHelp, new TGLayoutHints(kLHintsTop|kLHintsLeft));
 
