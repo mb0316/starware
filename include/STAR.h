@@ -37,7 +37,9 @@ class STAR
 		void reset();												//Reset all information
 		void GetCoorX(Int_t event, Int_t px, Int_t, TObject *);		//Get x value from the x projected histogram
 		void GetCoorY(Int_t event, Int_t px, Int_t, TObject *);		//Get x value from the y projected histogram
+		void GetCoorY2(Int_t event, Int_t px, Int_t, TObject *);		//Get x value from the y projected histogram
 		void DrawInfo();											//Represent gate information on the canvas
+		void DrawInfo2();											//Represent gate information on the canvas
 		void intro(); 												//Print out the intro information
 		void main(TString &directory, TString &openFile);			//Main function for the program
 
@@ -46,6 +48,7 @@ class STAR
 		TH1D* hist_Y = nullptr;		//y projected histogram
 		TCanvas* cvs1 = nullptr;	//A canvas for x projected histogram
 		TCanvas* cvs2 = nullptr;	//A canvas for y projected histogram
+		TCanvas* cvs5 = nullptr;	//A canvas for y projected histogram
 		TLatex* gate1 = nullptr;	
 		TLatex* gate2 = nullptr;
 		TLatex* bgl1 = nullptr;

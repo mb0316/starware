@@ -205,6 +205,45 @@ void STAR::GetCoorY(Int_t event, Int_t px, Int_t, TObject *)
     }
 }
 
+void STAR::GetCoorY2(Int_t event, Int_t px, Int_t, TObject *)
+{
+    TCanvas *c = (TCanvas *) gTQSender;
+    TPad *pad = (TPad *) c->GetSelectedPad();
+    if (!pad) return;
+    if (event == kButton1Double)
+    {
+        Int_t x = pad->AbsPixeltoX(px);
+        x = pad->PadtoX(x);
+        gatevalueY.push_back(x);
+        if (gatevalueY.size() == 1)
+        {
+//            cout << "Starting point of gate : " << x << endl;
+            DrawInfo2();
+        }
+        if (gatevalueY.size() == 2)
+        {
+//            cout << "End point of gate : " << x << endl;
+//            cout << "If you want to use 'NETAREA', please click 'NETAREA' button." << endl;
+//            cout << "If you want to use 'GATE' or 'DECAYGATE', please keep setting the background condition." << endl;
+            DrawInfo2();
+        }
+       
+        if (gatevalueY.size() > 2)
+        {
+//            cout << "Error : overflow. gate information has been deleted." << endl;
+			gatevalueY.clear();
+			delete gate1;
+			delete gate2;
+//			delete bgl1;
+//			delete bgl2;
+//			delete bgr1;
+//			delete bgr2;
+			cvs5 -> Modified();
+			cvs5 -> Update();
+        }
+    }
+}
+
 void STAR::DrawInfo()
 {
     if (gatevalueX.size() == 1)
@@ -321,11 +360,36 @@ void STAR::DrawInfo()
     
 }
 
+void STAR::DrawInfo2()
+{
+    
+    if (gatevalueY.size() == 1)
+    {
+        cvs5 -> cd();
+        
+        gate1 = new TLatex(0.2, 0.8, Form("Gate1 : %d", gatevalueY[0]));
+        gate1 -> SetNDC();
+        gate1 -> Draw("same");
+        cvs5 -> Modified();
+        cvs5 -> Update();
+    }
+    if (gatevalueY.size() == 2)
+    {
+        cvs5 -> cd();
+        gate2 = new TLatex(0.2, 0.75, Form("Gate2 : %d", gatevalueY[1]));
+        gate2 -> SetNDC();
+        gate2 -> Draw("same");
+        cvs5 -> Modified();
+        cvs5 -> Update();
+    }
+     
+}
+
 void STAR::intro()
 {
     cout << "-----------------------------STARWARE(SpecTroscopy Analysis for gamma-Ray softWARE)---------------------------------" << endl;
     cout << "------------------------------------------Byul means 'star' in Korean.----------------------------------------------" << endl;
-    cout << "----------------------------------Gamma-ray Spectroscopy Analysis Tool Ver.1.2--------------------------------------" << endl;
+    cout << "----------------------------------Gamma-ray Spectroscopy Analysis Tool Ver.1.3--------------------------------------" << endl;
     cout << "The Data analysis from coincidence event matrices." << endl;
     cout << "Made by Byul Moon(B.Moon) from Korea University" << endl;
     cout << "Since Jan. 2016." << endl;

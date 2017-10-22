@@ -49,7 +49,7 @@ class STARGui : public STAR
 		vector <int> peaksvalue;
 		TCanvas* cvs3;
 		TCanvas* cvs4;
-		TCanvas* cvs5;
+//		TCanvas* cvs5;
 		TCanvas* cvs6;
 //		TCanvas* cvs7;
 		TCanvas* cvs8;

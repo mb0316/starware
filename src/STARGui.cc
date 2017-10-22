@@ -88,8 +88,8 @@ This program operates with a GUI system.\n\
 STARWARE only accepts the data format with ~.mat.\n\
 \n\
 Since Jan. 2016.\n\
-Current Version : ver.1.1\n\
-Last Update : 10.Aug.2017.\n\
+Current Version : ver.1.3\n\
+Last Update : 16.Aug.2017.\n\
 By Byul Moon from Korea University\n\
 alpha ver.1.2 Update News 1 : The decaygate function now contains the elimination of the background.\n\
 alpha ver.1.2 Update News 2 : The decaygate function now asks the degree of the data compression(the bin size).\n\
@@ -495,7 +495,7 @@ STARGui::STARGui()
     Int_t wtgated_spec = tgated_spec->GetCanvasWindowId();
     cvs5 = new TCanvas("cvs5", 10, 10, wtgated_spec);
     tgated_spec->AdoptCanvas(cvs5);
-    cvs5 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "STARGui", this, "GetCoorY(Int_t, Int_t, Int_t, TObject*)");
+    cvs5 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "STARGui", this, "GetCoorY2(Int_t, Int_t, Int_t, TObject*)");
     cvs5 -> Connect("ProcessedEvent(Int_t, Int_t, Int_t, TObject*)", "STARGui", this, "EventInfo(Int_t, Int_t, Int_t, TObject*)");
     fCompositeFrame3->AddFrame(tgated_spec, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     tgated_spec->MoveResize(10,10,1000,250);
@@ -856,7 +856,7 @@ STARGui::STARGui()
     fMainFrame1073->MapWindow();
     fMainFrame1073->Resize(1200,1000);
 
-	fMainFrame1073->SetWindowName("STARWARE Ver.1.2");
+	fMainFrame1073->SetWindowName("STARWARE Ver.1.3");
 	fMainFrame1073->MapSubwindows();
 	fMainFrame1073->Connect("CloseWindow()", "STARGui", this, "TerminatePro()");
 
@@ -1078,6 +1078,8 @@ void STARGui::netarea()
 	cvs1 -> Update();
     cvs2 -> Modified();
 	cvs2 -> Update();
+	cvs5 -> Modified();
+	cvs5 -> Update();
 
 	cvs3 -> Modified();
 	cvs3 -> Update();
@@ -1099,6 +1101,9 @@ void STARGui::netarea2()
 	cvs1 -> Update();
     cvs2 -> Modified();
 	cvs2 -> Update();
+	cvs5 -> Modified();
+	cvs5 -> Update();
+
 
 	cvs3 -> Modified();
 	cvs3 -> Update();
@@ -1280,7 +1285,8 @@ void STARGui::HandleMenu(Int_t menu_id)
 	switch (menu_id) {
 		case M_FILE_EXIT:
 			// close the window and quit application
-			gApplication->Terminate(0);
+//			gApplication->Terminate(0);
+			TerminatePro();
 			break;
 		case M_FILE_OPEN:
 			openfile();
