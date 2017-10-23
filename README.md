@@ -1,5 +1,7 @@
 # STARWARE
 
+<img src="/Users/moonbyul/Moon_root/EURICA/BMprogram/starware_wiki/starware.wiki/image/3-1.png" alt="Drawing" style="width: 500px;"/>
+
 STARWARE(SpecTroscopy Analysis for gamma-Ray softWARE) is an analysis tool dedicated for gamma-ray spectroscopy based on ROOT.
 
 This program operates with a GUI system.
