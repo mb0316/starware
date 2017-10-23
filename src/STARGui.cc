@@ -120,7 +120,7 @@ Copyright 2017. B. Moon\n\
 
 const char gMANUAL[] ="\
 			STARWARE MANUAL\n\
-The online manual is available at https://opentutorials.org/module/2987 .\n\
+The online manual is available at https://github.com/mb0316/starware/wiki.\n\
 ";
 
 const char gCONTACT[] ="\
