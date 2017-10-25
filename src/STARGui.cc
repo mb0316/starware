@@ -2,7 +2,7 @@
 *************************STARWARE GUI CONSTRUCTOR FILE******************************
 Made by Byul Moon from Korea University
 GUI constructor for STARWARE program.
-Last refine : 16.Aug.2017, ver.1.2
+Last refine : 25.Oct.2017, ver.1.4
 Copyright 2017. B. Moon
 ***********************************************************************************/
 #include "TROOT.h"
@@ -88,8 +88,8 @@ This program operates with a GUI system.\n\
 STARWARE only accepts the data format with ~.mat.\n\
 \n\
 Since Jan. 2016.\n\
-Current Version : ver.1.3\n\
-Last Update : 16.Aug.2017.\n\
+Current Version : ver.1.4\n\
+Last Update : 25.Oct.2017.\n\
 By Byul Moon from Korea University\n\
 alpha ver.1.2 Update News 1 : The decaygate function now contains the elimination of the background.\n\
 alpha ver.1.2 Update News 2 : The decaygate function now asks the degree of the data compression(the bin size).\n\
@@ -109,6 +109,8 @@ beta ver.1.2 Update News 2 (13.Mar.2017) : The reduced matrix element calculatio
 ver.1.0 Update News 1 (12.May.2017) : Fixed bugs.\n\
 ver.1.1 Update News 1 (10.Aug.2017) : Optimized memory consumption.\n\
 ver.1.2 Update News 1 (16.Aug.2017) : Added CINT window.\n\
+ver.1.3 Update News 1 (01.Sep.2017) : Build executable.\n\
+ver.1.4 Update News 1 (25.Oct.2017) : Reduced matrix element calculation with W.u.\n\
 ";
 
 const char gCOPYRIGHT[] = "\
@@ -832,7 +834,19 @@ STARGui::STARGui()
 	fCompositeFrame6->AddFrame(fUNIT_HALF, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
 	fUNIT_HALF->MoveResize(750,290,100,20);
 	fUNIT_HALF->Connect("Selected(Int_t)", "STARGui", this, "SetHalfUnit(Int_t)");
- 
+  
+	TGLabel *lVAL_MASS = new TGLabel(fCompositeFrame6, "Mass Number");
+    lVAL_MASS -> SetTextJustify(kTextLeft);
+    lVAL_MASS-> SetMargins(0, 0, 0, 0);
+    lVAL_MASS-> SetWrapLength(-1);
+    fCompositeFrame6 -> AddFrame(lVAL_MASS, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
+    lVAL_MASS-> MoveResize(100, 320, 100, 20);
+   
+    TGNumberEntryField *fVAL_MASS = new TGNumberEntryField(fCompositeFrame6, 0, 0, TGNumberFormat::kNESReal, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 500);
+    fVAL_MASS->MoveResize(250,320,100,20);
+    fCompositeFrame6->AddFrame(fVAL_MASS, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
+    fVAL_MASS -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetBMass(const Char_t *)");
+
     TGTextButton *BMUL = new TGTextButton(fCompositeFrame6,"Calculate",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
     BMUL -> Connect("Clicked()", "STARGui", this, "bmulti()");
     BMUL->SetTextJustify(36);
@@ -856,7 +870,7 @@ STARGui::STARGui()
     fMainFrame1073->MapWindow();
     fMainFrame1073->Resize(1200,1000);
 
-	fMainFrame1073->SetWindowName("STARWARE Ver.1.3");
+	fMainFrame1073->SetWindowName("STARWARE ver.1.4");
 	fMainFrame1073->MapSubwindows();
 	fMainFrame1073->Connect("CloseWindow()", "STARGui", this, "TerminatePro()");
 
@@ -1429,6 +1443,11 @@ void STARGui::SetBHalf(const Char_t *value)
 	bhalf = atof(value);
 }
 
+void STARGui::SetBMass(const Char_t *value)
+{
+	bmass = atoi(value);
+}
+
 void STARGui::SetHalfUnit(Int_t value)
 {
 	if (value == 0)
@@ -1456,7 +1475,7 @@ void STARGui::SetHalfUnit(Int_t value)
 void STARGui::bmulti()
 {
 	gSystem->RedirectOutput(tempfile.Data(),"a");
-	starcal.HBMUL(multitype, benergy, bhalf, bunit);
+	starcal.HBMUL(multitype, benergy, bhalf, bunit, bmass);
     gSystem->RedirectOutput(0);
     fTextView->LoadFile(tempfile.Data());
     fTextView->ShowBottom();

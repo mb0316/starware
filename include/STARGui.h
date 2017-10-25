@@ -2,7 +2,7 @@
 *************************STARWARE GUI CONSTRUCTOR FILE******************************
 Made by Byul Moon from Korea University
 GUI constructor for STARWARE program.
-Last refine : 16.Aug.2017, ver.1.2
+Last refine : 25.Oct.2017, ver.1.4
 Copyright. 2017. B. Moon
 ***********************************************************************************/
 
@@ -83,6 +83,7 @@ class STARGui : public STAR
 		Double_t benergy = 0;
 		Double_t bhalf = 0;
 		Double_t bunit = 0;
+		Int_t bmass = 0;
 
 		TGStatusBar* fStatusBar;
 		TGTextView* fTextView;
@@ -132,6 +133,7 @@ class STARGui : public STAR
 		void SetMulti(Int_t value);
 		void SetBEnergy(const Char_t *value);
 		void SetBHalf(const Char_t *value);
+		void SetBMass(const Char_t *value);
 		void SetHalfUnit(Int_t value);
 		void bmulti();
 

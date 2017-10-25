@@ -6,7 +6,7 @@ STARWARE(SpecTroscopy Analysis for gamma-Ray softWARE) is an analysis tool dedic
 
 This program operates with a GUI system.
 
-STARWARE only accepts the data format with ~.mat.
+STARWARE only accepts the data format with *.mat.
 
 ## Manual
 The online manual is available at https://github.com/mb0316/starware/wiki .
@@ -14,9 +14,9 @@ The online manual is available at https://github.com/mb0316/starware/wiki .
 ## Update News
 Since Jan. 2016.
 
-Current Version : ver.1.3
+Current Version : ver.1.4
 
-Last Update : 1.Sep.2017.
+Last Update : 25.Oct.2017.
 
 By Byul Moon from Korea University
 
@@ -57,3 +57,5 @@ ver.1.1 Update News 1 (10.Aug.2017) : Optimized memory consumption.
 ver.1.2 Update News 1 (16.Aug.2017) : Added CINT window.
 
 ver.1.3 Update News 1 (01.Sep.2017) : Build executable.
+
+ver.1.4 Update News 1 (25.Oct.2017) : Reduced matrix element with W.u.
