@@ -49,7 +49,7 @@ Copyright 2017. B. Moon
 #include "TRootHelpDialog.h"
 
 #include "Riostream.h"
-#include <stdio.h>
+//#include <stdio.h>
 #include <vector>
 #include "TStyle.h"
 #include "TCanvas.h"
@@ -922,7 +922,8 @@ void STARGui::openfile()
     clearall();
     
     TGFileInfo fileInfo;
-    const Char_t *fileType[4] = {"Matrix File", "*.mat", 0, 0};
+//    const Char_t *fileType[4] = {"Matrix File", "*.mat", 0, 0};
+    const char *fileType[6] = {"Matrix File", "*.mat", "Root File", "*.root", 0, 0};
     fileInfo.fFileTypes = fileType;
     new TGFileDialog(gClient -> GetRoot(), 0, kFDOpen, &fileInfo);
     
@@ -935,6 +936,8 @@ void STARGui::openfile()
     TObjArray *decomposedFileNameWithPath = filenameWithPath.Tokenize("/");
     TString openingFile = ((TObjString *) decomposedFileNameWithPath -> Last()) -> GetString();
     TString directory = filenameWithPath.ReplaceAll(openingFile, "");
+	cout << openingFile << endl;
+	cout << directory << endl;
     
     main(directory, openingFile);
     cvs1 -> cd();

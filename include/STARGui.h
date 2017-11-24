@@ -17,7 +17,7 @@ Copyright. 2017. B. Moon
 #include "STARAnaDC.h"
 #include "STARAnaDis.h"
 #include "STARCal.h"
-#include <stdio.h>
+//#include <stdio.h>
 #include <vector>
 #include "TStyle.h"
 #include "TCanvas.h"

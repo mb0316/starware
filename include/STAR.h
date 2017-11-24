@@ -9,7 +9,7 @@ Copyright. 2017. B. Moon
 #ifndef STAR_H
 #define STAR_H
 
-#include "TH2S.h"
+#include "TH2D.h"
 #include "TH1D.h"
 #include "TCanvas.h"
 #include "TLatex.h"
@@ -28,7 +28,7 @@ class STAR
 {
 //	RQ_OBJECT("STARAna")
 	public :
-		TH2S* hist_Tot = nullptr;				//2D histogram built by MAT data
+		TH2D* hist_Tot = nullptr;				//2D histogram built by MAT data
 		TString direc;				//Directory of the current work in the string form
 		TString tempfile;
 		vector<int> gatevalueX;		//Gate value for x axis; 0 : gate_start, 1 : gate_end, 2 : left_bg_start, 3 : left_bg_end, 4 : right_bg_start, 5 : right_bg_end;

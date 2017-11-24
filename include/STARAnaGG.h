@@ -10,7 +10,7 @@ Copyright. 2017. B. Moon
 #define STARANAGG_H
 
 #include "TH1D.h"
-#include "TH2S.h"
+#include "TH2D.h"
 #include "STAR.h"
 
 
@@ -31,7 +31,7 @@ class STARAnaGG : public STAR
 	public :
 		TH1D* hist_P = nullptr;
 
-		void Hgate(TH2S *hist_Tot, Int_t iden, Int_t &start, Int_t &end, Int_t &bgls, Int_t &bgle, Int_t &bgrs, Int_t &bgre);
+		void Hgate(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, Int_t &bgls, Int_t &bgle, Int_t &bgrs, Int_t &bgre);
 };
 #endif
 

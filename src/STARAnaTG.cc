@@ -8,7 +8,7 @@ Copyright. 2017. B. Moon
 #include "TF1.h"
 #include "TFile.h"
 #include "TH1D.h"
-#include "TH2S.h"
+#include "TH2D.h"
 #include "TCanvas.h"
 #include <iostream>
 #include "TPad.h"
@@ -29,7 +29,7 @@ Copyright. 2017. B. Moon
 
 using namespace std;
 
-void STARAnaTG::Htimegate(TH2S *hist_Tot, Int_t &timeaxis1, Int_t &timeaxis2, Int_t &start, Int_t &end)
+void STARAnaTG::Htimegate(TH2D *hist_Tot, Int_t &timeaxis1, Int_t &timeaxis2, Int_t &start, Int_t &end)
 {
 	if (hist_TY != nullptr)	delete hist_TY;
     if (timeaxis1 == 0 && timeaxis2 == 1)
@@ -70,7 +70,7 @@ void STARAnaTG::Htimegate(TH2S *hist_Tot, Int_t &timeaxis1, Int_t &timeaxis2, In
     
 }
 
-void STARAnaTG::Hnetarea(TH2S *hist_Tot, Int_t iden, Int_t &start, Int_t &end, TCanvas *tempcvs, TString &openFile)
+void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, TCanvas *tempcvs, TString &openFile)
 {
     
 	if (hist_N != nullptr)	delete hist_N;
@@ -290,7 +290,7 @@ void STARAnaTG::Hnetarea(TH2S *hist_Tot, Int_t iden, Int_t &start, Int_t &end, T
 	}
 }
 
-void STARAnaTG::Hnetarea2(TH2S *hist_Tot, Int_t iden, Int_t &start, Int_t &end, TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int_t &tend)
+void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int_t &tend)
 {
 	if (hist_N != nullptr)	delete hist_N;
  

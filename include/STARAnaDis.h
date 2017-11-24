@@ -25,7 +25,7 @@ class STARAnaDis : public STAR
 		TH1D* hist2 = nullptr;		//The histogram for the second time condition
 		TH1* gated_hist = nullptr;	//The histogram for a specific energy
 
-		void Htimediff(TH2S *hist_Tot, Int_t &timeaxis1, Int_t &timeaxis2, Int_t &first, Int_t &second, Int_t &third, Int_t &forth);	//Show two different time gated histograms
+		void Htimediff(TH2D *hist_Tot, Int_t &timeaxis1, Int_t &timeaxis2, Int_t &first, Int_t &second, Int_t &third, Int_t &forth);	//Show two different time gated histograms
 		void peakfind(TString &openFile);																				//Show the histogram of a specific energy
 };
 #endif

@@ -8,7 +8,7 @@ Copyright. 2017. B. Moon
 #include "TF1.h"
 #include "TFile.h"
 #include "TH1S.h"
-#include "TH2S.h"
+#include "TH2D.h"
 #include "TCanvas.h"
 #include "TGraph.h"
 #include "TGraphErrors.h"
@@ -59,7 +59,7 @@ void MLM_D(Int_t &, Double_t *, Double_t &f, Double_t *par, Int_t)
     }
 }
 
-void STARAnaDC::Hdecaygate(TH2S *hist_Tot, Int_t iden, Int_t &start, Int_t &end, Int_t &bg_ls, Int_t &bg_le, Int_t &bg_rs, Int_t &bg_re, Int_t &nbin)
+void STARAnaDC::Hdecaygate(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, Int_t &bg_ls, Int_t &bg_le, Int_t &bg_rs, Int_t &bg_re, Int_t &nbin)
 {
 	if (hist_D != nullptr)	delete hist_D;
 
@@ -213,7 +213,7 @@ void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &pea
 		bg -> SetParameter(0, p[2]);
 
 		tempcvs -> cd();
-		TH2S* dummy = new TH2S("dummy", "", 4000, 0, 4000, ini+int(ini/2), 0.2, ini+int(ini/2));
+		TH2D* dummy = new TH2D("dummy", "", 4000, 0, 4000, ini+int(ini/2), 0.2, ini+int(ini/2));
 		dummy -> Draw();
 		singledecay -> Draw("P");
 		fcn -> Draw("SAME");
@@ -256,7 +256,7 @@ void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &pea
 		bg -> SetParameter(0, p[3]);
 
 		tempcvs -> cd();
-		TH2S* dummy = new TH2S("dummy", "", 4000, 0, 4000, ini+int(ini/2), 0.2, ini+int(ini/2));
+		TH2D* dummy = new TH2D("dummy", "", 4000, 0, 4000, ini+int(ini/2), 0.2, ini+int(ini/2));
 		dummy -> Draw();
 
 		singledecay -> Draw("P");
