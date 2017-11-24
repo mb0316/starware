@@ -2,7 +2,7 @@
 *************************STARWARE GUI CONSTRUCTOR FILE******************************
 Made by Byul Moon from Korea University
 GUI constructor for STARWARE program.
-Last refine : 25.Oct.2017, ver.1.4
+Last refine : 24.Nov.2017, ver.1.5
 Copyright 2017. B. Moon
 ***********************************************************************************/
 #include "TROOT.h"
@@ -88,8 +88,8 @@ This program operates with a GUI system.\n\
 STARWARE only accepts the data format with ~.mat.\n\
 \n\
 Since Jan. 2016.\n\
-Current Version : ver.1.4\n\
-Last Update : 25.Oct.2017.\n\
+Current Version : ver.1.5\n\
+Last Update : 24.Nov.2017.\n\
 By Byul Moon from Korea University\n\
 alpha ver.1.2 Update News 1 : The decaygate function now contains the elimination of the background.\n\
 alpha ver.1.2 Update News 2 : The decaygate function now asks the degree of the data compression(the bin size).\n\
@@ -111,6 +111,7 @@ ver.1.1 Update News 1 (10.Aug.2017) : Optimized memory consumption.\n\
 ver.1.2 Update News 1 (16.Aug.2017) : Added CINT window.\n\
 ver.1.3 Update News 1 (01.Sep.2017) : Build executable.\n\
 ver.1.4 Update News 1 (25.Oct.2017) : Reduced matrix element calculation with W.u.\n\
+ver.1.5 Update News 1 (24.Nov.2017) : Able to use a data file with ROOT type.\n\
 ";
 
 const char gCOPYRIGHT[] = "\
@@ -870,7 +871,7 @@ STARGui::STARGui()
     fMainFrame1073->MapWindow();
     fMainFrame1073->Resize(1200,1000);
 
-	fMainFrame1073->SetWindowName("STARWARE ver.1.4");
+	fMainFrame1073->SetWindowName("STARWARE ver.1.5");
 	fMainFrame1073->MapSubwindows();
 	fMainFrame1073->Connect("CloseWindow()", "STARGui", this, "TerminatePro()");
 

@@ -2,7 +2,7 @@
 ***************************STARWARE CLASS SOURCE FILE*******************************
 Made by Byul Moon from Korea University
 All functions are contained for STARWARE.
-Last refine : 16.Aug.2017, ver.1.2
+Last refine : 24.Nov.2017, ver.1.5
 Copyright. 2017. B. Moon
 ***********************************************************************************/
 #include "TH1S.h"
@@ -406,10 +406,10 @@ void STAR::intro()
 {
     cout << "-----------------------------STARWARE(SpecTroscopy Analysis for gamma-Ray softWARE)---------------------------------" << endl;
     cout << "------------------------------------------Byul means 'star' in Korean.----------------------------------------------" << endl;
-    cout << "-----------------------------------Gamma-ray Spectroscopy Analysis Tool v1.4----------------------------------------" << endl;
+    cout << "-----------------------------------Gamma-ray Spectroscopy Analysis Tool v1.5----------------------------------------" << endl;
     cout << "The Data analysis from coincidence event matrices." << endl;
     cout << "Made by Byul Moon(B.Moon) from Korea University" << endl;
     cout << "Since Jan. 2016." << endl;
-    cout << "Latest Update : Oct. 2017." << endl;
+    cout << "Latest Update : Nov. 2017." << endl;
 } 
 
