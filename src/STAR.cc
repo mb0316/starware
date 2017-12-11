@@ -5,6 +5,7 @@ All functions are contained for STARWARE.
 Last refine : 24.Nov.2017, ver.1.5
 Copyright. 2017. B. Moon
 ***********************************************************************************/
+#include "TSystem.h"
 #include "TH1S.h"
 #include "TH2D.h"
 #include "TCanvas.h"
@@ -27,6 +28,11 @@ Copyright. 2017. B. Moon
 #include "TString.h"
 #include "TObjString.h"
 #include <sys/stat.h>
+#include "TGWindow.h"
+#include "TGClient.h"
+#include "TGLabel.h"
+#include "TGNumberEntry.h"
+#include "TGButton.h"
 
 using namespace std;
 
@@ -41,50 +47,147 @@ void STAR::main(TString &directory, TString &openFile)
 
 	if (filetype == "mat")
 	{
-		cout << "Selected data filee : MAT type!!" << endl;
+		binconfirm = false;
+		cout << "Selected data file : MAT type!!" << endl;
+
+
 		struct stat file_stat;
 		stat(Form("%s%s", directory.Data(), openFile.Data()), &file_stat);
-		ULong64_t filesize = (ULong64_t) file_stat.st_size;
+		filesize = (ULong64_t) file_stat.st_size;
 
-		FILE *read;
 		read = fopen(Form("%s%s", directory.Data(), openFile.Data()), "rb");
 
-		direc = directory;
+		frame = new TGMainFrame(gClient->GetRoot(),230,150,kMainFrame | kVerticalFrame);
 
-		hist_Tot = new TH2D("hist", "", 4096, 0, 4096, 4096, 0, 4096);
+		TGLabel *lX_SET = new TGLabel(frame, "Value/bin for X");
+		lX_SET -> SetTextJustify(kTextLeft);
+		lX_SET-> SetMargins(0, 0, 0, 0);
+		lX_SET-> SetWrapLength(-1);
+		frame-> AddFrame(lX_SET, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
+		lX_SET-> MoveResize(10, 10, 100, 20);
 
-		UShort_t *temp1;
-		temp1 = (UShort_t *) malloc(sizeof(short) *4096);
+		TGNumberEntryField *fX_SET = new TGNumberEntryField(frame, 0, 0, TGNumberFormat::kNESReal, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 100);
+		fX_SET->MoveResize(120, 10, 100, 20);
+		frame->AddFrame(fX_SET, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
+		fX_SET -> Connect("TextChanged(const Char_t *)", "STAR", this, "SetXBin(const Char_t *)");
 
-		UInt_t *temp2;
-		temp2 = (UInt_t *) malloc(sizeof(int) *4096);
+		TGLabel *lY_SET = new TGLabel(frame, "Value/bin for Y");
+		lY_SET -> SetTextJustify(kTextLeft);
+		lY_SET-> SetMargins(0, 0, 0, 0);
+		lY_SET-> SetWrapLength(-1);
+		frame-> AddFrame(lY_SET, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
+		lY_SET-> MoveResize(10, 50, 100, 20);
 
-		for (Int_t i = 0; i < 4096; i++)
+		TGNumberEntryField *fY_SET = new TGNumberEntryField(frame, 0, 0, TGNumberFormat::kNESReal, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 100);
+		fY_SET->MoveResize(120, 50, 100, 20);
+		frame->AddFrame(fY_SET, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
+		fY_SET -> Connect("TextChanged(const Char_t *)", "STAR", this, "SetYBin(const Char_t *)");
+
+		TGTextButton *SET_BIN = new TGTextButton(frame,"SET",-1,TGTextButton::GetDefaultGC()(),TGTextButton::GetDefaultFontStruct(),kRaisedFrame);
+		SET_BIN -> Connect("Clicked()", "STAR", this, "SETBIN()");
+		SET_BIN->SetTextJustify(36);
+		SET_BIN->SetMargins(0,0,0,0);
+		SET_BIN->SetWrapLength(-1);
+		frame->AddFrame(SET_BIN, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
+		SET_BIN->MoveResize(10,100,100,35);
+		frame->MapSubwindows();
+		frame->MapWindow();
+
+		while (1)
 		{
-			if (filesize == 32*1024*1024)	fread(temp1, 2, 4096, read);
-			if (filesize == 64*1024*1024)	fread(temp2, 4, 4096, read);
-			for (Int_t j = 0; j < 4096; j++)
+			gSystem->ProcessEvents();
+			if (binconfirm == true)
 			{
-				if (filesize == 32*1024*1024)	hist_Tot -> SetBinContent(i+1, j+1, temp1[j]);
-				if (filesize == 64*1024*1024)	hist_Tot -> SetBinContent(i+1, j+1, temp2[j]);
+				break;
 			}
+			if (binconfirm == false)	continue;
 		}
 
-		hist_X = hist_Tot -> ProjectionX("pro_X");
-		hist_Y = hist_Tot -> ProjectionY("pro_Y");
-		free(temp1);
-		free(temp2);
+
 	}
 
 	if (filetype == "root")
 	{
-		cout << "Selected data filee : ROOT type!!" << endl;
+		cout << "Selected data file : ROOT type!!" << endl;
 		TFile* file = new TFile(Form("%s%s", directory.Data(), openFile.Data()), "READ");
 		hist_Tot = (TH2D*) file -> Get(file->GetListOfKeys()->At(0)->GetName());
 		hist_X = hist_Tot -> ProjectionX("pro_X");
 		hist_Y = hist_Tot -> ProjectionY("pro_Y");
+
+		nbinX = hist_X -> GetNbinsX();
+		nbinY = hist_Y -> GetNbinsX();
+		binMX = hist_X -> GetBinCenter(nbinX);
+		binMY = hist_Y -> GetBinCenter(nbinY);
+
+		chX = (double(binMX)+1)/double(nbinX);
+		chY = (double(binMY)+1)/double(nbinY);
+
+		cout << "The maximum channel for X : " << binMX << endl;
+		cout << "The maximum channel for Y : " << binMY << endl;
+
+		cout << "The number of X bin : " << nbinX << endl;
+		cout << "The number of Y bin : " << nbinY << endl;
+
+		cout << "channel per bin for X : " << chX << endl;
+		cout << "channel per bin for Y : " << chY << endl;
+	}
+}
+
+void STAR::SETBIN()
+{
+	nbinX = 4096;
+	nbinY = 4096;
+	binMX = nbinX*chX;
+	binMY = nbinY*chY;
+
+	hist_Tot = new TH2D("hist", "", nbinX, 0, binMX, nbinY, 0, binMY);
+
+	UShort_t *temp1;
+	temp1 = (UShort_t *) malloc(sizeof(short) *4096);
+
+	UInt_t *temp2;
+	temp2 = (UInt_t *) malloc(sizeof(int) *4096);
+
+	for (Int_t i = 0; i < 4096; i++)
+	{
+		if (filesize == 32*1024*1024)	fread(temp1, 2, 4096, read);
+		if (filesize == 64*1024*1024)	fread(temp2, 4, 4096, read);
+		for (Int_t j = 0; j < 4096; j++)
+		{
+			if (filesize == 32*1024*1024)	hist_Tot -> SetBinContent(i+1, j+1, temp1[j]);
+			if (filesize == 64*1024*1024)	hist_Tot -> SetBinContent(i+1, j+1, temp2[j]);
+		}
 	}
 
+	hist_X = hist_Tot -> ProjectionX("pro_X");
+	hist_Y = hist_Tot -> ProjectionY("pro_Y");
+	free(temp1);
+	free(temp2);
+
+//	frame->DestroySubwindows();
+
+	cout << "The maximum channel for X : " << binMX << endl;
+	cout << "The maximum channel for Y : " << binMY << endl;
+
+	cout << "The number of X bin : " << nbinX << endl;
+	cout << "The number of Y bin : " << nbinY << endl;
+
+	cout << "channel per bin for X : " << chX << endl;
+	cout << "channel per bin for Y : " << chY << endl;
+
+	binconfirm = true;
+
+	frame->UnmapWindow();
+}
+
+void STAR::SetXBin(const Char_t *value)
+{
+	chX = atof(value);
+}
+
+void STAR::SetYBin(const Char_t *value)
+{
+	chY = atof(value);
 }
 
 void STAR::reset()
@@ -107,8 +210,9 @@ void STAR::GetCoorX(Int_t event, Int_t px, Int_t, TObject *)
     if (!pad) return;
     if (event == kButton1Double)
     {
-        Int_t x = pad->AbsPixeltoX(px);
-        x = pad->PadtoX(x);
+        Double_t ex = pad->AbsPixeltoX(px);
+//        x = pad->PadtoX(x);
+		Int_t x = ex/chX;
         gatevalueX.push_back(x);
         if (gatevalueX.size() == 1)
         {
@@ -171,8 +275,9 @@ void STAR::GetCoorY(Int_t event, Int_t px, Int_t, TObject *)
     if (!pad) return;
     if (event == kButton1Double)
     {
-        Int_t x = pad->AbsPixeltoX(px);
-        x = pad->PadtoX(x);
+        Double_t ex = pad->AbsPixeltoX(px);
+//        x = pad->PadtoX(x);
+		Int_t x = ex/chY;
         gatevalueY.push_back(x);
         if (gatevalueY.size() == 1)
         {
@@ -234,8 +339,9 @@ void STAR::GetCoorY2(Int_t event, Int_t px, Int_t, TObject *)
     if (!pad) return;
     if (event == kButton1Double)
     {
-        Int_t x = pad->AbsPixeltoX(px);
-        x = pad->PadtoX(x);
+        Int_t ex = pad->AbsPixeltoX(px);
+//        x = pad->PadtoX(x);
+		Int_t x = ex/chY;
         gatevalueY.push_back(x);
         if (gatevalueY.size() == 1)
         {
@@ -266,7 +372,7 @@ void STAR::DrawInfo()
     if (gatevalueX.size() == 1)
     {
         cvs1 -> cd();
-        gate1 = new TLatex(0.2, 0.8, Form("Gate1 : %d", gatevalueX[0]));
+        gate1 = new TLatex(0.2, 0.8, Form("Gate1 : %.01f", gatevalueX[0]*chX));
         
         gate1 -> SetNDC();
         gate1 -> Draw("same");
@@ -276,7 +382,7 @@ void STAR::DrawInfo()
     if (gatevalueX.size() == 2)
     {
         cvs1 -> cd();
-        gate2 = new TLatex(0.2, 0.75, Form("Gate2 : %d", gatevalueX[1]));
+        gate2 = new TLatex(0.2, 0.75, Form("Gate2 : %.01f", gatevalueX[1]*chX));
         gate2 -> SetNDC();
         gate2 -> Draw("same");
         cvs1 -> Modified();
@@ -285,7 +391,7 @@ void STAR::DrawInfo()
     if (gatevalueX.size() == 3)
     {
         cvs1 -> cd();
-        bgl1 = new TLatex(0.2, 0.7, Form("#color[2]{BGL1 : %d}", gatevalueX[2]));
+        bgl1 = new TLatex(0.2, 0.7, Form("#color[2]{BGL1 : %.01f}", gatevalueX[2]*chX));
         bgl1 -> SetNDC();
         bgl1 -> Draw("same");
         cvs1 -> Modified();
@@ -294,7 +400,7 @@ void STAR::DrawInfo()
     if (gatevalueX.size() == 4)
     {
         cvs1 -> cd();
-        bgl2 = new TLatex(0.2, 0.65, Form("#color[2]{BGL2 : %d}", gatevalueX[3]));
+        bgl2 = new TLatex(0.2, 0.65, Form("#color[2]{BGL2 : %.01f}", gatevalueX[3]*chX));
         bgl2 -> SetNDC();
         bgl2 -> Draw("same");
         cvs1 -> Modified();
@@ -303,7 +409,7 @@ void STAR::DrawInfo()
     if (gatevalueX.size() == 5)
     {
         cvs1 -> cd();
-        bgr1 = new TLatex(0.2, 0.6, Form("#color[4]{BGR1 : %d}", gatevalueX[4]));
+        bgr1 = new TLatex(0.2, 0.6, Form("#color[4]{BGR1 : %.01f}", gatevalueX[4]*chX));
         bgr1 -> SetNDC();
         bgr1 -> Draw("same");
         cvs1 -> Modified();
@@ -312,7 +418,7 @@ void STAR::DrawInfo()
     if (gatevalueX.size() == 6)
     {
         cvs1 -> cd();
-        bgr2 = new TLatex(0.2, 0.55, Form("#color[4]{BGR2 : %d}", gatevalueX[5]));
+        bgr2 = new TLatex(0.2, 0.55, Form("#color[4]{BGR2 : %.01f}", gatevalueX[5]*chX));
         bgr2 -> SetNDC();
         bgr2 -> Draw("same");
         cvs1 -> Modified();
@@ -323,7 +429,7 @@ void STAR::DrawInfo()
     {
         cvs2 -> cd();
         
-        gate1 = new TLatex(0.2, 0.8, Form("Gate1 : %d", gatevalueY[0]));
+        gate1 = new TLatex(0.2, 0.8, Form("Gate1 : %.01f", gatevalueY[0]*chY));
         gate1 -> SetNDC();
         gate1 -> Draw("same");
         cvs2 -> Modified();
@@ -332,7 +438,7 @@ void STAR::DrawInfo()
     if (gatevalueY.size() == 2)
     {
         cvs2 -> cd();
-        gate2 = new TLatex(0.2, 0.75, Form("Gate2 : %d", gatevalueY[1]));
+        gate2 = new TLatex(0.2, 0.75, Form("Gate2 : %.01f", gatevalueY[1]*chY));
         gate2 -> SetNDC();
         gate2 -> Draw("same");
         cvs2 -> Modified();
@@ -341,7 +447,7 @@ void STAR::DrawInfo()
     if (gatevalueY.size() == 3)
     {
         cvs2 -> cd();
-        bgl1 = new TLatex(0.2, 0.7, Form("#color[2]{BGL1 : %d}", gatevalueY[2]));
+        bgl1 = new TLatex(0.2, 0.7, Form("#color[2]{BGL1 : %.01f}", gatevalueY[2]*chY));
         bgl1 -> SetNDC();
         bgl1 -> Draw("same");
         cvs2 -> Modified();
@@ -350,7 +456,7 @@ void STAR::DrawInfo()
     if (gatevalueY.size() == 4)
     {
         cvs2 -> cd();
-        bgl2 = new TLatex(0.2, 0.65, Form("#color[2]{BGL2 : %d}", gatevalueY[3]));
+        bgl2 = new TLatex(0.2, 0.65, Form("#color[2]{BGL2 : %.01f}", gatevalueY[3]*chY));
         bgl2 -> SetNDC();
         bgl2 -> Draw("same");
         cvs2 -> Modified();
@@ -359,7 +465,7 @@ void STAR::DrawInfo()
     if (gatevalueY.size() == 5)
     {
         cvs2 -> cd();
-        bgr1 = new TLatex(0.2, 0.6, Form("#color[4]{BGR1 : %d}", gatevalueY[4]));
+        bgr1 = new TLatex(0.2, 0.6, Form("#color[4]{BGR1 : %.01f}", gatevalueY[4]*chY));
         bgr1 -> SetNDC();
         bgr1 -> Draw("same");
         cvs2 -> Modified();
@@ -368,7 +474,7 @@ void STAR::DrawInfo()
     if (gatevalueY.size() == 6)
     {
         cvs2 -> cd();
-        bgr2 = new TLatex(0.2, 0.55, Form("#color[4]{BGR2 : %d}", gatevalueY[5]));
+        bgr2 = new TLatex(0.2, 0.55, Form("#color[4]{BGR2 : %.01f}", gatevalueY[5]*chY));
         bgr2 -> SetNDC();
         bgr2 -> Draw("same");
         cvs2 -> Modified();
@@ -384,7 +490,7 @@ void STAR::DrawInfo2()
     {
         cvs5 -> cd();
         
-        gate1 = new TLatex(0.2, 0.8, Form("Gate1 : %d", gatevalueY[0]));
+        gate1 = new TLatex(0.2, 0.8, Form("Gate1 : %.01f", gatevalueY[0]*chY));
         gate1 -> SetNDC();
         gate1 -> Draw("same");
         cvs5 -> Modified();
@@ -393,7 +499,7 @@ void STAR::DrawInfo2()
     if (gatevalueY.size() == 2)
     {
         cvs5 -> cd();
-        gate2 = new TLatex(0.2, 0.75, Form("Gate2 : %d", gatevalueY[1]));
+        gate2 = new TLatex(0.2, 0.75, Form("Gate2 : %.01f", gatevalueY[1]*chY));
         gate2 -> SetNDC();
         gate2 -> Draw("same");
         cvs5 -> Modified();

@@ -40,11 +40,11 @@ void STARAnaTG::Htimegate(TH2D *hist_Tot, Int_t &timeaxis1, Int_t &timeaxis2, In
         hist_TY = hist_Tot -> ProjectionY("Pro_Y_time", start, end, ""); // singles spectrum with the time interval
         
         // saving the result data
-        TFile* out = new TFile(Form("%s%dto%dmsspectrum.root", direc.Data(), start, end), "RECREATE");
+        TFile* out = new TFile(Form("%s%dto%d_spectrum.root", direc.Data(), start, end), "RECREATE");
         out -> cd();
         hist_TY -> Write();
         out -> Close();
-        cout << start << "to" << end << "msspectrum.root outfile has been created." << endl;
+        cout << start << "to" << end << "_spectrum.root outfile has been created." << endl;
 		delete out;
     }
     if (timeaxis1 == 1 && timeaxis2 == 0)
@@ -55,11 +55,11 @@ void STARAnaTG::Htimegate(TH2D *hist_Tot, Int_t &timeaxis1, Int_t &timeaxis2, In
         hist_TY = hist_Tot -> ProjectionX("Pro_X_time", start, end, ""); // singles spectrum with the time interval
         
         // saving the result data
-        TFile* out = new TFile(Form("%s%dto%dmsspectrum.root", direc.Data(), start, end), "RECREATE");
+        TFile* out = new TFile(Form("%s%dto%d_spectrum.root", direc.Data(), start, end), "RECREATE");
         out -> cd();
         hist_TY -> Write();
         out -> Close();
-        cout << start << "to" << end << "msspectrum.root outfile has been created." << endl;
+        cout << start << "to" << end << "_spectrum.root outfile has been created." << endl;
 		delete out;
     }
     if ((timeaxis1 == 0 && timeaxis2 == 0) || (timeaxis1 == 1 && timeaxis2 == 1))
@@ -70,9 +70,11 @@ void STARAnaTG::Htimegate(TH2D *hist_Tot, Int_t &timeaxis1, Int_t &timeaxis2, In
     
 }
 
-void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, TCanvas *tempcvs, TString &openFile)
+void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t start, Int_t end, TCanvas *tempcvs, TString &openFile)
 {
     
+	cout << start << " " << end << endl;
+
 	if (hist_N != nullptr)	delete hist_N;
 
 	if (openFile.Length() == 0)
@@ -92,8 +94,8 @@ void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, T
 			Double_t dev = 1.0;
 			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", start, end);
 			Double_t pi = TMath::Pi();
-			hist_N -> GetXaxis() -> SetRange(start-10, end+10);
-			peak = hist_N-> GetMaximumBin();
+			hist_N -> GetXaxis() -> SetRangeUser(start-10, end+10);
+			peak = hist_N->GetBinCenter(hist_N-> GetMaximumBin());
 			ampl = hist_N -> GetMaximum();
 			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
 			hist_N -> Fit(gaussian, "MQN", "", start, end);
@@ -123,6 +125,11 @@ void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, T
 			gaussian -> Draw("same");
 			gaussian_fit -> Draw("same");
 			back_fit -> Draw("same");
+
+			gaussian_fit ->SetLineStyle(2);
+			gaussian_fit ->SetLineColor(4);
+			back_fit ->SetLineStyle(5);
+			back_fit ->SetLineColor(6);
 
 			// represent total results for the request
 			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
@@ -141,8 +148,8 @@ void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, T
 			Double_t dev = 1.0;
 			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", start, end);
 			Double_t pi = TMath::Pi();
-			hist_N -> GetXaxis() -> SetRange(start-10, end+10);
-			peak = hist_N-> GetMaximumBin();
+			hist_N -> GetXaxis() -> SetRangeUser(start-10, end+10);
+			peak = hist_N->GetBinCenter(hist_N-> GetMaximumBin());
 			ampl = hist_N -> GetMaximum();
 			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
 			hist_N -> Fit(gaussian, "MQN", "", start, end);
@@ -173,6 +180,12 @@ void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, T
 			gaussian -> Draw("same");
 			gaussian_fit -> Draw("same");
 			back_fit -> Draw("same");
+
+			gaussian_fit ->SetLineStyle(2);
+			gaussian_fit ->SetLineColor(4);
+			back_fit ->SetLineStyle(5);
+			back_fit ->SetLineColor(6);
+
 
 			// represent total results for the request
 			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
@@ -198,8 +211,8 @@ void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, T
 			Double_t dev = 1.0;
 			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", start, end);
 			Double_t pi = TMath::Pi();
-			hist_N -> GetXaxis() -> SetRange(start-10, end+10);
-			peak = hist_N-> GetMaximumBin();
+			hist_N -> GetXaxis() -> SetRangeUser(start-10, end+10);
+			peak = hist_N->GetBinCenter(hist_N-> GetMaximumBin());
 			ampl = hist_N -> GetMaximum();
 			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
 			hist_N -> Fit(gaussian, "MQN", "", start, end);
@@ -229,6 +242,12 @@ void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, T
 			gaussian -> Draw("same");
 			gaussian_fit -> Draw("same");
 			back_fit -> Draw("same");
+
+			gaussian_fit ->SetLineStyle(2);
+			gaussian_fit ->SetLineColor(4);
+			back_fit ->SetLineStyle(5);
+			back_fit ->SetLineColor(6);
+
 
 			// represent total results for the request
 			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
@@ -251,8 +270,8 @@ void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, T
 			Double_t dev = 1.0;
 			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", start, end);
 			Double_t pi = TMath::Pi();
-			hist_N -> GetXaxis() -> SetRange(start-10, end+10);
-			peak = hist_N-> GetMaximumBin();
+			hist_N -> GetXaxis() -> SetRangeUser(start-10, end+10);
+			peak = hist_N->GetBinCenter(hist_N-> GetMaximumBin());
 			ampl = hist_N -> GetMaximum();
 			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
 			hist_N -> Fit(gaussian, "MQN", "", start, end);
@@ -284,13 +303,19 @@ void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, T
 			gaussian_fit -> Draw("same");
 			back_fit -> Draw("same");
 
+			gaussian_fit ->SetLineStyle(2);
+			gaussian_fit ->SetLineColor(4);
+			back_fit ->SetLineStyle(5);
+			back_fit ->SetLineColor(6);
+
+
 			// represent total results for the request
 			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
 		}
 	}
 }
 
-void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int_t &tend)
+void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t start, Int_t end, TCanvas *tempcvs,TString &openFile, Int_t &tstart, Int_t &tend)
 {
 	if (hist_N != nullptr)	delete hist_N;
  
@@ -311,8 +336,8 @@ void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, 
 			Double_t dev = 1.0;
 			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", start, end);
 			Double_t pi = TMath::Pi();
-			hist_N -> GetXaxis() -> SetRange(start-10, end+10);
-			peak = hist_N-> GetMaximumBin();
+			hist_N -> GetXaxis() -> SetRangeUser(start-10, end+10);
+			peak = hist_N->GetBinCenter(hist_N-> GetMaximumBin());
 			ampl = hist_N -> GetMaximum();
 			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
 			hist_N -> Fit(gaussian, "MQN", "", start, end);
@@ -342,6 +367,12 @@ void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, 
 			gaussian -> Draw("same");
 			gaussian_fit -> Draw("same");
 			back_fit -> Draw("same");
+
+			gaussian_fit ->SetLineStyle(2);
+			gaussian_fit ->SetLineColor(4);
+			back_fit ->SetLineStyle(5);
+			back_fit ->SetLineColor(6);
+
 
 			// represent total results for the request
 			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
@@ -360,8 +391,8 @@ void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, 
 			Double_t dev = 1.0;
 			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", start, end);
 			Double_t pi = TMath::Pi();
-			hist_N -> GetXaxis() -> SetRange(start-10, end+10);
-			peak = hist_N-> GetMaximumBin();
+			hist_N -> GetXaxis() -> SetRangeUser(start-10, end+10);
+			peak = hist_N->GetBinCenter(hist_N-> GetMaximumBin());
 			ampl = hist_N -> GetMaximum();
 			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
 			hist_N -> Fit(gaussian, "MQN", "", start, end);
@@ -392,6 +423,12 @@ void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, 
 			gaussian -> Draw("same");
 			gaussian_fit -> Draw("same");
 			back_fit -> Draw("same");
+
+			gaussian_fit ->SetLineStyle(2);
+			gaussian_fit ->SetLineColor(4);
+			back_fit ->SetLineStyle(5);
+			back_fit ->SetLineColor(6);
+
 
 			// represent total results for the request
 			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
@@ -417,8 +454,8 @@ void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, 
 			Double_t dev = 1.0;
 			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", start, end);
 			Double_t pi = TMath::Pi();
-			hist_N -> GetXaxis() -> SetRange(start-10, end+10);
-			peak = hist_N-> GetMaximumBin();
+			hist_N -> GetXaxis() -> SetRangeUser(start-10, end+10);
+			peak = hist_N->GetBinCenter(hist_N-> GetMaximumBin());
 			ampl = hist_N -> GetMaximum();
 			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
 			hist_N -> Fit(gaussian, "MQN", "", start, end);
@@ -448,6 +485,12 @@ void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, 
 			gaussian -> Draw("same");
 			gaussian_fit -> Draw("same");
 			back_fit -> Draw("same");
+
+			gaussian_fit ->SetLineStyle(2);
+			gaussian_fit ->SetLineColor(4);
+			back_fit ->SetLineStyle(5);
+			back_fit ->SetLineColor(6);
+
 
 			// represent total results for the request
 			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;
@@ -470,8 +513,8 @@ void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, 
 			Double_t dev = 1.0;
 			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", start, end);
 			Double_t pi = TMath::Pi();
-			hist_N -> GetXaxis() -> SetRange(start-10, end+10);
-			peak = hist_N-> GetMaximumBin();
+			hist_N -> GetXaxis() -> SetRangeUser(start-10, end+10);
+			peak = hist_N->GetBinCenter(hist_N-> GetMaximumBin());
 			ampl = hist_N -> GetMaximum();
 			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
 			hist_N -> Fit(gaussian, "MQN", "", start, end);
@@ -502,6 +545,12 @@ void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, 
 			gaussian -> Draw("same");
 			gaussian_fit -> Draw("same");
 			back_fit -> Draw("same");
+
+			gaussian_fit ->SetLineStyle(2);
+			gaussian_fit ->SetLineColor(4);
+			back_fit ->SetLineStyle(5);
+			back_fit ->SetLineColor(6);
+
 
 			// represent total results for the request
 			cout << peaks << " +- " << peakerrors << " keV : "  << netcount << " +- " << neterror << endl;

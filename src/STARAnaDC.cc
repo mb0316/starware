@@ -71,7 +71,10 @@ void STARAnaDC::Hdecaygate(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end,
         hist_DX = hist_Tot -> ProjectionY("Pro_Y_decay", start, end, "");
         hist_L = hist_Tot -> ProjectionY("Pro_BGl", bg_ls, bg_le, "");
         hist_R = hist_Tot -> ProjectionY("Pro_BGr", bg_rs, bg_re, "");
-        hist_D = new TH1S("hist_decay", "", bin/nbin, 0, bin); //gated time curve after removing the background
+
+		Double_t chbin = double(int(hist_DX->GetBinCenter(bin))+1)/double(bin);
+
+        hist_D = new TH1S("hist_decay", "", bin/nbin, 0, int(hist_DX->GetBinCenter(bin))+1); //gated time curve after removing the background
         
         // algorithm for the time decay curve
         for (Int_t i = 0; i < bin; i++)
@@ -81,18 +84,18 @@ void STARAnaDC::Hdecaygate(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end,
             gamR = hist_R -> GetBinContent(i+1);
             
             gamP = gam - (gamL+gamR)/2;
-            if (gamP > 0)	hist_D -> Fill(i, gamP);
+            if (gamP > 0)	hist_D -> Fill(i*chbin, gamP);
             else continue;
         }
         
         hist_D -> Sumw2(kFALSE);
         
         //saving the result data
-        TFile* out = new TFile(Form("%s%dkeV_decaycurve.root", direc.Data(), peak), "RECREATE");
+        TFile* out = new TFile(Form("%s%dch_decaycurve.root", direc.Data(), peak), "RECREATE");
         out -> cd();
         hist_D -> Write();
         out -> Close();
-        cout << peak << "keV_decaycurve.root outfile has been created." << endl;
+        cout << peak << "ch_decaycurve.root outfile has been created." << endl;
 		delete hist_DX;
 		delete hist_L;
 		delete hist_R;
@@ -107,7 +110,10 @@ void STARAnaDC::Hdecaygate(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end,
         hist_DX = hist_Tot -> ProjectionX("Pro_X_decay", start, end, "");
         hist_L = hist_Tot -> ProjectionX("Pro_BGl", bg_ls, bg_le, "");
         hist_R = hist_Tot -> ProjectionX("Pro_BGr", bg_rs, bg_re, "");
-        hist_D = new TH1S("hist_decay", "", bin/nbin, 0, bin); //gated time curve after removing the background
+
+		Double_t chbin = double(int(hist_DX->GetBinCenter(bin))+1)/double(bin);
+
+        hist_D = new TH1S("hist_decay", "", bin/nbin, 0, int(hist_DX->GetBinCenter(bin))+1); //gated time curve after removing the background
         
         // algorithm for the time decay curve
         for (Int_t i = 0; i < bin; i++)
@@ -117,18 +123,18 @@ void STARAnaDC::Hdecaygate(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end,
             gamR = hist_R -> GetBinContent(i+1);
             
             gamP = gam - (gamL+gamR)/2;
-            if (gamP > 0)	hist_D -> Fill(i, gamP);
+            if (gamP > 0)	hist_D -> Fill(i*chbin, gamP);
             else continue;
         }
         
         hist_D -> Sumw2(kFALSE);
         
         //saving the result data
-        TFile* out = new TFile(Form("%s%dkeV_decaycurve.root", direc.Data(), peak), "RECREATE");
+        TFile* out = new TFile(Form("%s%dch_decaycurve.root", direc.Data(), peak), "RECREATE");
         out -> cd();
         hist_D -> Write();
         out -> Close();
-        cout << peak << "keV_decaycurve.root outfile has been created." << endl;
+        cout << peak << "ch_decaycurve.root outfile has been created." << endl;
 		delete hist_DX;
 		delete hist_L;
 		delete hist_R;
@@ -149,7 +155,7 @@ void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &pea
     for (Int_t i = 0; i < num; i++)
     {
         peakfile = peaksvalue[i];
-        file[i] = new TFile(Form("%s%dkeV_decaycurve.root", direc.Data(), peakfile), "READ");
+        file[i] = new TFile(Form("%s%dch_decaycurve.root", direc.Data(), peakfile), "READ");
 		if (file[i]->IsOpen() ==  true)	cout << "The peak value : " << peaksvalue[i] << " keV has been successfully read." << endl;
 		if (file[i]->IsOpen() == false)
 		{

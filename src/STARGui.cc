@@ -1047,7 +1047,18 @@ void STARGui::gate()
 void STARGui::timegate()
 {
 	gSystem->RedirectOutput(tempfile.Data(),"a");
-    startg.Htimegate(hist_Tot, timeaxis1, timeaxis2, tstart, tend);
+	Int_t tch1, tch2;
+	if (timeaxis1 == 0 && timeaxis2 == 1)
+	{
+		tch1 = tstart/chX;
+		tch2 = tend/chX;
+	}
+	if (timeaxis1 == 1 && timeaxis2 == 0)
+	{
+		tch1 = tstart/chY;
+		tch2 = tend/chY;
+	}
+    startg.Htimegate(hist_Tot, timeaxis1, timeaxis2, tch1, tch2);
     
     cvs5 -> cd();
     cvs5 -> ToggleEventStatus();
@@ -1087,8 +1098,11 @@ void STARGui::decaygate()
 void STARGui::netarea()
 {
 	gSystem->RedirectOutput(tempfile.Data(),"a");
-	if (gatevalueX.size() == 2 && gatevalueY.size() == 0)	startg.Hnetarea(hist_Tot, 0, gatevalueX[0], gatevalueX[1], cvs3, effdatafile);
-	if (gatevalueY.size() == 2 && gatevalueX.size() == 0)	startg.Hnetarea(hist_Tot, 1, gatevalueY[0], gatevalueY[1], cvs3, effdatafile);
+
+	cout << gatevalueY[0]<< " " << gatevalueY[1] << " " << chY << endl;
+
+	if (gatevalueX.size() == 2 && gatevalueY.size() == 0)	startg.Hnetarea(hist_Tot, 0, gatevalueX[0]*chX, gatevalueX[1]*chX, cvs3, effdatafile);
+	if (gatevalueY.size() == 2 && gatevalueX.size() == 0)	startg.Hnetarea(hist_Tot, 1, gatevalueY[0]*chY, gatevalueY[1]*chY, cvs3, effdatafile);
 	else cout << "The gate information is not exact. Please check it again." << endl;
 	reset();
 	
@@ -1110,8 +1124,20 @@ void STARGui::netarea()
 void STARGui::netarea2()
 {
 	gSystem->RedirectOutput(tempfile.Data(),"a");
-	if (gatevalueX.size() == 2 && gatevalueY.size() == 0)	startg.Hnetarea2(hist_Tot, 0, gatevalueX[0], gatevalueX[1], cvs3, effdatafile, tstart, tend);
-	if (gatevalueY.size() == 2 && gatevalueX.size() == 0)	startg.Hnetarea2(hist_Tot, 1, gatevalueY[0], gatevalueY[1], cvs3, effdatafile, tstart, tend);
+	Int_t tch1, tch2;
+	if (timeaxis1 == 0 && timeaxis2 == 1)
+	{
+		tch1 = tstart/chX;
+		tch2 = tend/chX;
+	}
+	if (timeaxis1 == 1 && timeaxis2 == 0)
+	{
+		tch1 = tstart/chY;
+		tch2 = tend/chY;
+	}
+
+	if (gatevalueX.size() == 2 && gatevalueY.size() == 0)	startg.Hnetarea2(hist_Tot, 0, gatevalueX[0]*chX, gatevalueX[1]*chX, cvs3, effdatafile, tch1, tch2);
+	if (gatevalueY.size() == 2 && gatevalueX.size() == 0)	startg.Hnetarea2(hist_Tot, 1, gatevalueY[0]*chY, gatevalueY[1]*chY, cvs3, effdatafile, tch1, tch2);
 	else cout << "The gate information is not exact. Please check it again." << endl;
 	reset();
 
@@ -1134,7 +1160,24 @@ void STARGui::netarea2()
 void STARGui::timediff()
 {
 	gSystem->RedirectOutput(tempfile.Data(),"a");
-    stardis.Htimediff(hist_Tot, timeaxis1, timeaxis2, dstart1, dend1, dstart2, dend2);
+
+	Int_t tch1, tch2, tch3, tch4;
+	if (timeaxis1 == 0 && timeaxis2 == 1)
+	{
+		tch1 = dstart1/chX;
+		tch2 = dend1/chX;
+		tch3 = dstart2/chX;
+		tch4 = dend2/chX;
+	}
+	if (timeaxis1 == 1 && timeaxis2 == 0)
+	{
+		tch1 = dstart1/chY;
+		tch2 = dend1/chY;
+		tch3 = dstart2/chY;
+		tch4 = dend2/chY;
+	}
+
+    stardis.Htimediff(hist_Tot, timeaxis1, timeaxis2, tch1, tch2, tch3, tch4);
     
     cvs6 -> cd();
     cvs6 -> ToggleEventStatus();
@@ -1179,7 +1222,7 @@ void STARGui::setpeaks()
 	gSystem->RedirectOutput(tempfile.Data(),"a");
     peaksvalue.push_back(halfpeak);
     
-    cout << halfpeak << " keV has ben saved." << endl;
+    cout << halfpeak << " ch has ben saved." << endl;
 
     gSystem->RedirectOutput(0);
     fTextView->LoadFile(tempfile.Data());
