@@ -29,10 +29,11 @@ class STARAnaDC : public STAR
 		Double_t gamP = 0;
 
 	public :
+
 		TH1S* hist_D = nullptr;	//Decay curve histogram(hist_DX - hist_L, hist_R)
 
 		void Hdecaygate(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, Int_t &bg_ls, Int_t &bg_le, Int_t &bg_rs, Int_t &bg_re, Int_t &nbin);	//The function to get the decay curve
-		void Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &peaksvalue, TCanvas *tempcvs);	//The fuction to get the half-life
+		void Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &peaksvalue, TCanvas *tempcvs, Double_t htstart, Double_t htend);
 };
 #endif
 

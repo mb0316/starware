@@ -8,7 +8,7 @@ echo 'Build files will be stored at the following directory:'
 cd build/
 pwd
 cmake ..
-make
+make -j
 
 echo 'Executable program will be stored at the following directory:'
 echo "${STARPATH}"

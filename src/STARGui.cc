@@ -47,6 +47,10 @@ Copyright 2017. B. Moon
 #include "TGLabel.h"
 #include "TGFileDialog.h"
 #include "TRootHelpDialog.h"
+#include "TGSlider.h"
+#include "TGDoubleSlider.h"
+#include "TGTextBuffer.h"
+#include "TGTextEntry.h"
 
 #include "Riostream.h"
 //#include <stdio.h>
@@ -79,6 +83,7 @@ Copyright 2017. B. Moon
 #include "TString.h"
 #include "TSystem.h"
 #include "TRint.h"
+#include "TLatex.h"
 
 const char gAboutSTARWARE[] = "\
 			STARWARE\n\
@@ -141,6 +146,12 @@ enum EMyMessageTypes
 	M_HELP_COPYRIGHT,
 	M_HELP_MANUAL,
 	M_HELP_CONTACT
+};
+
+enum ETextBufferIdentifiers
+{
+	HId1,
+	HId2
 };
 
 using namespace std;
@@ -578,6 +589,8 @@ STARGui::STARGui()
 	fTYPE_DECAY->SetName("Types of decay");
 	fTYPE_DECAY->AddEntry("Parent",0);
 	fTYPE_DECAY->AddEntry("Daughter",1);
+	fTYPE_DECAY->AddEntry("Isomer-tail", 2);
+	fTYPE_DECAY->AddEntry("Isomer-prompt", 3);
 	fTYPE_DECAY->Resize(100,20);
 	fTYPE_DECAY->Select(-1);
 	fCompositeFrame5->AddFrame(fTYPE_DECAY, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
@@ -603,11 +616,42 @@ STARGui::STARGui()
     cvs8 = new TCanvas("cvs8", 10, 10, wthalf);
     thalf->AdoptCanvas(cvs8);
     fCompositeFrame5->AddFrame(thalf, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-    thalf->MoveResize(10,10,1000,500);
+    thalf->MoveResize(10,10,900,450);
 	cvs8 -> MoveOpaque(0);
 	cvs8 -> ResizeOpaque(0);
 
+	fslider = new TGDoubleHSlider(fCompositeFrame5, 900, 1, 0, kHorizontalFrame, TG16ColorSelector::GetDefaultFrameBackground(), kFALSE, kFALSE);
+	fslider->Connect("PositionChanged()", "STARGui", this, "ChangeSlide()");
+	fslider->SetRange(0, 4096);
+	fCompositeFrame5->AddFrame(fslider, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
+	fslider->MoveResize(10, 470, 900, 20);
 
+	ftext_sli1 = new TGTextEntry(fCompositeFrame5, ftext_buf1 = new TGTextBuffer(5), HId1);
+	ftext_sli2 = new TGTextEntry(fCompositeFrame5, ftext_buf2 = new TGTextBuffer(5), HId2);
+
+	ftext_sli1->SetToolTipText("Minimum value for fitting range");
+	ftext_sli2->SetToolTipText("Maximum value for fitting range");
+	ftext_buf1->AddText(0, "0.0");
+	ftext_buf2->AddText(0, "0.0");
+
+	ftext_sli1->Connect("TextChanged(char*)", "STARGui", this, "TextChange(char*)");
+	ftext_sli2->Connect("TextChanged(char*)", "STARGui", this, "TextChange(char*)");
+
+	fCompositeFrame5->AddFrame(ftext_sli1, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
+	fCompositeFrame5->AddFrame(ftext_sli2, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
+
+	ftext_sli1->MoveResize(10, 500, 100, 20);
+	ftext_sli2->MoveResize(200, 500, 100, 20);
+
+	char buf[32];
+	sprintf(buf, "%.3f", fslider->GetMinPosition());
+	ftext_buf1->Clear();
+	ftext_buf1->AddText(0, buf);
+	sprintf(buf, "%.3f", fslider->GetMaxPosition());
+	ftext_buf2->Clear();
+	ftext_buf2->AddText(0, buf);
+
+/*
 	// container of "Tab6"
 	TGCompositeFrame *fCompositeFrame6;
 	fCompositeFrame6 = fTab1 -> AddTab("Calculations");
@@ -856,7 +900,7 @@ STARGui::STARGui()
     BMUL->Resize(100,35);
     fCompositeFrame6->AddFrame(BMUL, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     BMUL->MoveResize(900,260,100,35);
-    
+*/    
 
  
     fTab1 -> SetTab(0);
@@ -1205,7 +1249,7 @@ void STARGui::timegrow()
 void STARGui::halflife()
 {
 	gSystem->RedirectOutput(tempfile.Data(),"a");
-    stardc.Hhalflife(halftype, half_parent, peaksvalue, cvs8);
+    stardc.Hhalflife(halftype, half_parent, peaksvalue, cvs8, htstart, htend);
     
     cvs8 -> Modified();
     cvs8 -> Update();
@@ -1215,6 +1259,9 @@ void STARGui::halflife()
     gSystem->RedirectOutput(0);
     fTextView->LoadFile(tempfile.Data());
     fTextView->ShowBottom();
+
+	half_hist->Clear();
+	half_hist = nullptr;
 }
 
 void STARGui::setpeaks()
@@ -1223,6 +1270,17 @@ void STARGui::setpeaks()
     peaksvalue.push_back(halfpeak);
     
     cout << halfpeak << " ch has ben saved." << endl;
+
+	cvs8->cd();
+	TFile* temp = new TFile(Form("%s%dch_decaycurve.root", direc.Data(), halfpeak), "READ");
+	TH1* temp_hist = (TH1*) temp->Get("hist_decay");
+	if (half_hist == nullptr)	half_hist = new TH1S("halflife histogram", "", temp_hist->GetNbinsX(), 0, temp_hist->GetXaxis()->GetXmax());
+	half_hist->Add(temp_hist, 1);
+	half_hist->Draw();
+	cvs8->Modified();
+	cvs8->Update();
+
+	fslider->SetRange(0, temp_hist->GetXaxis()->GetXmax());
 
     gSystem->RedirectOutput(0);
     fTextView->LoadFile(tempfile.Data());
@@ -1307,11 +1365,19 @@ void STARGui::checkhalftype(Int_t value)
 {	
     if (value==0)
     {
-        halftype = 1;
+        halftype = 0;
     }
     if (value==1)
     {
-        halftype = 0;
+        halftype = 1;
+    }
+    if (value==2)
+    {
+        halftype = 2;
+    }
+    if (value==3)
+    {
+        halftype = 3;
     }
 }
 
@@ -1382,6 +1448,75 @@ void STARGui::TerminatePro()
 	gApplication->Terminate(0);
 }
 
+void STARGui::TextChange(const char*)
+{
+
+	TGTextEntry *te = (TGTextEntry *) gTQSender;
+	Int_t id = te->WidgetId();
+
+	switch (id)
+	{
+		case HId1:
+			fslider->SetPosition(atof(ftext_buf1->GetString()), fslider->GetMaxPosition());
+			break;
+		case HId2:
+			fslider->SetPosition(fslider->GetMinPosition(), atof(ftext_buf2->GetString()));
+			break;
+		default:
+			break;
+	}
+
+	htstart = atof(ftext_buf1->GetString());
+	htend = atof(ftext_buf2->GetString());
+
+	if (p_htstart != nullptr)	delete p_htstart;
+	p_htstart = new TLatex(htstart, 1, "#color[2]{#void8}");
+	if (p_htend != nullptr)	delete p_htend;
+	p_htend = new TLatex(htend, 1,"#color[4]{#void8}");
+
+	cvs8->cd();
+	p_htstart->Draw("same");
+	p_htend->Draw("same");
+
+	cvs8->Modified();
+	cvs8->Update();
+}
+
+void STARGui::ChangeSlide()
+{
+	char buf[32];
+
+	sprintf(buf, "%.3f", fslider->GetMinPosition());
+	ftext_buf1->Clear();
+	ftext_buf1->AddText(0, buf);
+	ftext_sli1->SetCursorPosition(ftext_sli1->GetCursorPosition());
+	ftext_sli1->Deselect();
+	gClient->NeedRedraw(ftext_sli1);
+
+	sprintf(buf, "%.3f", fslider->GetMaxPosition());
+	ftext_buf2->Clear();
+	ftext_buf2->AddText(0, buf);
+	ftext_sli2->SetCursorPosition(ftext_sli2->GetCursorPosition());
+	ftext_sli2->Deselect();
+	gClient->NeedRedraw(ftext_sli2);
+
+	htstart = atof(ftext_buf1->GetString());
+	htend = atof(ftext_buf2->GetString());
+	
+	if (p_htstart != nullptr)	delete p_htstart;
+	p_htstart = new TLatex(htstart, 1, "#color[2]{#void8}");
+	if (p_htend != nullptr)	delete p_htend;
+	p_htend = new TLatex(htend, 1,"#color[4]{#void8}");
+
+	cvs8->cd();
+	p_htstart->Draw("same");
+	p_htend->Draw("same");
+
+	cvs8->Modified();
+	cvs8->Update();
+}
+
+/*
 void STARGui::SetZParent(const Char_t *value)
 {
 	ZParent = atoi(value);
@@ -1527,4 +1662,4 @@ void STARGui::bmulti()
     fTextView->LoadFile(tempfile.Data());
     fTextView->ShowBottom();
 }
-
+*/

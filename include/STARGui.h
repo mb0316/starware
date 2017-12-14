@@ -33,10 +33,16 @@ Copyright. 2017. B. Moon
 #include "TApplication.h"
 #include "TSystem.h"
 #include "TGClient.h"
+#include "TGTextEntry.h"
+#include "TGSlider.h"
+#include "TGDoubleSlider.h"
+#include "TGTextBuffer.h"
 #include "TObject.h"
 #include "TObjArray.h"
 #include "TObjString.h"
 #include "Rtypes.h"
+#include "TLatex.h"
+#include "TH1S.h"
 
 class STARGui : public STAR
 {
@@ -70,6 +76,12 @@ class STARGui : public STAR
 		Int_t timeaxis2 = 1; //timeaxis1 : x axis is time, timeaxis2: y axis is time; 0 : enable, 1 : unable
 		Int_t halftype = 1; //halftype=1 : mother nucleus decay, halftype=0 : daughter nucleus decay
 
+		Double_t htstart = 0;
+		Double_t htend = 0;
+
+		TH1S* half_hist = nullptr;
+
+/*
 		Int_t ZParent = 0;
 		Double_t HalfParent = 0;
 		Double_t QParent = 0;
@@ -84,9 +96,17 @@ class STARGui : public STAR
 		Double_t bhalf = 0;
 		Double_t bunit = 0;
 		Int_t bmass = 0;
-
+*/
 		TGStatusBar* fStatusBar;
 		TGTextView* fTextView;
+		TGDoubleHSlider* fslider;
+		TGTextEntry* ftext_sli1;
+		TGTextEntry* ftext_sli2;
+		TGTextBuffer* ftext_buf1;
+		TGTextBuffer* ftext_buf2;
+
+		TLatex* p_htstart = nullptr;
+		TLatex* p_htend = nullptr;
 
 	public :
 		STARGui();
@@ -120,6 +140,9 @@ class STARGui : public STAR
 		void SetStatusText(const char *text, Int_t pi);
 		void HandleMenu(Int_t menu_id);
 		void TerminatePro();
+		void ChangeSlide();
+		void TextChange(const char*);
+/*
 		void SetZParent(const Char_t *value);
 		void SetQParent(const Char_t *value);
 		void SetHalfParent(const Char_t *value);
@@ -136,7 +159,7 @@ class STARGui : public STAR
 		void SetBMass(const Char_t *value);
 		void SetHalfUnit(Int_t value);
 		void bmulti();
-
+*/
 };
 #endif
 

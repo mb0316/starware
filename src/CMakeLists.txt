@@ -20,9 +20,9 @@ ${CMAKE_SOURCE_DIR}/include/STARAnaDC.h
 ${CMAKE_SOURCE_DIR}/include/STARAnaDis.h
 )
 
-ROOT_GENERATE_DICTIONARY(STARCalDict
-${CMAKE_SOURCE_DIR}/include/STARCal.h
-)
+#ROOT_GENERATE_DICTIONARY(STARCalDict
+#${CMAKE_SOURCE_DIR}/include/STARCal.h
+#)
 
 #generate a shared library including dictionaries
 add_library(STARWARE SHARED
@@ -38,8 +38,8 @@ ${CMAKE_SOURCE_DIR}/src/STARAnaDC.cc
 ${CMAKE_SOURCE_DIR}/src/STARAnaDis.cc
 STARAnaDict.cxx
 
-${CMAKE_SOURCE_DIR}/src/STARCal.cc
-STARCalDict.cxx
+#${CMAKE_SOURCE_DIR}/src/STARCal.cc
+#STARCalDict.cxx
 )
 
 target_link_libraries(STARWARE ${ROOT_LIBRARIES})

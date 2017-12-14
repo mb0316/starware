@@ -24,6 +24,7 @@ Copyright. 2017. B. Moon
 #include "STAR.h"
 #include "STARAnaDC.h"
 #include "TObject.h"
+#include "TMath.h"
 
 using namespace std;
 
@@ -54,6 +55,21 @@ void MLM_D(Int_t &, Double_t *, Double_t &f, Double_t *par, Int_t)
     for (Int_t i = 0; i < np; i++)
     {
 		g1 = (par[0]*par[2]/(par[1]-par[2]))*(1-exp(-(par[1]-par[2])*x[i]))*exp(-par[2]*x[i])+par[3];
+        Double_t dg = -(y[i]*log(g1) - g1);
+        f += 2.*dg;
+    }
+}
+
+void MLM_I(Int_t &, Double_t *, Double_t &f, Double_t *par, Int_t)
+{
+    Int_t np = singledecay -> GetN();
+    f = 0;
+    Double_t *x = singledecay -> GetX();
+    Double_t *y = singledecay -> GetY();
+    Double_t g1 = 0;
+    for (Int_t i = 0; i < np; i++)
+    {
+		g1 = par[3]*exp(par[0]*(par[0]*par[1]*par[1]-2*(x[i]-par[2]))/2)*TMath::Erfc((par[0]*par[1]*par[1]-(x[i]-par[2]))/(TMath::Sqrt(2)*par[1])); 
         Double_t dg = -(y[i]*log(g1) - g1);
         f += 2.*dg;
     }
@@ -142,7 +158,7 @@ void STARAnaDC::Hdecaygate(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end,
     }
 }
 
-void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &peaksvalue, TCanvas *tempcvs)
+void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &peaksvalue, TCanvas *tempcvs, Double_t htstart, Double_t htend)
 {
 	if (singledecay != nullptr)	delete singledecay;
     Int_t num = peaksvalue.size();
@@ -166,6 +182,7 @@ void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &pea
     }
     
     Int_t nbin;
+	Int_t MX;
     Double_t gamma[num];
     Double_t gamma_T = 0;
     for (Int_t i = 0; i < num; i++)
@@ -173,7 +190,8 @@ void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &pea
         hist[i] = (TH1*) file[i] -> Get("hist_decay");
     }
     nbin = hist[0] -> GetNbinsX();
-    TH1S* hist_tot = new TH1S("decaycurve", "", nbin, 0, 4000);
+	MX = hist[0]->GetBinCenter(nbin)+1;
+    TH1S* hist_tot = new TH1S("decaycurve", "", nbin, 0, MX);
     
     for (Int_t i = 0; i < nbin; i++)
     {
@@ -185,33 +203,39 @@ void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &pea
         hist_tot -> SetBinContent(i+1, gamma_T);
         gamma_T = 0;
     }
-    Double_t interval = 4096/nbin;
+    Double_t interval = MX/nbin;
     for (Int_t i = 0; i < nbin; i++)
     {
-        singledecay -> SetPoint(i, (2*i*interval+interval)/2, hist_tot -> GetBinContent(i+1));
+//        singledecay -> SetPoint(i, (2*i*interval+interval)/2, hist_tot -> GetBinContent(i+1));
+        singledecay -> SetPoint(i, hist_tot->GetBinCenter(i+1), hist_tot -> GetBinContent(i+1));
         singledecay -> SetPointError(i, interval/2, sqrt(hist_tot -> GetBinContent(i+1)));
     }
 
-	if (halftype == 1) //halflife measurement for parent nucleus
+	if (halftype == 0) //halflife measurement for parent nucleus
 	{
 		Double_t expectedhalf = double(half_parent/log(2));
-		TF1* fcn = new TF1("single_decay", "[0]*exp(-x/[1])+[2]", 0, 4000);
-		TF1* exp = new TF1("decay", "[0]*exp(-x/[1])", 0, 4000);
-		TF1* bg = new TF1("bg", "[0]", 0, 4000);
+		TF1* fcn = new TF1("single_decay", "[0]*exp(-x/[1])+[2]", htstart, htend);
+		TF1* exp = new TF1("decay", "[0]*exp(-x/[1])", htstart, htend);
+		TF1* bg = new TF1("bg", "[0]", htstart, htend);
 
-		TFitter* fitter = new TFitter(3);
+//		TFitter* fitter = new TFitter(3);
 
 		Double_t ini = hist_tot -> GetMaximum();
-		fitter -> SetParameter(0, "amp", ini, 0.001, ini-200, ini+50);
-		fitter -> SetParameter(1, "TC", expectedhalf, 0.001, 0, 0);
-		fitter -> SetParameter(2, "BG", 1.200, 0.001, 0, 0);
-		fitter -> SetFCN(MLM_P);
-		fitter -> ExecuteCommand("MINOS", 0, 0);
+//		fcn -> SetParameter(0, "amp", ini, 0.001, ini-200, ini+50);
+//		fcn -> SetParameter(1, "TC", expectedhalf, 0.001, 0, 0);
+//		fcn -> SetParameter(2, "BG", 1.200, 0.001, 0, 0);
+//		fitter -> SetFCN(MLM_P);
+//		fitter -> ExecuteCommand("MINOS", 0, 0);
+		fcn->SetParameter(0, ini);
+		fcn->SetParLimits(0, ini-200, ini+50);
+		fcn->SetParameter(1, expectedhalf);
+		fcn->SetParameter(2, 1.0);
+		hist_tot->Fit(fcn, "MLR");
 
 		Double_t p[3] = {0};
 		for (Int_t i = 0; i < 3; i++)
 		{
-			p[i] = fitter -> GetParameter(i);
+			p[i] = fcn -> GetParameter(i);
 		}
 
 		fcn -> SetParameters(p[0], p[1], p[2]);
@@ -219,7 +243,7 @@ void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &pea
 		bg -> SetParameter(0, p[2]);
 
 		tempcvs -> cd();
-		TH2D* dummy = new TH2D("dummy", "", 4000, 0, 4000, ini+int(ini/2), 0.2, ini+int(ini/2));
+		TH2D* dummy = new TH2D("dummy", "", 100, 0, MX, ini+int(ini/2), 0.2, ini+int(ini/2));
 		dummy -> Draw();
 		singledecay -> Draw("P");
 		fcn -> Draw("SAME");
@@ -227,22 +251,23 @@ void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &pea
 		bg -> Draw("SAME");
 		exp -> SetLineStyle(3);
 		bg -> SetLineStyle(5);
-		Double_t error = (fitter -> GetParError(1))/p[1];
+		Double_t error = (fcn -> GetParError(1))/p[1];
 		cout << "Half-life : " << p[1]*log(2) << "(" << error*p[1]*log(2) << ")" << endl;
-		delete fitter;
+//		delete fitter;
 	}
 
-	if (halftype == 0) //halflife measurement for daughter nucleus
+	if (halftype == 1) //halflife measurement for daughter nucleus
 	{
 		Double_t expectedhalf = double(log(2)/half_parent);
 		cout << expectedhalf << endl;
-		TF1* fcn = new TF1("daughter_decay", "([0]*[2]/([1]-[2]))*(1-exp(-([1]-[2])*x))*exp(-[2]*x)+[3]", 0, 4000);
-		TF1* curve = new TF1("daughter_decay_curve", "([0]*[2]/([1]-[2]))*(1-exp(-([1]-[2])*x))*exp(-[2]*x)", 0, 4000);	
-		TF1* bg = new TF1("bg", "[0]", 0, 4000);
+		TF1* fcn = new TF1("daughter_decay", "([0]*[2]/([1]-[2]))*(1-exp(-([1]-[2])*x))*exp(-[2]*x)+[3]", htstart, htend);
+		TF1* curve = new TF1("daughter_decay_curve", "([0]*[2]/([1]-[2]))*(1-exp(-([1]-[2])*x))*exp(-[2]*x)", htstart, htend);	
+		TF1* bg = new TF1("bg", "[0]", htstart, htend);
 
-		TFitter* fitter = new TFitter(4);
+//		TFitter* fitter = new TFitter(4);
 
 		Double_t ini = hist_tot -> GetMaximum();
+/*
 		fitter -> SetParameter(0, "amp", ini, 0.001, 0, 0);
 		fitter -> SetParameter(1, "TC1", expectedhalf, 0.001, expectedhalf-5E-6, expectedhalf+5E-6);
 		fitter -> SetParameter(2, "TC2", expectedhalf/2, 0.001, 0, 0);
@@ -250,11 +275,19 @@ void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &pea
 		fitter -> FixParameter(1);
 		fitter -> SetFCN(MLM_D);
 		fitter -> ExecuteCommand("MINOS", 0, 0);
+*/
+		fcn->SetParameter(0, ini);
+		fcn->FixParameter(1, expectedhalf);
+		fcn->SetParameter(2, expectedhalf/2);
+		fcn->SetParameter(3, 1.0);
+
+		fcn->SetParLimits(1, expectedhalf-5E-6, expectedhalf+5E+6);
+		hist_tot->Fit(fcn, "MRL");
 
 		Double_t p[4] = {0};
 		for (Int_t i = 0; i < 4; i++)
 		{
-			p[i] = fitter -> GetParameter(i);
+			p[i] = fcn -> GetParameter(i);
 		}
 
 		fcn -> SetParameters(p[0], p[1], p[2], p[3]);
@@ -262,7 +295,7 @@ void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &pea
 		bg -> SetParameter(0, p[3]);
 
 		tempcvs -> cd();
-		TH2D* dummy = new TH2D("dummy", "", 4000, 0, 4000, ini+int(ini/2), 0.2, ini+int(ini/2));
+		TH2D* dummy = new TH2D("dummy", "", 100, 0, MX, ini+int(ini/2), 0.2, ini+int(ini/2));
 		dummy -> Draw();
 
 		singledecay -> Draw("P");
@@ -272,10 +305,47 @@ void STARAnaDC::Hhalflife(Int_t &halftype, Int_t &half_parent, vector <int> &pea
 		curve -> SetLineStyle(3);
 		bg -> SetLineStyle(5);
 
-		Double_t error = (fitter -> GetParError(2))/p[2];
+		Double_t error = (fcn -> GetParError(2))/p[2];
 		cout << "Half-life for parent : " << log(2)/p[1] << endl; 
 		cout << "Half-life for daughter : " << log(2)/p[2] << "(" << error*(log(2)/p[2]) << ")" << endl;
-		delete fitter;
+//		delete fitter;
 	}
+
+	if (halftype == 2) //halflife measurement for isomeric decay only with tail
+	{
+		Double_t expectedhalf = double(half_parent/log(2));
+		TF1* fcn = new TF1("single_decay", "[0]*exp(-x/[1])", htstart, htend);
+
+//		TFitter* fitter = new TFitter(3);
+
+		Double_t ini = hist_tot -> GetMaximum();
+//		fcn -> SetParameter(0, "amp", ini, 0.001, ini-200, ini+50);
+//		fcn -> SetParameter(1, "TC", expectedhalf, 0.001, 0, 0);
+//		fcn -> SetParameter(2, "BG", 1.200, 0.001, 0, 0);
+//		fitter -> SetFCN(MLM_P);
+//		fitter -> ExecuteCommand("MINOS", 0, 0);
+		fcn->SetParameter(0, ini);
+		fcn->SetParameter(1, expectedhalf);
+		hist_tot->Fit(fcn, "MLR");
+
+		Double_t p[2] = {0};
+		for (Int_t i = 0; i < 2; i++)
+		{
+			p[i] = fcn -> GetParameter(i);
+		}
+
+		fcn -> SetParameters(p[0], p[1]);
+
+		tempcvs -> cd();
+		TH2D* dummy = new TH2D("dummy", "", 100, 0, MX, ini+int(ini/2), 0.2, ini+int(ini/2));
+		dummy -> Draw();
+		singledecay -> Draw("P");
+		fcn -> Draw("SAME");
+		Double_t error = (fcn -> GetParError(1))/p[1];
+		cout << "Half-life : " << p[1]*log(2) << "(" << error*p[1]*log(2) << ")" << endl;
+//		delete fitter;
+	}
+
+
 }
 
