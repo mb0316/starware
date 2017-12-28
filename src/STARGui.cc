@@ -84,6 +84,7 @@ Copyright 2017. B. Moon
 #include "TSystem.h"
 #include "TRint.h"
 #include "TLatex.h"
+#include "TLine.h"
 
 const char gAboutSTARWARE[] = "\
 			STARWARE\n\
@@ -1472,9 +1473,13 @@ void STARGui::TextChange(const char*)
 	htend = atof(ftext_buf2->GetString());
 
 	if (p_htstart != nullptr)	delete p_htstart;
-	p_htstart = new TLatex(htstart, 1, "#color[2]{#void8}");
+//	p_htstart = new TLatex(htstart, 1, "#color[2]{#void8}");
+	p_htstart = new TLine(htstart, cvs8->GetUymin(), htstart, cvs8->GetUymax());
+	p_htstart->SetLineColor(2);
 	if (p_htend != nullptr)	delete p_htend;
-	p_htend = new TLatex(htend, 1,"#color[4]{#void8}");
+//	p_htend = new TLatex(htend, 1,"#color[4]{#void8}");
+	p_htend = new TLine(htend, cvs8->GetUymin(), htend, cvs8->GetUymax());
+	p_htend->SetLineColor(4);
 
 	cvs8->cd();
 	p_htstart->Draw("same");
@@ -1504,11 +1509,15 @@ void STARGui::ChangeSlide()
 
 	htstart = atof(ftext_buf1->GetString());
 	htend = atof(ftext_buf2->GetString());
-	
+
 	if (p_htstart != nullptr)	delete p_htstart;
-	p_htstart = new TLatex(htstart, 1, "#color[2]{#void8}");
+//	p_htstart = new TLatex(htstart, 1, "#color[2]{#void8}");
+	p_htstart = new TLine(htstart, cvs8->GetUymin(), htstart, cvs8->GetUymax());
+	p_htstart->SetLineColor(2);
 	if (p_htend != nullptr)	delete p_htend;
-	p_htend = new TLatex(htend, 1,"#color[4]{#void8}");
+//	p_htend = new TLatex(htend, 1,"#color[4]{#void8}");
+	p_htend = new TLine(htend, cvs8->GetUymin(), htend, cvs8->GetUymax());
+	p_htend->SetLineColor(4);
 
 	cvs8->cd();
 	p_htstart->Draw("same");

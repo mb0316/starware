@@ -43,6 +43,7 @@ Copyright. 2017. B. Moon
 #include "Rtypes.h"
 #include "TLatex.h"
 #include "TH1S.h"
+#include "TLine.h"
 
 class STARGui : public STAR
 {
@@ -105,8 +106,8 @@ class STARGui : public STAR
 		TGTextBuffer* ftext_buf1;
 		TGTextBuffer* ftext_buf2;
 
-		TLatex* p_htstart = nullptr;
-		TLatex* p_htend = nullptr;
+		TLine* p_htstart = nullptr;
+		TLine* p_htend = nullptr;
 
 	public :
 		STARGui();
