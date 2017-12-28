@@ -555,7 +555,7 @@ STARGui::STARGui()
     fCompositeFrame5 -> AddFrame(lHALF, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
     lHALF -> MoveResize(1020, 40, 170, 20);
     
-    TGNumberEntryField *fSETPEAK = new TGNumberEntryField(fCompositeFrame5, 2, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 4096);
+    TGNumberEntryField *fSETPEAK = new TGNumberEntryField(fCompositeFrame5, 2, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 16384);
     fSETPEAK->MoveResize(1020,65,40,20);
     fCompositeFrame5->AddFrame(fSETPEAK, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     fSETPEAK -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetPeakValue(const Char_t *)");
@@ -1091,6 +1091,7 @@ void STARGui::gate()
 void STARGui::timegate()
 {
 	gSystem->RedirectOutput(tempfile.Data(),"a");
+
 	Int_t tch1, tch2;
 	if (timeaxis1 == 0 && timeaxis2 == 1)
 	{
@@ -1102,6 +1103,7 @@ void STARGui::timegate()
 		tch1 = tstart/chY;
 		tch2 = tend/chY;
 	}
+
     startg.Htimegate(hist_Tot, timeaxis1, timeaxis2, tch1, tch2);
     
     cvs5 -> cd();
@@ -1269,10 +1271,10 @@ void STARGui::setpeaks()
 	gSystem->RedirectOutput(tempfile.Data(),"a");
     peaksvalue.push_back(halfpeak);
     
-    cout << halfpeak << " ch has ben saved." << endl;
+    cout << halfpeak << " keV has ben saved." << endl;
 
 	cvs8->cd();
-	TFile* temp = new TFile(Form("%s%dch_decaycurve.root", direc.Data(), halfpeak), "READ");
+	TFile* temp = new TFile(Form("%s%dkeV_decaycurve.root", direc.Data(), halfpeak), "READ");
 	TH1* temp_hist = (TH1*) temp->Get("hist_decay");
 	if (half_hist == nullptr)	half_hist = new TH1S("halflife histogram", "", temp_hist->GetNbinsX(), 0, temp_hist->GetXaxis()->GetXmax());
 	half_hist->Add(temp_hist, 1);

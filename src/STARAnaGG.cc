@@ -42,8 +42,9 @@ void STARAnaGG::Hgate(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, Int_
         hist_BGL = hist_Tot -> ProjectionX("Pro_BGL", bgls, bgle, "");
         hist_BGR = hist_Tot -> ProjectionX("Pro_BGR", bgrs, bgre, "");
         
-		Double_t chbin = double(int(hist_PY->GetBinCenter(bin))+1)/double(bin);
-		cout << chbin << endl;
+//		Double_t chbin = double(int(hist_PY->GetBinCenter(bin))+1)/double(bin);
+		Double_t chbin = (hist_PY->GetXaxis()->GetXmax())/double(bin);
+//		cout << chbin << endl;
 		hist_P = new TH1D("gated_histogram", "", bin, 0, int(hist_PY->GetBinCenter(bin))+1); //gated spectrum after removing the background
         // algorithm for making the gated spectrum
         for (Int_t i = 0; i < bin; i++)
@@ -89,8 +90,9 @@ void STARAnaGG::Hgate(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end, Int_
         hist_BGL = hist_Tot -> ProjectionY("Pro_BGL", bgls, bgle, "");
         hist_BGR = hist_Tot -> ProjectionY("Pro_BGR", bgrs, bgre, "");
         
-		Double_t chbin = double(int(hist_PY->GetBinCenter(bin))+1)/double(bin);
-		cout << chbin << endl;
+//		Double_t chbin = double(int(hist_PY->GetBinCenter(bin))+1)/double(bin);
+		Double_t chbin = (hist_PY->GetXaxis()->GetXmax())/double(bin);
+//		cout << chbin << endl;
         hist_P = new TH1D("gated_histogram", "", bin, 0, (hist_PY->GetBinCenter(bin))+1); //gated spectrum after removing the background
         // algorithm for making the gated spectrum
         for (Int_t i = 0; i < bin; i++)

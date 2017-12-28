@@ -34,32 +34,36 @@ void STARAnaTG::Htimegate(TH2D *hist_Tot, Int_t &timeaxis1, Int_t &timeaxis2, In
 	if (hist_TY != nullptr)	delete hist_TY;
     if (timeaxis1 == 0 && timeaxis2 == 1)
     {
-        cout << "Input the start value of the gate : " << start << endl; //gate start
-        cout << "Input the end value of the gate : " << end << endl; //gate end
-        
         hist_TY = hist_Tot -> ProjectionY("Pro_Y_time", start, end, ""); // singles spectrum with the time interval
+		Double_t chbin = (hist_Tot->GetXaxis()->GetXmax())/(hist_Tot->GetNbinsX());
+		cout << chbin << endl;
+
+        cout << "Input the start value of the gate : " << int(start*chbin)+1 << endl; //gate start
+        cout << "Input the end value of the gate : " << int(end*chbin)+1 << endl; //gate end
         
         // saving the result data
-        TFile* out = new TFile(Form("%s%dto%d_spectrum.root", direc.Data(), start, end), "RECREATE");
+        TFile* out = new TFile(Form("%s%dto%d_spectrum.root", direc.Data(), int(start*chbin)+1, int(end*chbin)+1), "RECREATE");
         out -> cd();
         hist_TY -> Write();
         out -> Close();
-        cout << start << "to" << end << "_spectrum.root outfile has been created." << endl;
+        cout << int(start*chbin)+1 << "to" << int(end*chbin)+1 << "_spectrum.root outfile has been created." << endl;
 		delete out;
     }
     if (timeaxis1 == 1 && timeaxis2 == 0)
     {
-        cout << "Input the start value of the gate : " << start << endl; //gate start
-        cout << "Input the end value of the gate : " << end << endl; //gate end
-        
         hist_TY = hist_Tot -> ProjectionX("Pro_X_time", start, end, ""); // singles spectrum with the time interval
+		Double_t chbin = (hist_Tot->GetYaxis()->GetXmax())/(hist_Tot->GetNbinsY());
+
+		cout << chbin << endl;
+        cout << "Input the start value of the gate : " << int(start*chbin)+1 << endl; //gate start
+        cout << "Input the end value of the gate : " << int(end*chbin)+1 << endl; //gate end
         
         // saving the result data
-        TFile* out = new TFile(Form("%s%dto%d_spectrum.root", direc.Data(), start, end), "RECREATE");
+        TFile* out = new TFile(Form("%s%dto%d_spectrum.root", direc.Data(), int(start*chbin)+1, int(end*chbin)+1), "RECREATE");
         out -> cd();
         hist_TY -> Write();
         out -> Close();
-        cout << start << "to" << end << "_spectrum.root outfile has been created." << endl;
+        cout << int(start*chbin)+1 << "to" << int(end*chbin)+1 << "_spectrum.root outfile has been created." << endl;
 		delete out;
     }
     if ((timeaxis1 == 0 && timeaxis2 == 0) || (timeaxis1 == 1 && timeaxis2 == 1))
