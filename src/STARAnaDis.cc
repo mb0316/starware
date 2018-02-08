@@ -19,21 +19,30 @@ void STARAnaDis::Htimediff(TH2D *hist_Tot, Int_t &timeaxis1, Int_t &timeaxis2, I
 {
 	if (hist1 != nullptr)	delete hist1;
 	if (hist2 != nullptr)	delete hist2;
+	if (hist_diff != nullptr)	delete hist_diff;
 
     if (timeaxis1 == 0 && timeaxis2 == 1)
     {
         hist1 = hist_Tot -> ProjectionY("first_time", first, second, "");
         hist2 = hist_Tot -> ProjectionY("second_time", third, forth, "");
-        hist2 -> SetLineColor(2);
-        hist1 -> SetLineColor(4);
+//        hist2 -> SetLineColor(2);
+//        hist1 -> SetLineColor(4);
+		Int_t Nbin = hist1->GetNbinsX();
+		Double_t Xmax = hist1->GetXaxis()->GetXmax();
+		hist_diff = new TH1D("timediff", "", Nbin, 0, Xmax);
+		for (Int_t i = 0; i < Nbin; i++)	hist_diff->SetBinContent(i+1, hist1->GetBinContent(i+1) - hist2->GetBinContent(i+1));
     }
     
     if (timeaxis1 == 1 && timeaxis2 == 0)
     {
         hist1 = hist_Tot -> ProjectionX("first_time", first, second, "");
         hist2 = hist_Tot -> ProjectionX("second_time", third, forth, "");
-        hist2 -> SetLineColor(2);
-        hist1 -> SetLineColor(4);
+//        hist2 -> SetLineColor(2);
+//        hist1 -> SetLineColor(4);
+		Int_t Nbin = hist1->GetNbinsX();
+		Double_t Xmax = hist1->GetXaxis()->GetXmax();
+		hist_diff = new TH1D("timediff", "", Nbin, 0, Xmax);
+		for (Int_t i = 0; i < Nbin; i++)	hist_diff->SetBinContent(i+1, hist1->GetBinContent(i+1) - hist2->GetBinContent(i+1));
     }
     
     if ((timeaxis1 == 0 && timeaxis2 == 0) || (timeaxis1 == 1 && timeaxis2 == 1))
@@ -41,6 +50,7 @@ void STARAnaDis::Htimediff(TH2D *hist_Tot, Int_t &timeaxis1, Int_t &timeaxis2, I
         cout << "Error : The time axis is not properly setted. Please check again." << endl;
         hist1 = new TH1D();
         hist2 = new TH1D();
+		hist_diff = new TH1D();
     }
 }
 

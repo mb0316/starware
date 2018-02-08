@@ -34,7 +34,7 @@ void STARAnaDC::Hdecaygate(TH2D *hist_Tot, Int_t iden, Int_t &start, Int_t &end,
 {
 	if (hist_D != nullptr)	delete hist_D;
 
-	if (iden == 0)
+	if (iden == 0)	//gate by x-axis, project to y-axis
     {
         peak = (start+end)/2; // gated peak value
         

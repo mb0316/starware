@@ -2,7 +2,7 @@
 *************************STARWARE GUI CONSTRUCTOR FILE******************************
 Made by Byul Moon from Korea University
 GUI constructor for STARWARE program.
-Last refine : 24.Nov.2017, ver.1.5
+Last refine : 8.Feb.2018, ver.2.0
 Copyright 2017. B. Moon
 ***********************************************************************************/
 #include "TROOT.h"
@@ -91,40 +91,18 @@ const char gAboutSTARWARE[] = "\
 STARWARE(SpecTroscopy Analysis for gamma-Ray softWARE)\n\
 is an analysis tool dedicated for gamma-ray spectroscopy based on ROOT.\n\
 This program operates with a GUI system.\n\
-STARWARE only accepts the data format with ~.mat.\n\
 \n\
 Since Jan. 2016.\n\
-Current Version : ver.1.5\n\
-Last Update : 24.Nov.2017.\n\
+Current Version : ver.2.0\n\
+Last Update : 8.Feb.2018.\n\
 By Byul Moon from Korea University\n\
-alpha ver.1.2 Update News 1 : The decaygate function now contains the elimination of the background.\n\
-alpha ver.1.2 Update News 2 : The decaygate function now asks the degree of the data compression(the bin size).\n\
-alpha ver.1.3 Update News 1 : The netarea function now uses the gaussian fitting to get the exact net area including the error.\n\
-alpha ver.1.4 Update News 1 : The netarea function now does not remove the background by using TSpectrum. Instead, now the function fits the background with the linear function to remove the background.\n\
-alpha ver.1.5 Update News 1 : This program now performs the efficiency calibration by using the external data file.\n\
-alpha ver.2.0 Update News 1 : Now this program works with its own CLASS header file.\n\
-alpha ver.2.1 Update News 1 : The timegrow function now works with the fit process not using TSpectrum anymore.\n\
-alpha ver.3.0 Update News 1 : Now you can use the mouse double-click to set the gate condition. If you want to set the gate, please zoom in the spectrum and double-click the bin point.\n\
-alpha ver.3.0 Update News 2 : Now this program works with RADWARE data foramt(.mat).\n\
-alpha ver.3.1 Update News 1 : Now this program provides halflife measurement using gamma-rays.\n\
-alpha ver.4.0 Update News 1 : Now this program is based on the GUI system.\n\
-beta ver.1.0 Update News 1 (09.Jan.2017) : The interface for STARWARE is now fixed.\n\
-beta ver.1.1 Update News 1 (22.Feb.2017) : The analysis for the half-life of the daughter nucleus has been added.\n\
-beta ver.1.2 Update News 1 (08.Mar.2017) : The logft calculation has been added.\n\
-beta ver.1.2 Update News 2 (13.Mar.2017) : The reduced matrix element calculation has been added.\n\
-ver.1.0 Update News 1 (12.May.2017) : Fixed bugs.\n\
-ver.1.1 Update News 1 (10.Aug.2017) : Optimized memory consumption.\n\
-ver.1.2 Update News 1 (16.Aug.2017) : Added CINT window.\n\
-ver.1.3 Update News 1 (01.Sep.2017) : Build executable.\n\
-ver.1.4 Update News 1 (25.Oct.2017) : Reduced matrix element calculation with W.u.\n\
-ver.1.5 Update News 1 (24.Nov.2017) : Able to use a data file with ROOT type.\n\
 ";
 
 const char gCOPYRIGHT[] = "\
 			STARWARE COPYRIGHT\n\
 STARWARE is made by Byul Moon from Korea University.\n\
 \n\
-Copyright 2017. B. Moon\n\
+Copyright 2018. B. Moon\n\
 ";
 
 const char gMANUAL[] ="\
@@ -188,6 +166,7 @@ STARGui::STARGui()
     fMainFrame1073->SetName("STARWARE");
     fMainFrame1073->SetLayoutBroken(kTRUE);
 
+
 	TGMenuBar* fMenuBar = new TGMenuBar(fMainFrame1073, 1200, 25, kHorizontalFrame);
 	TGPopupMenu* fMenuFile = new TGPopupMenu(gClient->GetRoot());
 	fMenuFile->AddEntry(" &Open", M_FILE_OPEN, 0, gClient->GetPicture("bld_open.png")); 
@@ -208,9 +187,6 @@ STARGui::STARGui()
 	fMenuBar->MoveResize(0,0,1200,25);
 
     fTextView = new TGTextView(fMainFrame1073, 1180, 150, 10, kFixedWidth | kFixedHeight); 
-//	Pixel_t backpxl;
-//	gClient->GetColorByName("#c0c0c0", backpxl);
-//	fTextView -> SetBackground(backpxl);
 	fMainFrame1073->AddFrame(fTextView, new TGLayoutHints(kLHintsExpandX)); 
 	fTextView->MoveResize(10, 590, 1180, 150);
 	fTextView->Clear();
@@ -916,7 +892,7 @@ STARGui::STARGui()
     fMainFrame1073->MapWindow();
     fMainFrame1073->Resize(1200,1000);
 
-	fMainFrame1073->SetWindowName("STARWARE ver.1.5");
+	fMainFrame1073->SetWindowName("STARWARE");
 	fMainFrame1073->MapSubwindows();
 	fMainFrame1073->Connect("CloseWindow()", "STARGui", this, "TerminatePro()");
 
@@ -1225,11 +1201,14 @@ void STARGui::timediff()
 	}
 
     stardis.Htimediff(hist_Tot, timeaxis1, timeaxis2, tch1, tch2, tch3, tch4);
+	cout << "1st spectrum time cut condition in bin number : " << tch1 << " to " << tch2 << endl;
+	cout << "2nd spectrum time cut condition in bin number : " << tch3 << " to " << tch4 << endl;
     
     cvs6 -> cd();
     cvs6 -> ToggleEventStatus();
-    stardis.hist1 -> Draw();
-    stardis.hist2 -> Draw("same");
+//    stardis.hist1 -> Draw();
+//    stardis.hist2 -> Draw("same");
+	stardis.hist_diff -> Draw();
     cvs6 -> Modified();
     cvs6 -> Update();
 
