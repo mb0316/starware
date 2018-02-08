@@ -19,7 +19,7 @@ Last Update : 8.Feb.2018.
 By Byul Moon from Korea University
 
 ver.2.0 (8. Feb. 2018)
-1. A pop-up window will ask you to set the bin size of your 2-D histogram only for data files with mat stype.
+1. A pop-up window will ask you to set the bin size of your 2-D histogram only for data files with mat type.
 2. Able to measure the half-life of isomeric state.
 3. Able to set the fit range by using a GUI scroll bar.
 4. Calculations has been removed from STARWARE but these functions will be included in STARCAL program which is being developing.
