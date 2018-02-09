@@ -2,7 +2,7 @@
 *************************STARWARE GUI CONSTRUCTOR FILE******************************
 Made by Byul Moon from Korea University
 GUI constructor for STARWARE program.
-Last refine : 8.Feb.2018, ver.2.0
+Last refine : 9.Feb.2018, ver.2.0.1
 Copyright 2017. B. Moon
 ***********************************************************************************/
 #include "TROOT.h"
@@ -93,7 +93,7 @@ is an analysis tool dedicated for gamma-ray spectroscopy based on ROOT.\n\
 This program operates with a GUI system.\n\
 \n\
 Since Jan. 2016.\n\
-Current Version : ver.2.0\n\
+Current Version : ver.2.0.1\n\
 Last Update : 8.Feb.2018.\n\
 By Byul Moon from Korea University\n\
 ";

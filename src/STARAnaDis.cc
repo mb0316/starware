@@ -2,7 +2,7 @@
 ***************************STARWARE CLASS SOURCE FILE*******************************
 Made by Byul Moon from Korea University
 All functions are contained for STARWARE.
-Last refine : 12.Aug.2017, ver.1.1
+Last refine : 9.Feb.2017, ver.2.0.1
 Copyright. 2017. B. Moon
 ***********************************************************************************/
 #include "TFile.h"
