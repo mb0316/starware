@@ -12,9 +12,9 @@ The online manual is available at https://github.com/mb0316/starware/wiki.
 ## Update News
 Since Jan. 2016.
 
-Current Version : ver.2.0
+Current Version : ver.2.0.1
 
-Last Update : 8.Feb.2018.
+Last Update : 9.Feb.2018.
 
 By Byul Moon from Korea University
 
