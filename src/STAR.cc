@@ -33,6 +33,7 @@ Copyright. 2017. B. Moon
 #include "TGLabel.h"
 #include "TGNumberEntry.h"
 #include "TGButton.h"
+#include "TSpectrum.h"
 
 using namespace std;
 
@@ -188,6 +189,32 @@ void STAR::SetXBin(const Char_t *value)
 void STAR::SetYBin(const Char_t *value)
 {
 	chY = atof(value);
+}
+
+void STAR::FindPeaks(TCanvas* cvs, TH1D* hist)
+{
+	TSpectrum* spec = new TSpectrum();
+	spec->Search(hist, 0.6, "goff", 0.01);
+
+	Int_t nb = hist->GetNbinsX();
+	Double_t mx = hist->GetXaxis()->GetXmax();
+	Double_t chpx = nb/mx;
+
+	Double_t *xpeaks = spec->GetPositionX();
+
+	cvs->cd();
+	TLatex temp;
+	temp.SetTextAlign(12);
+	temp.SetTextSize(0.05);
+	temp.SetTextFont(132);
+	temp.SetTextColor(2);
+	temp.SetTextAngle(90);
+	for (Int_t i = 0; i < spec->GetNPeaks(); i++)
+	{
+		temp.DrawLatex(xpeaks[i], hist->GetBinContent(int(xpeaks[i]*chpx+1)), Form("%d", int(xpeaks[i])));
+	}
+//	delete spec;
+//	delete xpeaks;
 }
 
 void STAR::reset()
@@ -512,10 +539,10 @@ void STAR::intro()
 {
     cout << "-----------------------------STARWARE(SpecTroscopy Analysis for gamma-Ray softWARE)---------------------------------" << endl;
     cout << "------------------------------------------Byul means 'star' in Korean.----------------------------------------------" << endl;
-    cout << "-----------------------------------Gamma-ray Spectroscopy Analysis Tool v1.5----------------------------------------" << endl;
+    cout << "-----------------------------------Gamma-ray Spectroscopy Analysis Tool v2.0----------------------------------------" << endl;
     cout << "The Data analysis from coincidence event matrices." << endl;
     cout << "Made by Byul Moon(B.Moon) from Korea University" << endl;
     cout << "Since Jan. 2016." << endl;
-    cout << "Latest Update : Nov. 2017." << endl;
+    cout << "Latest Update : Feb. 2018." << endl;
 } 
 

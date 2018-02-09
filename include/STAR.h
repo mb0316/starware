@@ -58,6 +58,7 @@ class STAR
 		void SetXBin(const Char_t *value);
 		void SetYBin(const Char_t *value);
 		void SETBIN();
+		void FindPeaks(TCanvas* cvs, TH1D* hist);
 
 	protected :
 		TH1D* hist_X = nullptr;		//x projected histogram

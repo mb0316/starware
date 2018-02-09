@@ -59,6 +59,6 @@ void STARAnaDis::peakfind(TString &openFile)
 	if (gated_hist != nullptr)	delete gated_hist;
 	if (open != nullptr)	delete open;
 	open = new TFile(Form("%s", openFile.Data()), "read");
-	gated_hist = (TH1*) open -> Get(open->GetListOfKeys()->At(0)->GetName());
+	gated_hist = (TH1D*) open -> Get(open->GetListOfKeys()->At(0)->GetName());
 }
 

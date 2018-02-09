@@ -23,3 +23,4 @@ ver.2.0 (8. Feb. 2018)
 2. Able to measure the half-life of isomeric state.
 3. Able to set the fit range by using a GUI scroll bar.
 4. Calculations has been removed from STARWARE but these functions will be included in STARCAL program which is being developing.
+5. Dominant peaks are indicated by number in spectra.

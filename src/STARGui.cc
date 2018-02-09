@@ -962,6 +962,7 @@ void STARGui::openfile()
 	cout << directory << endl;
     
     main(directory, openingFile);
+
     cvs1 -> cd();
     cvs1 -> ToggleEventStatus();
     hist_X -> Draw();
@@ -977,10 +978,17 @@ void STARGui::openfile()
     cvs2 -> Modified();
     cvs2 -> Update();
    
+	FindPeaks(cvs1, hist_X);
+	FindPeaks(cvs2, hist_Y);
+	cvs1->Modified();
+	cvs1->Update();
+	cvs2->Modified();
+	cvs2->Update();
 	cvs1 -> MoveOpaque(0);
 	cvs1 -> ResizeOpaque(0);
 	cvs2 -> MoveOpaque(0);
 	cvs2 -> ResizeOpaque(0);	
+
  
 	cout << filenameWithPath << openingFile << endl;
     delete decomposedFileNameWithPath;
@@ -1035,6 +1043,7 @@ void STARGui::gatedspectrum()
 		stardis.peakfind(gatedatafile);
 		cvs4 -> cd();
 		stardis.gated_hist -> Draw();
+		FindPeaks(cvs4, stardis.gated_hist);
 		cvs4 -> Update();
 		cvs4 -> Modified();
 	}
@@ -1058,6 +1067,7 @@ void STARGui::gate()
     cvs3 -> cd();
     cvs3 -> ToggleEventStatus();
     if (stargg.hist_P != nullptr)	stargg.hist_P -> Draw();
+	FindPeaks(cvs3, stargg.hist_P);
     cvs3 -> Modified();
     cvs3 -> Update();
 	gSystem->RedirectOutput(0);
@@ -1086,6 +1096,7 @@ void STARGui::timegate()
     cvs5 -> cd();
     cvs5 -> ToggleEventStatus();
     startg.hist_TY -> Draw();
+	FindPeaks(cvs5, startg.hist_TY);
     cvs5 -> Modified();
     cvs5 -> Update();
 
@@ -1209,6 +1220,7 @@ void STARGui::timediff()
 //    stardis.hist1 -> Draw();
 //    stardis.hist2 -> Draw("same");
 	stardis.hist_diff -> Draw();
+	FindPeaks(cvs6, stardis.hist_diff);
     cvs6 -> Modified();
     cvs6 -> Update();
 
