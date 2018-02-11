@@ -194,11 +194,30 @@ void STAR::SetYBin(const Char_t *value)
 void STAR::FindPeaks(TCanvas* cvs, TH1D* hist)
 {
 	TSpectrum* spec = new TSpectrum();
-	spec->Search(hist, 0.6, "goff", 0.01);
 
 	Int_t nb = hist->GetNbinsX();
 	Double_t mx = hist->GetXaxis()->GetXmax();
 	Double_t chpx = nb/mx;
+	Double_t source[nb], dest[nb];
+
+	if (chpx <= 1)
+	{
+//		cout << "High" << endl;
+		for (Int_t i = 0; i < nb; i++)	source[i] = hist->GetBinContent(i+1);
+		spec->SearchHighRes(source, dest, nb, 1, 2, kTRUE, 5, kTRUE, 3);
+	}
+
+	if (1 < chpx && chpx < 5)
+	{
+//		cout << "Normal" << endl;
+		spec->Search(hist, 0.7, "goff", 0.005);
+	}
+
+	if (chpx >= 5)
+	{
+//		cout << "Low" << endl;
+		spec->Search(hist, 0.4, "goff", 0.01);
+	}
 
 	Double_t *xpeaks = spec->GetPositionX();
 
