@@ -38,15 +38,15 @@ void STARAnaTG::Htimegate(TH2D *hist_Tot, Int_t &timeaxis1, Int_t &timeaxis2, In
 		Double_t chbin = (hist_Tot->GetXaxis()->GetXmax())/(hist_Tot->GetNbinsX());
 		cout << chbin << endl;
 
-        cout << "Input the start value of the gate : " << int(start*chbin)+1 << endl; //gate start
-        cout << "Input the end value of the gate : " << int(end*chbin)+1 << endl; //gate end
+        cout << "Input the start value of the gate : " << int(start*chbin) << endl; //gate start
+        cout << "Input the end value of the gate : " << int(end*chbin) << endl; //gate end
         
         // saving the result data
-        TFile* out = new TFile(Form("%s%dto%d_spectrum.root", direc.Data(), int(start*chbin)+1, int(end*chbin)+1), "RECREATE");
+        TFile* out = new TFile(Form("%s%dto%d_spectrum.root", direc.Data(), int(start*chbin), int(end*chbin)), "RECREATE");
         out -> cd();
         hist_TY -> Write();
         out -> Close();
-        cout << int(start*chbin)+1 << "to" << int(end*chbin)+1 << "_spectrum.root outfile has been created." << endl;
+        cout << int(start*chbin) << "to" << int(end*chbin) << "_spectrum.root outfile has been created." << endl;
 		delete out;
     }
     if (timeaxis1 == 1 && timeaxis2 == 0)
@@ -55,15 +55,15 @@ void STARAnaTG::Htimegate(TH2D *hist_Tot, Int_t &timeaxis1, Int_t &timeaxis2, In
 		Double_t chbin = (hist_Tot->GetYaxis()->GetXmax())/(hist_Tot->GetNbinsY());
 
 		cout << chbin << endl;
-        cout << "Input the start value of the gate : " << int(start*chbin)+1 << endl; //gate start
-        cout << "Input the end value of the gate : " << int(end*chbin)+1 << endl; //gate end
+        cout << "Input the start value of the gate : " << int(start*chbin) << endl; //gate start
+        cout << "Input the end value of the gate : " << int(end*chbin) << endl; //gate end
         
         // saving the result data
-        TFile* out = new TFile(Form("%s%dto%d_spectrum.root", direc.Data(), int(start*chbin)+1, int(end*chbin)+1), "RECREATE");
+        TFile* out = new TFile(Form("%s%dto%d_spectrum.root", direc.Data(), int(start*chbin), int(end*chbin)), "RECREATE");
         out -> cd();
         hist_TY -> Write();
         out -> Close();
-        cout << int(start*chbin)+1 << "to" << int(end*chbin)+1 << "_spectrum.root outfile has been created." << endl;
+        cout << int(start*chbin) << "to" << int(end*chbin) << "_spectrum.root outfile has been created." << endl;
 		delete out;
     }
     if ((timeaxis1 == 0 && timeaxis2 == 0) || (timeaxis1 == 1 && timeaxis2 == 1))

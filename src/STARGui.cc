@@ -1092,7 +1092,7 @@ void STARGui::timegate()
 	}
 
     startg.Htimegate(hist_Tot, timeaxis1, timeaxis2, tch1, tch2);
-    
+   
     cvs5 -> cd();
     cvs5 -> ToggleEventStatus();
     startg.hist_TY -> Draw();
