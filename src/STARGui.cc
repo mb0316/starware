@@ -260,7 +260,7 @@ STARGui::STARGui()
     fCompositeFrame1 -> AddFrame(lSTARTBIN, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
     lSTARTBIN-> MoveResize(1030, 215, 170, 20);
     
-    TGNumberEntryField *fTSTARTBIN = new TGNumberEntryField(fCompositeFrame1, 1, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 4096);
+    TGNumberEntryField *fTSTARTBIN = new TGNumberEntryField(fCompositeFrame1, 1, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 999999);
     fTSTARTBIN->MoveResize(1030,240,100,20);
     fCompositeFrame1->AddFrame(fTSTARTBIN, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     fTSTARTBIN -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetTimeStart(const Char_t *)");
@@ -272,7 +272,7 @@ STARGui::STARGui()
     fCompositeFrame1 -> AddFrame(lENDBIN, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
     lENDBIN-> MoveResize(1030, 265, 170, 20);
     
-    TGNumberEntryField *fTENDBIN = new TGNumberEntryField(fCompositeFrame1, 2, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 4096);
+    TGNumberEntryField *fTENDBIN = new TGNumberEntryField(fCompositeFrame1, 2, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 999999);
     fTENDBIN->MoveResize(1030,290,100,20);
     fCompositeFrame1->AddFrame(fTENDBIN, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     fTENDBIN -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetTimeEnd(const Char_t *)");
@@ -412,12 +412,12 @@ STARGui::STARGui()
     fCompositeFrame3 -> AddFrame(lDENDBIN1, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
     lDENDBIN1-> MoveResize(1100, 55, 40, 20);
     
-    TGNumberEntryField *fDSTARTBIN1 = new TGNumberEntryField(fCompositeFrame3, 1, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 4096);
+    TGNumberEntryField *fDSTARTBIN1 = new TGNumberEntryField(fCompositeFrame3, 1, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 999999);
     fDSTARTBIN1->MoveResize(1050,80,40,20);
     fCompositeFrame3->AddFrame(fDSTARTBIN1, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     fDSTARTBIN1 -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetDiffStart1(const Char_t *)");
     
-    TGNumberEntryField *fDENDBIN1 = new TGNumberEntryField(fCompositeFrame3, 2, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 4096);
+    TGNumberEntryField *fDENDBIN1 = new TGNumberEntryField(fCompositeFrame3, 2, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 999999);
     fDENDBIN1->MoveResize(1100,80,40,20);
     fCompositeFrame3->AddFrame(fDENDBIN1, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     fDENDBIN1 -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetDiffEnd1(const Char_t *)");
@@ -443,12 +443,12 @@ STARGui::STARGui()
     fCompositeFrame3 -> AddFrame(lDENDBIN2, new TGLayoutHints(kLHintsLeft | kLHintsTop, 2, 2, 2, 2));
     lDENDBIN2-> MoveResize(1100, 140, 40, 20);
     
-    TGNumberEntryField *fDSTARTBIN2 = new TGNumberEntryField(fCompositeFrame3, 1, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 4096);
+    TGNumberEntryField *fDSTARTBIN2 = new TGNumberEntryField(fCompositeFrame3, 1, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 999999);
     fDSTARTBIN2->MoveResize(1050,165,40,20);
     fCompositeFrame3->AddFrame(fDSTARTBIN2, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     fDSTARTBIN2 -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetDiffStart2(const Char_t *)");
     
-    TGNumberEntryField *fDENDBIN2 = new TGNumberEntryField(fCompositeFrame3, 2, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 4096);
+    TGNumberEntryField *fDENDBIN2 = new TGNumberEntryField(fCompositeFrame3, 2, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 999999);
     fDENDBIN2->MoveResize(1100,165,40,20);
     fCompositeFrame3->AddFrame(fDENDBIN2, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     fDENDBIN2 -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetDiffEnd2(const Char_t *)");
@@ -574,7 +574,7 @@ STARGui::STARGui()
 	fTYPE_DECAY->MoveResize(1020,210,100,20);
 	fTYPE_DECAY->Connect("Selected(Int_t)", "STARGui", this, "checkhalftype(Int_t)");
 
-    TGNumberEntryField *fHALF_P = new TGNumberEntryField(fCompositeFrame5, 0, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 4096);
+    TGNumberEntryField *fHALF_P = new TGNumberEntryField(fCompositeFrame5, 0, 0, TGNumberFormat::kNESInteger, TGNumberFormat::kNEANonNegative, TGNumberFormat::kNELLimitMinMax, 0, 999999);
     fHALF_P->MoveResize(1020,280,100,20);
     fCompositeFrame5->AddFrame(fHALF_P, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
     fHALF_P -> Connect("TextChanged(const Char_t *)", "STARGui", this, "SetHalfLife(const Char_t *)");
@@ -1212,8 +1212,8 @@ void STARGui::timediff()
 	}
 
     stardis.Htimediff(hist_Tot, timeaxis1, timeaxis2, tch1, tch2, tch3, tch4);
-	cout << "1st spectrum time cut condition in bin number : " << tch1 << " to " << tch2 << endl;
-	cout << "2nd spectrum time cut condition in bin number : " << tch3 << " to " << tch4 << endl;
+	cout << "1st spectrum time cut condition : " << dstart1 << " to " << dend1 << endl;
+	cout << "2nd spectrum time cut condition : " << dstart2 << " to " << dend2 << endl;
     
     cvs6 -> cd();
     cvs6 -> ToggleEventStatus();
@@ -1223,6 +1223,13 @@ void STARGui::timediff()
 	FindPeaks(cvs6, stardis.hist_diff);
     cvs6 -> Modified();
     cvs6 -> Update();
+
+	TFile* out_diff = new TFile(Form("%s%dto%d_%dto%d_diff_spectrum.root", direc.Data(), dstart1, dend1, dstart2, dend2), "RECREATE");
+	out_diff -> cd();
+	stardis.hist_diff -> Write();
+	out_diff -> Close();
+	cout << dstart1 << "to" << dend1 << "_" << dstart2 << "to" << dend2 << "_diff_spectrum.root outfile has been created." << endl;
+	delete out_diff;
 
     gSystem->RedirectOutput(0);
     fTextView->LoadFile(tempfile.Data());

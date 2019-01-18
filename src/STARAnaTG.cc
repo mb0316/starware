@@ -34,9 +34,10 @@ void STARAnaTG::Htimegate(TH2D *hist_Tot, Int_t &timeaxis1, Int_t &timeaxis2, In
 	if (hist_TY != nullptr)	delete hist_TY;
     if (timeaxis1 == 0 && timeaxis2 == 1)
     {
-        hist_TY = hist_Tot -> ProjectionY("Pro_Y_time", start, end, ""); // singles spectrum with the time interval
 		Double_t chbin = (hist_Tot->GetXaxis()->GetXmax())/(hist_Tot->GetNbinsX());
-		cout << chbin << endl;
+		cout << "ch/bin = " << chbin << endl;
+
+        hist_TY = hist_Tot -> ProjectionY("Pro_Y_time", start, end, ""); // singles spectrum with the time interval
 
         cout << "Input the start value of the gate : " << int(start*chbin) << endl; //gate start
         cout << "Input the end value of the gate : " << int(end*chbin) << endl; //gate end
@@ -51,10 +52,11 @@ void STARAnaTG::Htimegate(TH2D *hist_Tot, Int_t &timeaxis1, Int_t &timeaxis2, In
     }
     if (timeaxis1 == 1 && timeaxis2 == 0)
     {
-        hist_TY = hist_Tot -> ProjectionX("Pro_X_time", start, end, ""); // singles spectrum with the time interval
 		Double_t chbin = (hist_Tot->GetYaxis()->GetXmax())/(hist_Tot->GetNbinsY());
+		cout << "ch/bin = " << chbin << endl;
 
-		cout << chbin << endl;
+        hist_TY = hist_Tot -> ProjectionX("Pro_X_time", start, end, ""); // singles spectrum with the time interval
+
         cout << "Input the start value of the gate : " << int(start*chbin) << endl; //gate start
         cout << "Input the end value of the gate : " << int(end*chbin) << endl; //gate end
         
@@ -98,10 +100,13 @@ void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t start, Int_t end, TCa
 			Double_t dev = 1.0;
 			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", start, end);
 			Double_t pi = TMath::Pi();
-			hist_N -> GetXaxis() -> SetRangeUser(start-10, end+10);
+			hist_N -> GetXaxis() -> SetRangeUser(start, end);
 			peak = hist_N->GetBinCenter(hist_N-> GetMaximumBin());
 			ampl = hist_N -> GetMaximum();
 			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
+			gaussian -> SetParLimits(0, ampl/5, ampl*2);
+			gaussian -> SetParLimits(1, peak-3, peak+3);
+			gaussian -> SetParLimits(2, 0.7, 1.5);
 			hist_N -> Fit(gaussian, "MQN", "", start, end);
 			peaks = gaussian -> GetParameter(1);
 			peakerror = gaussian -> GetParError(1);
@@ -110,8 +115,8 @@ void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t start, Int_t end, TCa
 			amplerror = (gaussian -> GetParError(0))/ampl;
 			deverror = (gaussian -> GetParError(2))/dev;
 			netcount = sqrt(2*pi)*ampl*dev;
-			neterror = sqrt(amplerror*amplerror + deverror*deverror)*netcount;
-			peakerrors = sqrt(peakerror*peakerror + dev*dev/netcount);
+			neterror = sqrt(netcount);
+			peakerrors = gaussian -> GetParError(1);
 			peak = 0;
 			ampl = 0;
 			amplerror = 0;
@@ -152,10 +157,13 @@ void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t start, Int_t end, TCa
 			Double_t dev = 1.0;
 			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", start, end);
 			Double_t pi = TMath::Pi();
-			hist_N -> GetXaxis() -> SetRangeUser(start-10, end+10);
+			hist_N -> GetXaxis() -> SetRangeUser(start, end);
 			peak = hist_N->GetBinCenter(hist_N-> GetMaximumBin());
 			ampl = hist_N -> GetMaximum();
 			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
+            gaussian -> SetParLimits(0, ampl/5, ampl*2);
+            gaussian -> SetParLimits(1, peak-3, peak+3);
+            gaussian -> SetParLimits(2, 0.7, 1.5);
 			hist_N -> Fit(gaussian, "MQN", "", start, end);
 			peaks = gaussian -> GetParameter(1);
 			peakerror = gaussian -> GetParError(1);
@@ -164,8 +172,8 @@ void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t start, Int_t end, TCa
 			amplerror = (gaussian -> GetParError(0))/ampl;
 			deverror = (gaussian -> GetParError(2))/dev;
 			netcount = sqrt(2*pi)*ampl*dev;
-			neterror = sqrt(amplerror*amplerror + deverror*deverror)*netcount;
-			peakerrors = sqrt(peakerror*peakerror + dev*dev/netcount);
+			neterror = sqrt(netcount);
+			peakerrors = gaussian -> GetParError(1);
 			peak = 0;
 			ampl = 0;
 			amplerror = 0;
@@ -215,10 +223,13 @@ void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t start, Int_t end, TCa
 			Double_t dev = 1.0;
 			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", start, end);
 			Double_t pi = TMath::Pi();
-			hist_N -> GetXaxis() -> SetRangeUser(start-10, end+10);
+			hist_N -> GetXaxis() -> SetRangeUser(start, end);
 			peak = hist_N->GetBinCenter(hist_N-> GetMaximumBin());
 			ampl = hist_N -> GetMaximum();
 			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
+            gaussian -> SetParLimits(0, ampl/5, ampl*2);
+            gaussian -> SetParLimits(1, peak-3, peak+3);
+            gaussian -> SetParLimits(2, 0.7, 1.5);
 			hist_N -> Fit(gaussian, "MQN", "", start, end);
 			peaks = gaussian -> GetParameter(1);
 			peakerror = gaussian -> GetParError(1);
@@ -227,8 +238,8 @@ void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t start, Int_t end, TCa
 			amplerror = (gaussian -> GetParError(0))/ampl;
 			deverror = (gaussian -> GetParError(2))/dev;
 			netcount = sqrt(2*pi)*ampl*dev*(100/(fcn -> Eval(peak)));
-			neterror = sqrt(amplerror*amplerror + deverror*deverror)*netcount;
-			peakerrors = sqrt(peakerror*peakerror + dev*dev/netcount);
+			neterror = sqrt(netcount + (netcount*0.05)*(netcount*0.05));
+			peakerrors = gaussian -> GetParError(1);
 			peak = 0;
 			ampl = 0;
 			amplerror = 0;
@@ -274,10 +285,13 @@ void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t start, Int_t end, TCa
 			Double_t dev = 1.0;
 			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", start, end);
 			Double_t pi = TMath::Pi();
-			hist_N -> GetXaxis() -> SetRangeUser(start-10, end+10);
+			hist_N -> GetXaxis() -> SetRangeUser(start, end);
 			peak = hist_N->GetBinCenter(hist_N-> GetMaximumBin());
 			ampl = hist_N -> GetMaximum();
 			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
+            gaussian -> SetParLimits(0, ampl/5, ampl*2);
+            gaussian -> SetParLimits(1, peak-3, peak+3);
+            gaussian -> SetParLimits(2, 0.7, 1.5);
 			hist_N -> Fit(gaussian, "MQN", "", start, end);
 			peaks = gaussian -> GetParameter(1);
 			peakerror = gaussian -> GetParError(1);
@@ -286,8 +300,8 @@ void STARAnaTG::Hnetarea(TH2D *hist_Tot, Int_t iden, Int_t start, Int_t end, TCa
 			amplerror = (gaussian -> GetParError(0))/ampl;
 			deverror = (gaussian -> GetParError(2))/dev;
 			netcount = sqrt(2*pi)*ampl*dev*(100/(fcn -> Eval(peak)));
-			neterror = sqrt(amplerror*amplerror + deverror*deverror)*netcount;
-			peakerrors = sqrt(peakerror*peakerror + dev*dev/netcount);
+			neterror = sqrt(netcount + (netcount*0.05)*(netcount*0.05));
+			peakerrors = gaussian -> GetParError(1);
 			peak = 0;
 			ampl = 0;
 			amplerror = 0;
@@ -340,10 +354,13 @@ void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t start, Int_t end, TC
 			Double_t dev = 1.0;
 			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", start, end);
 			Double_t pi = TMath::Pi();
-			hist_N -> GetXaxis() -> SetRangeUser(start-10, end+10);
+			hist_N -> GetXaxis() -> SetRangeUser(start, end);
 			peak = hist_N->GetBinCenter(hist_N-> GetMaximumBin());
 			ampl = hist_N -> GetMaximum();
 			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
+            gaussian -> SetParLimits(0, ampl/5, ampl*2);
+            gaussian -> SetParLimits(1, peak-3, peak+3);
+            gaussian -> SetParLimits(2, 0.7, 1.5);
 			hist_N -> Fit(gaussian, "MQN", "", start, end);
 			peaks = gaussian -> GetParameter(1);
 			peakerror = gaussian -> GetParError(1);
@@ -352,8 +369,8 @@ void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t start, Int_t end, TC
 			amplerror = (gaussian -> GetParError(0))/ampl;
 			deverror = (gaussian -> GetParError(2))/dev;
 			netcount = sqrt(2*pi)*ampl*dev;
-			neterror = sqrt(amplerror*amplerror + deverror*deverror)*netcount;
-			peakerrors = sqrt(peakerror*peakerror + dev*dev/netcount);
+			neterror = sqrt(netcount);
+			peakerrors = gaussian -> GetParError(1);
 			peak = 0;
 			ampl = 0;
 			amplerror = 0;
@@ -395,10 +412,13 @@ void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t start, Int_t end, TC
 			Double_t dev = 1.0;
 			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", start, end);
 			Double_t pi = TMath::Pi();
-			hist_N -> GetXaxis() -> SetRangeUser(start-10, end+10);
+			hist_N -> GetXaxis() -> SetRangeUser(start, end);
 			peak = hist_N->GetBinCenter(hist_N-> GetMaximumBin());
 			ampl = hist_N -> GetMaximum();
 			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
+            gaussian -> SetParLimits(0, ampl/5, ampl*2);
+            gaussian -> SetParLimits(1, peak-3, peak+3);
+            gaussian -> SetParLimits(2, 0.7, 1.5);
 			hist_N -> Fit(gaussian, "MQN", "", start, end);
 			peaks = gaussian -> GetParameter(1);
 			peakerror = gaussian -> GetParError(1);
@@ -407,8 +427,8 @@ void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t start, Int_t end, TC
 			amplerror = (gaussian -> GetParError(0))/ampl;
 			deverror = (gaussian -> GetParError(2))/dev;
 			netcount = sqrt(2*pi)*ampl*dev;
-			neterror = sqrt(amplerror*amplerror + deverror*deverror)*netcount;
-			peakerrors = sqrt(peakerror*peakerror + dev*dev/netcount);
+			neterror = sqrt(netcount);
+			peakerrors = gaussian -> GetParError(1);
 			peak = 0;
 			ampl = 0;
 			amplerror = 0;
@@ -458,10 +478,13 @@ void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t start, Int_t end, TC
 			Double_t dev = 1.0;
 			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", start, end);
 			Double_t pi = TMath::Pi();
-			hist_N -> GetXaxis() -> SetRangeUser(start-10, end+10);
+			hist_N -> GetXaxis() -> SetRangeUser(start, end);
 			peak = hist_N->GetBinCenter(hist_N-> GetMaximumBin());
 			ampl = hist_N -> GetMaximum();
 			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
+            gaussian -> SetParLimits(0, ampl/5, ampl*2);
+            gaussian -> SetParLimits(1, peak-3, peak+3);
+            gaussian -> SetParLimits(2, 0.7, 1.5);
 			hist_N -> Fit(gaussian, "MQN", "", start, end);
 			peaks = gaussian -> GetParameter(1);
 			peakerror = gaussian -> GetParError(1);
@@ -470,8 +493,8 @@ void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t start, Int_t end, TC
 			amplerror = (gaussian -> GetParError(0))/ampl;
 			deverror = (gaussian -> GetParError(2))/dev;
 			netcount = sqrt(2*pi)*ampl*dev*(100/(fcn -> Eval(peak)));
-			neterror = sqrt(amplerror*amplerror + deverror*deverror)*netcount;
-			peakerrors = sqrt(peakerror*peakerror + dev*dev/netcount);
+			neterror = sqrt(netcount + (netcount*0.05)*(netcount*0.05));
+			peakerrors = gaussian -> GetParError(1);
 			peak = 0;
 			ampl = 0;
 			amplerror = 0;
@@ -517,10 +540,13 @@ void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t start, Int_t end, TC
 			Double_t dev = 1.0;
 			TF1* gaussian = new TF1("gaussian", "gaus(0) + [3]*x + [4]", start, end);
 			Double_t pi = TMath::Pi();
-			hist_N -> GetXaxis() -> SetRangeUser(start-10, end+10);
+			hist_N -> GetXaxis() -> SetRangeUser(start, end);
 			peak = hist_N->GetBinCenter(hist_N-> GetMaximumBin());
 			ampl = hist_N -> GetMaximum();
 			gaussian -> SetParameters(ampl, peak, dev, -1, 0);
+            gaussian -> SetParLimits(0, ampl/5, ampl*2);
+            gaussian -> SetParLimits(1, peak-3, peak+3);
+            gaussian -> SetParLimits(2, 0.7, 1.5);
 			hist_N -> Fit(gaussian, "MQN", "", start, end);
 			peaks = gaussian -> GetParameter(1);
 			peakerror = gaussian -> GetParError(1);
@@ -529,8 +555,8 @@ void STARAnaTG::Hnetarea2(TH2D *hist_Tot, Int_t iden, Int_t start, Int_t end, TC
 			amplerror = (gaussian -> GetParError(0))/ampl;
 			deverror = (gaussian -> GetParError(2))/dev;
 			netcount = sqrt(2*pi)*ampl*dev*(100/(fcn -> Eval(peak)));
-			neterror = sqrt(amplerror*amplerror + deverror*deverror)*netcount;
-			peakerrors = sqrt(peakerror*peakerror + dev*dev/netcount);
+			neterror = sqrt(netcount + (netcount*0.05)*(netcount*0.05));
+			peakerrors = gaussian -> GetParError(1);
 			peak = 0;
 			ampl = 0;
 			amplerror = 0;
